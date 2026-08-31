@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>口 — 5 написаний</title>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <style>
+    :root {
+      --ink: #1c1917;
+      --muted: #57534e;
+      --paper: #faf6ef;
+      --card: #fffdf8;
+      --line: #e7e0d4;
+      --grid: #eadfce;
+      --accent: #b42318;
+      --ok: #166534;
+      --ok-bg: #ecfdf3;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    main {
+      width: min(420px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 32px 28px 28px;
+      box-shadow: 0 12px 40px rgba(28, 25, 23, 0.08);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hanzi {
+      font-size: 72px;
+      line-height: 1;
+      margin: 8px 0 4px;
+    }
+
+    .meta {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .hint {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .rounds {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .round-slot {
+      width: 44px;
+      height: 44px;
+      border: 1.5px dashed #c4b8a8;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #d6cfc3;
+      background: #fff;
+      transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.2s;
+    }
+
+    .round-slot.done {
+      border-style: solid;
+      border-color: var(--ok);
+      background: var(--ok-bg);
+      color: var(--ok);
+    }
+
+    .round-slot.current {
+      border-style: solid;
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .round-slot.done.just-filled {
+      animation: pop 0.35s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.7); }
+      70% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    .writer-wrap {
+      display: flex;
+      justify-content: center;
+      width: fit-content;
+      margin: 0 auto 16px;
+      position: relative;
+    }
+
+    #character-target {
+      width: 280px;
+      height: 280px;
+      background: #fff;
+      border: 2px solid #c4b8a8;
+      border-radius: 8px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .progress {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .status {
+      min-height: 24px;
+      margin: 0 0 16px;
+      font-size: 16px;
+    }
+
+    .status.ok { color: var(--ok); font-weight: 600; }
+    .status.miss { color: var(--accent); }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button {
+      font: inherit;
+      font-size: 14px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    button:hover { background: #f5efe6; }
+
+    button.primary {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    button.primary:hover { background: #44403c; }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .prize {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      background: #fffdf8;
+      border-radius: 8px;
+    }
+
+    .prize.show {
+      display: flex;
+    }
+
+    .prize span {
+      font-size: 120px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--ok);
+      animation: prize-glow 0.55s ease;
+    }
+
+    @keyframes prize-glow {
+      0% { transform: scale(0.4); opacity: 0; }
+      70% { transform: scale(1.12); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Китайский иероглиф</h1>
+    <div class="hanzi" aria-hidden="true">口</div>
+    <p class="meta">kǒu · рот</p>
+    <p class="hint">Напишите 口 по чертам 5 раз</p>
+
+    <div class="rounds" id="rounds" aria-label="Прогресс: 5 написаний"></div>
+
+    <div class="writer-wrap">
+      <svg
+        id="character-target"
+        xmlns="http://www.w3.org/2000/svg"
+        width="280"
+        height="280"
+        viewBox="0 0 280 280"
+        aria-label="Поле для написания иероглифа 口"
+      >
+        <line x1="0" y1="0" x2="280" y2="280" stroke="#eadfce" />
+        <line x1="280" y1="0" x2="0" y2="280" stroke="#eadfce" />
+        <line x1="140" y1="0" x2="140" y2="280" stroke="#eadfce" />
+        <line x1="0" y1="140" x2="280" y2="140" stroke="#eadfce" />
+      </svg>
+      <div id="prize" class="prize" aria-live="polite">
+        <span>35</span>
+      </div>
+    </div>
+
+    <p id="progress" class="progress">Написание 1 из 5 · черта 0 из 3</p>
+    <p id="status" class="status" role="status">Обведите контур, начиная с первой черты</p>
+
+    <div class="actions">
+      <button type="button" id="animate-btn">Показать черты</button>
+      <button type="button" class="primary" id="retry-btn">Заново</button>
+    </div>
+  </main>
+
+  <script>
+    const SIZE = 280;
+    const STROKES = 3;
+    const ROUNDS = 5;
+    const progressEl = document.getElementById("progress");
+    const statusEl = document.getElementById("status");
+    const roundsEl = document.getElementById("rounds");
+    const animateBtn = document.getElementById("animate-btn");
+    const retryBtn = document.getElementById("retry-btn");
+    const prizeEl = document.getElementById("prize");
+
+    let completed = 0;
+    let finished = false;
+    let nextTimer = null;
+
+    for (let i = 0; i < ROUNDS; i++) {
+      const slot = document.createElement("div");
+      slot.className = "round-slot" + (i === 0 ? " current" : "");
+      slot.textContent = "口";
+      slot.setAttribute("aria-label", "Написание " + (i + 1));
+      roundsEl.appendChild(slot);
+    }
+
+    function slots() {
+      return roundsEl.querySelectorAll(".round-slot");
+    }
+
+    function renderSlots(justFilledIndex) {
+      slots().forEach(function (slot, i) {
+        slot.className = "round-slot";
+        if (i < completed) {
+          slot.classList.add("done");
+          if (i === justFilledIndex) slot.classList.add("just-filled");
+        } else if (!finished && i === completed) {
+          slot.classList.add("current");
+        }
+      });
+    }
+
+    function setProgress(strokeDone) {
+      if (finished) {
+        progressEl.textContent = "Написано 5 из 5";
+        return;
+      }
+      progressEl.textContent =
+        "Написание " + (completed + 1) + " из " + ROUNDS +
+        " · черта " + strokeDone + " из " + STROKES;
+    }
+
+    function setStatus(text, kind) {
+      statusEl.textContent = text;
+      statusEl.className = "status" + (kind ? " " + kind : "");
+    }
+
+    function clearTimer() {
+      if (nextTimer) {
+        clearTimeout(nextTimer);
+        nextTimer = null;
+      }
+    }
+
+    const writer = HanziWriter.create("character-target", "口", {
+      width: SIZE,
+      height: SIZE,
+      padding: 24,
+      showCharacter: false,
+      showOutline: true,
+      strokeColor: "#1c1917",
+      outlineColor: "#d6cfc3",
+      drawingColor: "#b42318",
+      highlightColor: "#b42318",
+      highlightCompleteColor: "#166534",
+      drawingWidth: 6,
+      showHintAfterMisses: 2,
+      highlightOnComplete: true,
+      onLoadCharDataError: function () {
+        setStatus("Не удалось загрузить данные иероглифа", "miss");
+      }
+    });
+
+    function startQuiz() {
+      if (finished) return;
+      setProgress(0);
+      setStatus("Обведите контур, начиная с первой черты");
+      writer.quiz({
+        onCorrectStroke: function (data) {
+          const done = data.strokeNum + 1;
+          setProgress(done);
+          if (data.strokesRemaining > 0) {
+            setStatus("Верно. Осталось черт: " + data.strokesRemaining);
+          }
+        },
+        onMistake: function (data) {
+          if (data.mistakesOnStroke >= 2) {
+            setStatus("Не та черта — смотрите подсказку", "miss");
+          } else {
+            setStatus("Попробуйте ещё раз эту черту", "miss");
+          }
+        },
+        onComplete: function () {
+          const justFilled = completed;
+          completed += 1;
+          renderSlots(justFilled);
+
+          if (completed >= ROUNDS) {
+            finished = true;
+            setProgress(STROKES);
+            setStatus("Готово: 口 написан 5 раз", "ok");
+            prizeEl.classList.add("show");
+            retryBtn.textContent = "Начать сначала";
+            animateBtn.disabled = true;
+            return;
+          }
+
+          progressEl.textContent = "Написание " + completed + " из " + ROUNDS + " готово";
+          setStatus("Верно: 口. Следующее написание…", "ok");
+          nextTimer = setTimeout(function () {
+            writer.cancelQuiz();
+            writer.hideCharacter({ duration: 0 });
+            startQuiz();
+          }, 700);
+        }
+      });
+    }
+
+    function resetAll() {
+      clearTimer();
+      finished = false;
+      completed = 0;
+      prizeEl.classList.remove("show");
+      retryBtn.textContent = "Заново";
+      animateBtn.disabled = false;
+      renderSlots();
+      writer.cancelQuiz();
+      writer.hideCharacter({ duration: 0 });
+      startQuiz();
+    }
+
+    function retryCurrent() {
+      if (finished) {
+        resetAll();
+        return;
+      }
+      clearTimer();
+      writer.cancelQuiz();
+      writer.hideCharacter({ duration: 0 });
+      startQuiz();
+    }
+
+    retryBtn.addEventListener("click", retryCurrent);
+    animateBtn.addEventListener("click", function () {
+      if (finished) return;
+      clearTimer();
+      writer.cancelQuiz();
+      writer.hideCharacter({ duration: 0 });
+      setStatus("Смотрите порядок черт");
+      writer.animateCharacter({
+        onComplete: function () {
+          writer.hideCharacter({ duration: 200 });
+          startQuiz();
+        }
+      });
+    });
+
+    startQuiz();
+  </script>
+</body>
+</html>
