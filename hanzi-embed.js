@@ -16,10 +16,42 @@
     document.head.appendChild(style);
   }
 
+  function tellParent(type, extra) {
+    if (!isEmbedded()) return;
+    try {
+      global.parent.postMessage(
+        Object.assign({ type: type }, extra || {}),
+        "*"
+      );
+    } catch (err) {}
+  }
+
+  function preventScroll(evt) {
+    evt.preventDefault();
+  }
+
+  function styleHostIframe() {
+    try {
+      const frame = global.frameElement;
+      if (!frame) return;
+      frame.setAttribute("scrolling", "no");
+      frame.style.overflow = "hidden";
+      frame.style.touchAction = "none";
+      frame.style.overscrollBehavior = "none";
+    } catch (err) {}
+  }
+
   function preparePage() {
     document.documentElement.classList.toggle("in-iframe", isEmbedded());
+    document.documentElement.style.touchAction = "none";
+    document.body.style.touchAction = "none";
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
     document.addEventListener("touchstart", function () {}, { passive: true });
     document.body.addEventListener("touchstart", function () {}, { passive: true });
+    document.addEventListener("touchmove", preventScroll, { passive: false, capture: true });
+    document.addEventListener("wheel", preventScroll, { passive: false, capture: true });
+    styleHostIframe();
     injectStyle();
   }
 
@@ -125,6 +157,8 @@
       if (!q) return;
       drawing = true;
       stream = kind;
+      tellParent("hanzi-embed-lock-scroll");
+      styleHostIframe();
       if (kind === "pointer" && evt.pointerId != null && surface.setPointerCapture) {
         try {
           surface.setPointerCapture(evt.pointerId);
@@ -153,6 +187,7 @@
       if (evt) block(evt);
       drawing = false;
       stream = null;
+      tellParent("hanzi-embed-unlock-scroll");
       const q = quiz();
       if (q) q.endUserStroke();
     }
