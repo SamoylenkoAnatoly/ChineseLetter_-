@@ -7,9 +7,39 @@
     }
   }
 
+  function injectStyle() {
+    if (document.getElementById("hanzi-embed-style")) return;
+    const style = document.createElement("style");
+    style.id = "hanzi-embed-style";
+    style.textContent =
+      ".hanzi-draw-surface{position:absolute;inset:0;z-index:2;touch-action:none;cursor:crosshair;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}";
+    document.head.appendChild(style);
+  }
+
   function preparePage() {
     document.documentElement.classList.toggle("in-iframe", isEmbedded());
     document.addEventListener("touchstart", function () {}, { passive: true });
+    document.body.addEventListener("touchstart", function () {}, { passive: true });
+    injectStyle();
+  }
+
+  function findQuiz(writer) {
+    if (writer._quiz && typeof writer._quiz.startUserStroke === "function") {
+      return writer._quiz;
+    }
+    for (const key in writer) {
+      if (!Object.prototype.hasOwnProperty.call(writer, key)) continue;
+      const value = writer[key];
+      if (
+        value &&
+        typeof value.startUserStroke === "function" &&
+        typeof value.continueUserStroke === "function" &&
+        typeof value.endUserStroke === "function"
+      ) {
+        return value;
+      }
+    }
+    return null;
   }
 
   function clientPoint(el, clientX, clientY, size) {
@@ -35,125 +65,155 @@
   }
 
   function eventPoint(el, evt, size) {
-    if (evt.touches && evt.touches.length) {
-      return clientPoint(el, evt.touches[0].clientX, evt.touches[0].clientY, size);
+    const w = size || el.getBoundingClientRect().width;
+    const rect = el.getBoundingClientRect();
+
+    if (
+      typeof evt.offsetX === "number" &&
+      !evt.touches &&
+      (evt.target === el || (evt.target && el.contains(evt.target)))
+    ) {
+      return {
+        x: evt.offsetX * (w / Math.max(rect.width, 1)),
+        y: evt.offsetY * (w / Math.max(rect.height, 1))
+      };
     }
-    if (evt.changedTouches && evt.changedTouches.length) {
-      return clientPoint(
-        el,
-        evt.changedTouches[0].clientX,
-        evt.changedTouches[0].clientY,
-        size
-      );
+
+    const touch =
+      (evt.touches && evt.touches[0]) ||
+      (evt.changedTouches && evt.changedTouches[0]);
+    if (touch) {
+      return clientPoint(el, touch.clientX, touch.clientY, w);
     }
-    return clientPoint(el, evt.clientX, evt.clientY, size);
+    return clientPoint(el, evt.clientX, evt.clientY, w);
   }
 
   function enableTouchDrawing(writer, el) {
+    const wrap = el.parentElement || el;
+    let surface = wrap.querySelector(".hanzi-draw-surface");
+    if (!surface) {
+      surface = document.createElement("div");
+      surface.className = "hanzi-draw-surface";
+      wrap.appendChild(surface);
+    }
+
     let drawing = false;
+    let stream = null;
     const opts = { passive: false, capture: true };
 
     function size() {
-      return writer._options && writer._options.width;
+      return (writer._options && writer._options.width) || 280;
     }
 
     function quiz() {
-      return writer._quiz;
+      return findQuiz(writer);
     }
 
-    function start(evt) {
-      if (!quiz()) return;
-      if (evt.pointerType === "mouse") return;
+    function block(evt) {
       evt.preventDefault();
-      evt.stopImmediatePropagation();
+      if (evt.stopImmediatePropagation) evt.stopImmediatePropagation();
+      else evt.stopPropagation();
+    }
+
+    function start(evt, kind) {
+      if (evt.pointerType === "mouse" && kind === "pointer") {
+        // still handle mouse on the overlay so HanziWriter never needs the event
+      }
+      block(evt);
+      if (drawing) return;
+      const q = quiz();
+      if (!q) return;
       drawing = true;
-      if (evt.pointerId != null && el.setPointerCapture) {
+      stream = kind;
+      if (kind === "pointer" && evt.pointerId != null && surface.setPointerCapture) {
         try {
-          el.setPointerCapture(evt.pointerId);
+          surface.setPointerCapture(evt.pointerId);
         } catch (err) {}
       }
-      quiz().startUserStroke(eventPoint(el, evt, size()));
+      q.startUserStroke(eventPoint(surface, evt, size()));
     }
 
-    function move(evt) {
-      if (!drawing || !quiz()) return;
-      if (evt.pointerType === "mouse") return;
-      evt.preventDefault();
-      evt.stopImmediatePropagation();
-      quiz().continueUserStroke(eventPoint(el, evt, size()));
-    }
-
-    function end(evt) {
+    function move(evt, kind) {
       if (!drawing) return;
-      if (evt && evt.pointerType === "mouse") return;
-      if (evt) {
-        evt.preventDefault();
-        evt.stopImmediatePropagation();
+      if (stream && kind !== stream) {
+        block(evt);
+        return;
       }
+      block(evt);
+      const q = quiz();
+      if (q) q.continueUserStroke(eventPoint(surface, evt, size()));
+    }
+
+    function end(evt, kind) {
+      if (!drawing) return;
+      if (stream && kind && kind !== stream) {
+        block(evt);
+        return;
+      }
+      if (evt) block(evt);
       drawing = false;
-      if (quiz()) quiz().endUserStroke();
+      stream = null;
+      const q = quiz();
+      if (q) q.endUserStroke();
     }
 
-    if (global.PointerEvent) {
-      el.addEventListener("pointerdown", start, opts);
-      el.addEventListener("pointermove", move, opts);
-      el.addEventListener("pointerup", end, opts);
-      el.addEventListener("pointercancel", end, opts);
-      document.addEventListener(
-        "pointermove",
-        function (evt) {
-          if (drawing) move(evt);
-        },
-        opts
-      );
-      document.addEventListener(
-        "pointerup",
-        function (evt) {
-          if (drawing) end(evt);
-        },
-        opts
-      );
-      document.addEventListener(
-        "pointercancel",
-        function (evt) {
-          if (drawing) end(evt);
-        },
-        opts
-      );
-    } else {
-      el.addEventListener("touchstart", start, opts);
-      el.addEventListener("touchmove", move, opts);
-      el.addEventListener("touchend", end, opts);
-      el.addEventListener("touchcancel", end, opts);
-    }
+    surface.addEventListener("pointerdown", function (evt) {
+      start(evt, "pointer");
+    }, opts);
+    surface.addEventListener("pointermove", function (evt) {
+      move(evt, "pointer");
+    }, opts);
+    surface.addEventListener("pointerup", function (evt) {
+      end(evt, "pointer");
+    }, opts);
+    surface.addEventListener("pointercancel", function (evt) {
+      end(evt, "pointer");
+    }, opts);
 
-    document.body.addEventListener(
-      "touchmove",
-      function (evt) {
-        if (drawing) move(evt);
-      },
-      opts
-    );
-    document.body.addEventListener(
-      "touchend",
-      function (evt) {
-        if (drawing) end(evt);
-      },
-      opts
-    );
-    document.body.addEventListener(
-      "touchcancel",
-      function (evt) {
-        if (drawing) end(evt);
-      },
-      opts
-    );
+    surface.addEventListener("touchstart", function (evt) {
+      start(evt, "touch");
+    }, opts);
+    surface.addEventListener("touchmove", function (evt) {
+      move(evt, "touch");
+    }, opts);
+    surface.addEventListener("touchend", function (evt) {
+      end(evt, "touch");
+    }, opts);
+    surface.addEventListener("touchcancel", function (evt) {
+      end(evt, "touch");
+    }, opts);
+
+    surface.addEventListener("mousedown", function (evt) {
+      start(evt, "mouse");
+    }, opts);
+    surface.addEventListener("mousemove", function (evt) {
+      move(evt, "mouse");
+    }, opts);
+    surface.addEventListener("mouseup", function (evt) {
+      end(evt, "mouse");
+    }, opts);
+
+    document.addEventListener("pointermove", function (evt) {
+      if (drawing && stream === "pointer") move(evt, "pointer");
+    }, opts);
+    document.addEventListener("pointerup", function (evt) {
+      if (drawing && stream === "pointer") end(evt, "pointer");
+    }, opts);
+    document.addEventListener("touchmove", function (evt) {
+      if (drawing && stream === "touch") move(evt, "touch");
+    }, opts);
+    document.addEventListener("touchend", function (evt) {
+      if (drawing && stream === "touch") end(evt, "touch");
+    }, opts);
+    document.addEventListener("mouseup", function (evt) {
+      if (drawing && stream === "mouse") end(evt, "mouse");
+    }, opts);
 
     writer.target._getMousePoint = function (evt) {
-      return clientPoint(el, evt.clientX, evt.clientY, size());
+      return eventPoint(surface, evt, size());
     };
     writer.target._getTouchPoint = function (evt) {
-      return eventPoint(el, evt, size());
+      return eventPoint(surface, evt, size());
     };
   }
 
@@ -184,21 +244,21 @@
       12;
     const availH = viewportH - chrome;
     const availW = Math.min(main.clientWidth, global.innerWidth);
-    const size = Math.max(
+    const nextSize = Math.max(
       168,
       Math.min(280, Math.floor(availW), Math.floor(availH))
     );
 
-    el.style.width = size + "px";
-    el.style.height = size + "px";
+    el.style.width = nextSize + "px";
+    el.style.height = nextSize + "px";
     if (el.parentElement && el.parentElement.classList.contains("writer-wrap")) {
-      el.parentElement.style.width = size + "px";
-      el.parentElement.style.height = size + "px";
+      el.parentElement.style.width = nextSize + "px";
+      el.parentElement.style.height = nextSize + "px";
     }
     writer.updateDimensions({
-      width: size,
-      height: size,
-      padding: Math.round(size * 0.085)
+      width: nextSize,
+      height: nextSize,
+      padding: Math.round(nextSize * 0.085)
     });
   }
 
