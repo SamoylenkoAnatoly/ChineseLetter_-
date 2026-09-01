@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!--
+  <iframe src="index_夕_practice.html" scrolling="no"
+    style="border:0;width:100%;max-width:420px;height:640px;overflow:hidden;touch-action:none;overscroll-behavior:none"></iframe>
+  <script src="embed-parent.js"></script>
+-->
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>夕 — ввод по чертам</title>
+  <link rel="stylesheet" href="hanzi-common.css">
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="hanzi-embed.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Китайский иероглиф</h1>
+    <div class="hanzi" aria-hidden="true">夕</div>
+    <p class="meta">xī · вечер</p>
+    <p class="hint">Нарисуйте 夕 по чертам в правильном порядке</p>
+    <div class="writer-wrap">
+      <div id="character-target" aria-label="Поле для написания иероглифа 夕"></div>
+    </div>
+    <p id="progress" class="progress">Черта 0 из 0</p>
+    <p id="status" class="status" role="status">Обведите контур, начиная с первой черты</p>
+    <div class="actions">
+      <button type="button" id="animate-btn">Показать черты</button>
+      <button type="button" class="primary" id="retry-btn">Заново</button>
+    </div>
+  </main>
+  <script>window.HANZI = {"char": "夕", "pinyin": "xī", "meaning": "вечер"};</script>
+  <script src="hanzi-practice.js"></script>
+</body>
+</html>
