@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1b1726">
+  <title>Защита замка</title>
+  <style>
+    :root {
+      --ink: #241c30;
+      --night: #171321;
+      --panel: #fff6dc;
+      --paper: #fffaf0;
+      --cream: #f0dca8;
+      --red: #d95852;
+      --red-dark: #8f3542;
+      --gold: #edb84f;
+      --green: #5ea568;
+      --muted: #786c72;
+      --shadow: 5px 5px 0 var(--ink);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-width: 280px;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(10px, 2vw, 20px);
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.025) 50%, transparent 50%) 0 0 / 100% 4px,
+        radial-gradient(circle at 50% -20%, #3a2f50 0, var(--night) 62%);
+      font-family: "Courier New", "MS Gothic", monospace;
+      image-rendering: pixelated;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .game-shell {
+      width: min(100%, 700px);
+      border: 3px solid var(--cream);
+      outline: 4px solid var(--ink);
+      background: var(--panel);
+      box-shadow: 9px 9px 0 rgba(0, 0, 0, 0.38);
+      overflow: hidden;
+    }
+
+    .top-stripe {
+      height: 8px;
+      background: repeating-linear-gradient(90deg, var(--red) 0 18px, var(--gold) 18px 36px);
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .screen {
+      min-height: min(520px, calc(100svh - 40px));
+      padding: clamp(16px, 4vw, 30px);
+    }
+
+    .screen[hidden] {
+      display: none;
+    }
+
+    .start-screen,
+    .victory-screen {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--red-dark);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 560px;
+      margin-bottom: 10px;
+      font-size: clamp(1.55rem, 5vw, 2.65rem);
+      line-height: 1;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 var(--gold);
+    }
+
+    .start-copy {
+      max-width: 480px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .character-preview {
+      margin: 2px 0 22px;
+      color: var(--red-dark);
+      font-family: "MS Gothic", "Noto Sans CJK SC", sans-serif;
+      font-size: clamp(1.15rem, 4vw, 1.7rem);
+      letter-spacing: 0.2em;
+    }
+
+    .mode-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 13px;
+    }
+
+    .pixel-button {
+      min-height: 44px;
+      padding: 11px 20px;
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      color: #fff;
+      background: var(--red);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+    }
+
+    .pixel-button:hover {
+      background: #e6675f;
+    }
+
+    .pixel-button:active {
+      transform: translate(4px, 4px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .pixel-button:focus-visible {
+      outline: 3px dashed var(--red-dark);
+      outline-offset: 5px;
+    }
+
+    .pixel-button.secondary {
+      min-height: 34px;
+      padding: 7px 11px;
+      color: var(--ink);
+      background: var(--cream);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-size: 0.72rem;
+    }
+
+    .pixel-button.hard-mode {
+      background: var(--red-dark);
+    }
+
+    .battle-screen {
+      padding: clamp(12px, 2.7vw, 22px);
+    }
+
+    .battle-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .round-count {
+      font-size: 0.78rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .progress-track,
+    .hp-track {
+      height: 14px;
+      border: 2px solid var(--ink);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .progress-fill,
+    .hp-fill {
+      width: 0;
+      height: 100%;
+      background: repeating-linear-gradient(90deg, var(--green) 0 12px, #76bb75 12px 16px);
+      transition: width 350ms steps(5, end);
+    }
+
+    .battle-grid {
+      display: grid;
+      grid-template-columns: minmax(185px, 0.95fr) minmax(225px, 1.05fr);
+      gap: clamp(14px, 3vw, 26px);
+      align-items: center;
+    }
+
+    .monster-zone {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      min-height: 290px;
+      padding: 12px;
+      border: 3px solid var(--ink);
+      background:
+        linear-gradient(transparent 72%, #d9bd78 72% 75%, #c49a57 75%),
+        repeating-linear-gradient(0deg, #eee2bb 0 2px, #f8edcd 2px 4px);
+    }
+
+    .monster-wrap {
+      display: grid;
+      justify-items: center;
+      width: 100%;
+    }
+
+    .monster {
+      width: clamp(105px, 22vw, 145px);
+      color: var(--red-dark);
+      filter: drop-shadow(5px 6px 0 rgba(36, 28, 48, 0.28));
+      animation: monster-idle 1.2s steps(2, end) infinite;
+    }
+
+    .monster.hit {
+      animation: monster-hit 360ms steps(4, end);
+    }
+
+    .monster-defeated {
+      animation: monster-fall 650ms steps(5, end) forwards;
+    }
+
+    .monster-name {
+      margin: 10px 0 5px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .hp-wrap {
+      width: min(100%, 180px);
+    }
+
+    .hp-track {
+      height: 12px;
+    }
+
+    .hp-fill {
+      width: 100%;
+      background: repeating-linear-gradient(90deg, var(--red) 0 12px, #e86b5f 12px 16px);
+    }
+
+    .task-zone {
+      display: grid;
+      justify-items: center;
+      min-width: 0;
+    }
+
+    .task-title {
+      margin-bottom: 8px;
+      font-size: clamp(0.82rem, 2.5vw, 1rem);
+      text-align: center;
+    }
+
+    .writer-frame {
+      position: relative;
+      width: min(100%, 255px);
+      aspect-ratio: 1;
+      border: 3px solid var(--ink);
+      background:
+        linear-gradient(45deg, transparent calc(50% - 1px), rgba(143, 53, 66, 0.15) 50%, transparent calc(50% + 1px)),
+        linear-gradient(-45deg, transparent calc(50% - 1px), rgba(143, 53, 66, 0.15) 50%, transparent calc(50% + 1px)),
+        linear-gradient(90deg, transparent calc(50% - 1px), rgba(143, 53, 66, 0.15) 50%, transparent calc(50% + 1px)),
+        linear-gradient(transparent calc(50% - 1px), rgba(143, 53, 66, 0.15) 50%, transparent calc(50% + 1px)),
+        var(--paper);
+      box-shadow: 5px 5px 0 var(--ink);
+      touch-action: none;
+    }
+
+    #writer-target,
+    #writer-target svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .loading-note {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      color: var(--muted);
+      background: rgba(255, 250, 240, 0.92);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .loading-note[hidden] {
+      display: none;
+    }
+
+    .task-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: min(100%, 260px);
+      margin-top: 13px;
+    }
+
+    .feedback {
+      min-height: 2.4em;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .feedback.bad {
+      color: var(--red-dark);
+    }
+
+    .feedback.good {
+      color: #367d48;
+    }
+
+    .victory-glyph {
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: clamp(3.4rem, 12vw, 5.5rem);
+      line-height: 1;
+      text-shadow: 4px 4px 0 var(--red-dark);
+    }
+
+    .victory-screen h2 {
+      margin-bottom: 8px;
+      font-size: clamp(1.55rem, 5vw, 2.3rem);
+      text-transform: uppercase;
+    }
+
+    .victory-stats {
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    @keyframes monster-idle {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
+    }
+
+    @keyframes monster-hit {
+      0%, 100% { transform: translateX(0); opacity: 1; }
+      25% { transform: translateX(-9px); opacity: 0.55; }
+      50% { transform: translateX(8px); opacity: 1; }
+      75% { transform: translateX(-4px); opacity: 0.55; }
+    }
+
+    @keyframes monster-fall {
+      to { transform: translateY(32px) rotate(8deg) scale(0.7); opacity: 0; }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        place-items: start center;
+        padding: 8px;
+      }
+
+      .screen {
+        min-height: calc(100svh - 24px);
+      }
+
+      .battle-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .monster-zone {
+        grid-row: 2;
+        min-height: 112px;
+        grid-template-columns: auto 1fr;
+        gap: 15px;
+      }
+
+      .monster {
+        width: 74px;
+      }
+
+      .monster-name {
+        margin-top: 3px;
+      }
+
+      .writer-frame {
+        width: min(68vw, 230px);
+      }
+
+      .battle-header {
+        margin-bottom: 10px;
+      }
+    }
+
+    @media (max-height: 580px) and (min-width: 521px) {
+      .screen {
+        min-height: 0;
+      }
+
+      .monster-zone {
+        min-height: 245px;
+      }
+
+      .writer-frame {
+        width: min(42vh, 225px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell" aria-live="polite">
+    <div class="top-stripe" aria-hidden="true"></div>
+
+    <section class="screen start-screen" id="start-screen">
+      <div>
+        <p class="eyebrow">Ретро-тренировка</p>
+        <h1>Защита замка</h1>
+        <p class="start-copy">Начертите 9 знаков в правильном порядке и победите чернильного монстра.</p>
+        <div class="character-preview" aria-label="Иероглифы в игре">口 品 日 目 人 众 木 林 相</div>
+        <div class="mode-actions">
+          <button class="pixel-button" id="start-button" type="button">Начать</button>
+          <button class="pixel-button hard-mode" id="hard-button" type="button">Сложный режим</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen battle-screen" id="battle-screen" hidden>
+      <header class="battle-header">
+        <span class="round-count" id="round-count">0 / 9</span>
+        <div class="progress-track" role="progressbar" aria-label="Прогресс игры" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="round-count">Победи!</span>
+      </header>
+
+      <div class="battle-grid">
+        <section class="monster-zone" aria-label="Противник">
+          <div class="monster-wrap">
+            <svg class="monster" id="monster" viewBox="0 0 160 150" role="img" aria-label="Чернильный монстр">
+              <path fill="currentColor" d="M42 28h16V16h16v12h12V12h16v20h16v12h12v18h12v42h-13v18h-22v13H50v-13H28v-18H16V62h12V44h14z"/>
+              <path fill="#fff6dc" d="M48 61h22v24H48zm46 0h22v24H94z"/>
+              <path fill="#241c30" d="M58 67h12v18H58zm36 0h12v18H94zM55 103h50v10H55z"/>
+              <path fill="#edb84f" d="M28 48h12v14H28zm102 0h12v14h-12z"/>
+            </svg>
+            <div>
+              <p class="monster-name">Клякса-9</p>
+              <div class="hp-wrap">
+                <div class="hp-track" role="progressbar" aria-label="Здоровье монстра" aria-valuemin="0" aria-valuemax="9" aria-valuenow="9" id="hp-track">
+                  <div class="hp-fill" id="hp-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="task-zone" aria-label="Задание">
+          <h2 class="task-title"><span id="task-label">Напишите:</span> <span id="current-character">—</span></h2>
+          <div class="writer-frame">
+            <div id="writer-target" aria-label="Поле для написания иероглифа"></div>
+            <div class="loading-note" id="loading-note">Загрузка знака…</div>
+          </div>
+          <div class="task-footer">
+            <p class="feedback" id="feedback">Следуйте контуру и порядку черт.</p>
+            <button class="pixel-button secondary" id="retry-button" type="button">Сбросить</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="screen victory-screen" id="victory-screen" hidden>
+      <div>
+        <div class="victory-glyph" aria-hidden="true">胜</div>
+        <p class="eyebrow">Битва окончена</p>
+        <h2>Победа!</h2>
+        <p class="victory-stats" id="victory-stats">Все 9 иероглифов написаны.</p>
+        <button class="pixel-button" id="restart-button" type="button">Играть снова</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const CHARACTERS = [
+        { char: "口", translation: "рот" },
+        { char: "品", translation: "товар, качество" },
+        { char: "日", translation: "солнце, день" },
+        { char: "目", translation: "глаз" },
+        { char: "人", translation: "человек" },
+        { char: "众", translation: "толпа" },
+        { char: "木", translation: "дерево" },
+        { char: "林", translation: "лес" },
+        { char: "相", translation: "взаимный, облик" }
+      ];
+      const screens = {
+        start: document.getElementById("start-screen"),
+        battle: document.getElementById("battle-screen"),
+        victory: document.getElementById("victory-screen")
+      };
+      const elements = {
+        startButton: document.getElementById("start-button"),
+        hardButton: document.getElementById("hard-button"),
+        restartButton: document.getElementById("restart-button"),
+        retryButton: document.getElementById("retry-button"),
+        target: document.getElementById("writer-target"),
+        taskLabel: document.getElementById("task-label"),
+        currentCharacter: document.getElementById("current-character"),
+        roundCount: document.getElementById("round-count"),
+        progressTrack: document.getElementById("progress-track"),
+        progressFill: document.getElementById("progress-fill"),
+        hpTrack: document.getElementById("hp-track"),
+        hpFill: document.getElementById("hp-fill"),
+        monster: document.getElementById("monster"),
+        feedback: document.getElementById("feedback"),
+        loadingNote: document.getElementById("loading-note"),
+        victoryStats: document.getElementById("victory-stats")
+      };
+
+      let sequence = [];
+      let currentIndex = 0;
+      let totalMistakes = 0;
+      let currentMistakes = 0;
+      let writer = null;
+      let roundToken = 0;
+      let roundLocked = false;
+      let hardMode = false;
+
+      function shuffle(items) {
+        const shuffled = [...items];
+        for (let i = shuffled.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+
+      function showScreen(name) {
+        Object.entries(screens).forEach(([key, screen]) => {
+          screen.hidden = key !== name;
+        });
+      }
+
+      function setFeedback(message, tone = "") {
+        elements.feedback.textContent = message;
+        elements.feedback.className = `feedback ${tone}`.trim();
+      }
+
+      function updateMeters() {
+        const completed = currentIndex;
+        const remaining = CHARACTERS.length - completed;
+        const completedPercent = (completed / CHARACTERS.length) * 100;
+        const remainingPercent = (remaining / CHARACTERS.length) * 100;
+
+        elements.roundCount.textContent = `${completed} / ${CHARACTERS.length}`;
+        elements.progressFill.style.width = `${completedPercent}%`;
+        elements.progressTrack.setAttribute("aria-valuenow", String(completed));
+        elements.hpFill.style.width = `${remainingPercent}%`;
+        elements.hpTrack.setAttribute("aria-valuenow", String(remaining));
+      }
+
+      function clearWriter() {
+        roundToken += 1;
+        if (writer && typeof writer.cancelQuiz === "function") {
+          writer.cancelQuiz();
+        }
+        writer = null;
+        elements.target.replaceChildren();
+      }
+
+      function failCharacterLoad(token) {
+        if (token !== roundToken) return;
+        elements.loadingNote.hidden = false;
+        elements.loadingNote.textContent = "Не удалось загрузить знак. Проверьте интернет и нажмите «Сбросить».";
+        elements.retryButton.textContent = "Повторить";
+        setFeedback("Данные Hanzi Writer недоступны.", "bad");
+      }
+
+      function loadCurrentCharacter() {
+        clearWriter();
+        roundLocked = false;
+        currentMistakes = 0;
+        elements.retryButton.textContent = "Сбросить";
+        elements.loadingNote.hidden = false;
+        elements.loadingNote.textContent = "Загрузка знака…";
+
+        const task = sequence[currentIndex];
+        const character = task.char;
+        elements.taskLabel.textContent = hardMode ? "Перевод:" : "Напишите:";
+        elements.currentCharacter.textContent = hardMode ? task.translation : character;
+        setFeedback(hardMode ? "Вспомните знак и соблюдайте порядок черт." : "Следуйте контуру и порядку черт.");
+
+        if (typeof window.HanziWriter === "undefined") {
+          failCharacterLoad(roundToken);
+          return;
+        }
+
+        const token = roundToken;
+        const frameSize = Math.max(160, Math.round(elements.target.getBoundingClientRect().width));
+
+        try {
+          writer = window.HanziWriter.create(elements.target, character, {
+            width: frameSize,
+            height: frameSize,
+            padding: Math.round(frameSize * 0.08),
+            showCharacter: false,
+            showOutline: !hardMode,
+            outlineColor: "#d6b9aa",
+            strokeColor: "#8f3542",
+            drawingColor: "#241c30",
+            highlightColor: "#edb84f",
+            drawingWidth: Math.max(5, Math.round(frameSize * 0.025)),
+            strokeWidth: 2,
+            leniency: 1.15,
+            showHintAfterMisses: 3,
+            highlightOnComplete: true,
+            acceptBackwardsStrokes: false,
+            onLoadCharDataSuccess: () => {
+              if (token === roundToken) {
+                elements.loadingNote.hidden = true;
+              }
+            },
+            onLoadCharDataError: () => failCharacterLoad(token)
+          });
+
+          writer.quiz({
+            onMistake: () => {
+              if (token !== roundToken || roundLocked) return;
+              currentMistakes += 1;
+              totalMistakes += 1;
+              setFeedback(currentMistakes >= 3 ? "Подсказка подсветит верную черту." : "Не та черта — попробуйте ещё.", "bad");
+            },
+            onCorrectStroke: (data) => {
+              if (token !== roundToken || roundLocked) return;
+              setFeedback(`Верно! Черта ${data.strokeNum + 1}.`, "good");
+            },
+            onComplete: () => completeCharacter(token)
+          });
+        } catch (error) {
+          failCharacterLoad(token);
+        }
+      }
+
+      function completeCharacter(token) {
+        if (token !== roundToken || roundLocked) return;
+        roundLocked = true;
+        setFeedback("Иероглиф готов! Удар по монстру.", "good");
+
+        elements.monster.classList.remove("hit");
+        void elements.monster.offsetWidth;
+        elements.monster.classList.add("hit");
+
+        currentIndex += 1;
+        updateMeters();
+
+        window.setTimeout(() => {
+          if (currentIndex >= CHARACTERS.length) {
+            finishGame();
+          } else {
+            loadCurrentCharacter();
+          }
+        }, 650);
+      }
+
+      function startGame(isHardMode = hardMode) {
+        hardMode = isHardMode;
+        sequence = shuffle(CHARACTERS);
+        currentIndex = 0;
+        totalMistakes = 0;
+        currentMistakes = 0;
+        roundLocked = false;
+        elements.monster.classList.remove("hit", "monster-defeated");
+        showScreen("battle");
+        updateMeters();
+        window.requestAnimationFrame(loadCurrentCharacter);
+      }
+
+      function finishGame() {
+        clearWriter();
+        elements.monster.classList.remove("hit");
+        elements.monster.classList.add("monster-defeated");
+        elements.victoryStats.textContent = `Все 9 иероглифов написаны. Ошибок: ${totalMistakes}.`;
+        window.setTimeout(() => showScreen("victory"), 450);
+      }
+
+      elements.startButton.addEventListener("click", () => startGame(false));
+      elements.hardButton.addEventListener("click", () => startGame(true));
+      elements.restartButton.addEventListener("click", () => startGame(hardMode));
+      elements.retryButton.addEventListener("click", () => {
+        if (!roundLocked && sequence.length) loadCurrentCharacter();
+      });
+    })();
+  </script>
+</body>
+</html>
