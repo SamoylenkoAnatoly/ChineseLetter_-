@@ -73,6 +73,7 @@
     }
 
     .start-screen,
+    .level-screen,
     .victory-screen {
       display: grid;
       place-items: center;
@@ -127,6 +128,55 @@
       gap: 13px;
     }
 
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      width: min(100%, 560px);
+      margin-top: 12px;
+    }
+
+    .level-card {
+      min-height: 104px;
+      padding: 14px;
+      border: 3px solid var(--ink);
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 4px 4px 0 var(--ink);
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+      transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+    }
+
+    .level-card:hover {
+      background: var(--cream);
+    }
+
+    .level-card:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .level-card strong,
+    .level-card span {
+      display: block;
+    }
+
+    .level-card strong {
+      margin-bottom: 7px;
+      color: var(--red-dark);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    .level-card span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
     .pixel-button {
       min-height: 44px;
       padding: 11px 20px;
@@ -163,10 +213,6 @@
       background: var(--cream);
       box-shadow: 3px 3px 0 var(--ink);
       font-size: 0.72rem;
-    }
-
-    .pixel-button.hard-mode {
-      background: var(--red-dark);
     }
 
     .battle-screen {
@@ -288,6 +334,62 @@
         var(--paper);
       box-shadow: 5px 5px 0 var(--ink);
       touch-action: none;
+    }
+
+    .writer-frame[hidden],
+    .choice-panel[hidden] {
+      display: none;
+    }
+
+    .choice-panel {
+      display: grid;
+      gap: 10px;
+      width: min(100%, 270px);
+      margin: 8px 0;
+    }
+
+    .choice-button {
+      min-height: 46px;
+      padding: 9px 12px;
+      border: 2px solid var(--ink);
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 3px 3px 0 var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 800;
+      transition: transform 80ms ease, background 120ms ease;
+    }
+
+    .choice-button:hover {
+      background: var(--cream);
+    }
+
+    .choice-button:active {
+      transform: translate(2px, 2px);
+    }
+
+    .choice-button.wrong {
+      color: #fff;
+      background: var(--red-dark);
+    }
+
+    .choice-button.correct {
+      color: #fff;
+      background: var(--green);
+    }
+
+    .task-zone.matching .task-title {
+      display: grid;
+      gap: 7px;
+    }
+
+    .task-zone.matching #current-character {
+      color: var(--red-dark);
+      font-family: "MS Gothic", "Noto Sans CJK SC", sans-serif;
+      font-size: clamp(2.7rem, 10vw, 4.4rem);
+      line-height: 1;
     }
 
     #writer-target,
@@ -422,6 +524,15 @@
       .battle-header {
         margin-bottom: 10px;
       }
+
+      .level-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .level-card {
+        min-height: 78px;
+      }
     }
 
     @media (max-height: 580px) and (min-width: 521px) {
@@ -458,11 +569,35 @@
       <div>
         <p class="eyebrow">Ретро-тренировка</p>
         <h1>Защита замка</h1>
-        <p class="start-copy">Начертите 9 знаков в правильном порядке и победите чернильного монстра.</p>
+        <p class="start-copy">Пройдите испытания с 9 иероглифами и победите чернильного монстра.</p>
         <div class="character-preview" aria-label="Иероглифы в игре">口 品 日 目 人 众 木 林 相</div>
         <div class="mode-actions">
           <button class="pixel-button" id="start-button" type="button">Начать</button>
-          <button class="pixel-button hard-mode" id="hard-button" type="button">Сложный режим</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen level-screen" id="level-screen" hidden>
+      <div>
+        <p class="eyebrow">Выбор испытания</p>
+        <h2>Выберите уровень</h2>
+        <div class="level-grid">
+          <button class="level-card" type="button" data-level="1">
+            <strong>Уровень 1</strong>
+            <span>Напишите иероглиф по видимому контуру.</span>
+          </button>
+          <button class="level-card" type="button" data-level="2">
+            <strong>Уровень 2</strong>
+            <span>Вспомните и напишите иероглиф по переводу.</span>
+          </button>
+          <button class="level-card" type="button" data-level="3">
+            <strong>Уровень 3</strong>
+            <span>Сопоставьте иероглиф с его значением.</span>
+          </button>
+          <button class="level-card" type="button" data-level="4">
+            <strong>Уровень 4</strong>
+            <span>Сопоставьте иероглиф с его произношением.</span>
+          </button>
         </div>
       </div>
     </section>
@@ -496,13 +631,14 @@
           </div>
         </section>
 
-        <section class="task-zone" aria-label="Задание">
+        <section class="task-zone" id="task-zone" aria-label="Задание">
           <h2 class="task-title"><span id="task-label">Напишите:</span> <span id="current-character">—</span></h2>
-          <div class="writer-frame">
+          <div class="writer-frame" id="writer-frame">
             <div id="writer-target" aria-label="Поле для написания иероглифа"></div>
             <div class="loading-note" id="loading-note">Загрузка знака…</div>
           </div>
-          <div class="task-footer">
+          <div class="choice-panel" id="choice-panel" hidden></div>
+          <div class="task-footer" id="task-footer">
             <p class="feedback" id="feedback">Следуйте контуру и порядку черт.</p>
             <button class="pixel-button secondary" id="retry-button" type="button">Сбросить</button>
           </div>
@@ -517,7 +653,7 @@
         <h2>Победа!</h2>
         <p class="victory-stats" id="victory-stats">Все 9 иероглифов написаны.</p>
         <p class="victory-code" id="victory-code" aria-label="Код победы"></p>
-        <button class="pixel-button" id="restart-button" type="button">Играть снова</button>
+        <button class="pixel-button" id="restart-button" type="button">Выбрать уровень</button>
       </div>
     </section>
   </main>
@@ -528,27 +664,32 @@
       "use strict";
 
       const CHARACTERS = [
-        { char: "口", translation: "рот" },
-        { char: "品", translation: "товар, качество" },
-        { char: "日", translation: "солнце, день" },
-        { char: "目", translation: "глаз" },
-        { char: "人", translation: "человек" },
-        { char: "众", translation: "толпа" },
-        { char: "木", translation: "дерево" },
-        { char: "林", translation: "лес" },
-        { char: "相", translation: "взаимный, облик" }
+        { char: "口", translation: "рот", pronunciation: "kǒu" },
+        { char: "品", translation: "товар, качество", pronunciation: "pǐn" },
+        { char: "日", translation: "солнце, день", pronunciation: "rì" },
+        { char: "目", translation: "глаз", pronunciation: "mù" },
+        { char: "人", translation: "человек", pronunciation: "rén" },
+        { char: "众", translation: "толпа", pronunciation: "zhòng" },
+        { char: "木", translation: "дерево", pronunciation: "mù" },
+        { char: "林", translation: "лес", pronunciation: "lín" },
+        { char: "相", translation: "взаимный, облик", pronunciation: "xiāng" }
       ];
+      const LEVEL_CODES = { 1: "3771", 2: "4567", 3: "6656", 4: "8777" };
       const screens = {
         start: document.getElementById("start-screen"),
+        levels: document.getElementById("level-screen"),
         battle: document.getElementById("battle-screen"),
         victory: document.getElementById("victory-screen")
       };
       const elements = {
         startButton: document.getElementById("start-button"),
-        hardButton: document.getElementById("hard-button"),
+        levelButtons: document.querySelectorAll("[data-level]"),
         restartButton: document.getElementById("restart-button"),
         retryButton: document.getElementById("retry-button"),
         target: document.getElementById("writer-target"),
+        writerFrame: document.getElementById("writer-frame"),
+        choicePanel: document.getElementById("choice-panel"),
+        taskZone: document.getElementById("task-zone"),
         taskLabel: document.getElementById("task-label"),
         currentCharacter: document.getElementById("current-character"),
         roundCount: document.getElementById("round-count"),
@@ -570,7 +711,7 @@
       let writer = null;
       let roundToken = 0;
       let roundLocked = false;
-      let hardMode = false;
+      let currentLevel = 1;
 
       function shuffle(items) {
         const shuffled = [...items];
@@ -622,19 +763,34 @@
         setFeedback("Данные Hanzi Writer недоступны.", "bad");
       }
 
-      function loadCurrentCharacter() {
+      function loadCurrentChallenge() {
         clearWriter();
         roundLocked = false;
         currentMistakes = 0;
         elements.retryButton.textContent = "Сбросить";
-        elements.loadingNote.hidden = false;
-        elements.loadingNote.textContent = "Загрузка знака…";
+        elements.retryButton.hidden = currentLevel >= 3;
+        elements.writerFrame.hidden = currentLevel >= 3;
+        elements.choicePanel.hidden = currentLevel < 3;
+        elements.taskZone.classList.toggle("matching", currentLevel >= 3);
 
         const task = sequence[currentIndex];
         const character = task.char;
-        elements.taskLabel.textContent = hardMode ? "Перевод:" : "Напишите:";
-        elements.currentCharacter.textContent = hardMode ? task.translation : character;
-        setFeedback(hardMode ? "Вспомните знак и соблюдайте порядок черт." : "Следуйте контуру и порядку черт.");
+
+        if (currentLevel >= 3) {
+          elements.loadingNote.hidden = true;
+          elements.taskLabel.textContent = currentLevel === 3 ? "Выберите значение:" : "Выберите произношение:";
+          elements.currentCharacter.textContent = character;
+          setFeedback("Выберите один правильный вариант.");
+          loadMatchingOptions(task, roundToken);
+          return;
+        }
+
+        elements.choicePanel.replaceChildren();
+        elements.loadingNote.hidden = false;
+        elements.loadingNote.textContent = "Загрузка знака…";
+        elements.taskLabel.textContent = currentLevel === 2 ? "Перевод:" : "Напишите:";
+        elements.currentCharacter.textContent = currentLevel === 2 ? task.translation : character;
+        setFeedback(currentLevel === 2 ? "Вспомните знак и соблюдайте порядок черт." : "Следуйте контуру и порядку черт.");
 
         if (typeof window.HanziWriter === "undefined") {
           failCharacterLoad(roundToken);
@@ -650,7 +806,7 @@
             height: frameSize,
             padding: Math.round(frameSize * 0.08),
             showCharacter: false,
-            showOutline: !hardMode,
+            showOutline: currentLevel === 1,
             outlineColor: "#d6b9aa",
             strokeColor: "#8f3542",
             drawingColor: "#241c30",
@@ -680,17 +836,50 @@
               if (token !== roundToken || roundLocked) return;
               setFeedback(`Верно! Черта ${data.strokeNum + 1}.`, "good");
             },
-            onComplete: () => completeCharacter(token)
+            onComplete: () => completeCharacter(token, "Иероглиф готов! Удар по монстру.")
           });
         } catch (error) {
           failCharacterLoad(token);
         }
       }
 
-      function completeCharacter(token) {
+      function loadMatchingOptions(task, token) {
+        const key = currentLevel === 3 ? "translation" : "pronunciation";
+        const distractors = shuffle(
+          CHARACTERS.filter((candidate) => candidate.char !== task.char && candidate[key] !== task[key])
+        ).slice(0, 3);
+        const options = shuffle([task, ...distractors]);
+        elements.choicePanel.replaceChildren();
+
+        options.forEach((option) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "choice-button";
+          button.textContent = option[key];
+          button.addEventListener("click", () => {
+            if (token !== roundToken || roundLocked) return;
+            if (option.char === task.char) {
+              button.classList.add("correct");
+              elements.choicePanel.querySelectorAll("button").forEach((item) => {
+                item.disabled = true;
+              });
+              completeCharacter(token, "Верно! Удар по монстру.");
+            } else {
+              button.classList.add("wrong");
+              button.disabled = true;
+              currentMistakes += 1;
+              totalMistakes += 1;
+              setFeedback("Неверно — выберите другой вариант.", "bad");
+            }
+          });
+          elements.choicePanel.append(button);
+        });
+      }
+
+      function completeCharacter(token, message) {
         if (token !== roundToken || roundLocked) return;
         roundLocked = true;
-        setFeedback("Иероглиф готов! Удар по монстру.", "good");
+        setFeedback(message, "good");
 
         elements.monster.classList.remove("hit");
         void elements.monster.offsetWidth;
@@ -703,13 +892,13 @@
           if (currentIndex >= CHARACTERS.length) {
             finishGame();
           } else {
-            loadCurrentCharacter();
+            loadCurrentChallenge();
           }
         }, 650);
       }
 
-      function startGame(isHardMode = hardMode) {
-        hardMode = isHardMode;
+      function startGame(level) {
+        currentLevel = level;
         sequence = shuffle(CHARACTERS);
         currentIndex = 0;
         totalMistakes = 0;
@@ -718,23 +907,25 @@
         elements.monster.classList.remove("hit", "monster-defeated");
         showScreen("battle");
         updateMeters();
-        window.requestAnimationFrame(loadCurrentCharacter);
+        window.requestAnimationFrame(loadCurrentChallenge);
       }
 
       function finishGame() {
         clearWriter();
         elements.monster.classList.remove("hit");
         elements.monster.classList.add("monster-defeated");
-        elements.victoryStats.textContent = `Все 9 иероглифов написаны. Ошибок: ${totalMistakes}.`;
-        elements.victoryCode.textContent = "3771";
+        elements.victoryStats.textContent = `Уровень ${currentLevel} пройден. Ошибок: ${totalMistakes}.`;
+        elements.victoryCode.textContent = LEVEL_CODES[currentLevel];
         window.setTimeout(() => showScreen("victory"), 450);
       }
 
-      elements.startButton.addEventListener("click", () => startGame(false));
-      elements.hardButton.addEventListener("click", () => startGame(true));
-      elements.restartButton.addEventListener("click", () => startGame(hardMode));
+      elements.startButton.addEventListener("click", () => showScreen("levels"));
+      elements.levelButtons.forEach((button) => {
+        button.addEventListener("click", () => startGame(Number(button.dataset.level)));
+      });
+      elements.restartButton.addEventListener("click", () => showScreen("levels"));
       elements.retryButton.addEventListener("click", () => {
-        if (!roundLocked && sequence.length) loadCurrentCharacter();
+        if (!roundLocked && sequence.length) loadCurrentChallenge();
       });
     })();
   </script>
