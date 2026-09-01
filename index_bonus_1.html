@@ -355,9 +355,18 @@
     }
 
     .victory-stats {
-      margin-bottom: 22px;
+      margin-bottom: 10px;
       color: var(--muted);
       font-weight: 700;
+    }
+
+    .victory-code {
+      margin: 0 0 22px;
+      color: var(--red-dark);
+      font-size: clamp(2rem, 8vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-shadow: 3px 3px 0 var(--gold);
     }
 
     @keyframes monster-idle {
@@ -507,6 +516,7 @@
         <p class="eyebrow">Битва окончена</p>
         <h2>Победа!</h2>
         <p class="victory-stats" id="victory-stats">Все 9 иероглифов написаны.</p>
+        <p class="victory-code" id="victory-code" aria-label="Код победы"></p>
         <button class="pixel-button" id="restart-button" type="button">Играть снова</button>
       </div>
     </section>
@@ -549,7 +559,8 @@
         monster: document.getElementById("monster"),
         feedback: document.getElementById("feedback"),
         loadingNote: document.getElementById("loading-note"),
-        victoryStats: document.getElementById("victory-stats")
+        victoryStats: document.getElementById("victory-stats"),
+        victoryCode: document.getElementById("victory-code")
       };
 
       let sequence = [];
@@ -715,6 +726,7 @@
         elements.monster.classList.remove("hit");
         elements.monster.classList.add("monster-defeated");
         elements.victoryStats.textContent = `Все 9 иероглифов написаны. Ошибок: ${totalMistakes}.`;
+        elements.victoryCode.textContent = String(Math.floor(1000 + Math.random() * 9000));
         window.setTimeout(() => showScreen("victory"), 450);
       }
 
