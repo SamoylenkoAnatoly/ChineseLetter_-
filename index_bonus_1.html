@@ -621,7 +621,7 @@
               <path fill="#edb84f" d="M28 48h12v14H28zm102 0h12v14h-12z"/>
             </svg>
             <div>
-              <p class="monster-name">Клякса-9</p>
+              <p class="monster-name" id="monster-name">Клякса-9</p>
               <div class="hp-wrap">
                 <div class="hp-track" role="progressbar" aria-label="Здоровье монстра" aria-valuemin="0" aria-valuemax="9" aria-valuenow="9" id="hp-track">
                   <div class="hp-fill" id="hp-fill"></div>
@@ -675,6 +675,49 @@
         { char: "相", translation: "взаимный, облик", pronunciation: "xiāng" }
       ];
       const LEVEL_CODES = { 1: "3771", 2: "4567", 3: "6656", 4: "8777" };
+      const MONSTERS = {
+        1: {
+          name: "Клякса-9",
+          color: "#8f3542",
+          svg: `
+            <path fill="currentColor" d="M42 28h16V16h16v12h12V12h16v20h16v12h12v18h12v42h-13v18h-22v13H50v-13H28v-18H16V62h12V44h14z"/>
+            <path fill="#fff6dc" d="M48 61h22v24H48zm46 0h22v24H94z"/>
+            <path fill="#241c30" d="M58 67h12v18H58zm36 0h12v18H94zM55 103h50v10H55z"/>
+            <path fill="#edb84f" d="M28 48h12v14H28zm102 0h12v14h-12z"/>`
+        },
+        2: {
+          name: "Теневой рогач",
+          color: "#594482",
+          svg: `
+            <path fill="#edb84f" d="M18 14h18v14h12v19H30V38H18zm124 0h-18v14h-12v19h18v-9h12z"/>
+            <path fill="currentColor" d="M47 34h66v12h16v16h12v50h-16v20h-30v10H65v-10H35v-20H19V62h12V46h16z"/>
+            <path fill="#fff6dc" d="M43 65h28v19H43zm46 0h28v19H89z"/>
+            <path fill="#241c30" d="M43 65h12v19H43zm62 0h12v19h-12zM55 105h12v10h26v-10h12v22H55z"/>
+            <path fill="#d95852" d="M67 91h26v12H67z"/>`
+        },
+        3: {
+          name: "Глаз-загадка",
+          color: "#397d72",
+          svg: `
+            <path fill="currentColor" d="M48 20h64v10h17v14h13v20h9v48h-17v18h-24v12H50v-12H26v-18H9V64h9V44h13V30h17z"/>
+            <path fill="#edb84f" d="M28 56h104v12h12v20h-12v12H28V88H16V68h12z"/>
+            <path fill="#fff6dc" d="M47 53h66v50H47z"/>
+            <path fill="#241c30" d="M65 62h30v32H65z"/>
+            <path fill="#d95852" d="M73 70h14v15H73z"/>
+            <path fill="#241c30" d="M54 118h52v10H54z"/>`
+        },
+        4: {
+          name: "Дракон слогов",
+          color: "#b44f45",
+          svg: `
+            <path fill="#594482" d="M8 46h27V29h16v33H35v18H8zm144 0h-27V29h-16v33h16v18h27z"/>
+            <path fill="#edb84f" d="M52 15h15v19H52zm41 0h15v19H93z"/>
+            <path fill="currentColor" d="M45 32h70v13h16v19h11v48h-18v20H99v10H61v-10H36v-20H18V64h11V45h16z"/>
+            <path fill="#fff6dc" d="M45 61h26v22H45zm44 0h26v22H89z"/>
+            <path fill="#241c30" d="M57 66h14v17H57zm32 0h14v17H89zM57 106h46v12H91v12H69v-12H57z"/>
+            <path fill="#edb84f" d="M20 95h18v13H20zm102 0h18v13h-18z"/>`
+        }
+      };
       const screens = {
         start: document.getElementById("start-screen"),
         levels: document.getElementById("level-screen"),
@@ -698,6 +741,7 @@
         hpTrack: document.getElementById("hp-track"),
         hpFill: document.getElementById("hp-fill"),
         monster: document.getElementById("monster"),
+        monsterName: document.getElementById("monster-name"),
         feedback: document.getElementById("feedback"),
         loadingNote: document.getElementById("loading-note"),
         victoryStats: document.getElementById("victory-stats"),
@@ -897,6 +941,14 @@
         }, 650);
       }
 
+      function configureMonster(level) {
+        const monster = MONSTERS[level];
+        elements.monster.innerHTML = monster.svg;
+        elements.monster.style.color = monster.color;
+        elements.monster.setAttribute("aria-label", monster.name);
+        elements.monsterName.textContent = monster.name;
+      }
+
       function startGame(level) {
         currentLevel = level;
         sequence = shuffle(CHARACTERS);
@@ -904,6 +956,7 @@
         totalMistakes = 0;
         currentMistakes = 0;
         roundLocked = false;
+        configureMonster(level);
         elements.monster.classList.remove("hit", "monster-defeated");
         showScreen("battle");
         updateMeters();
