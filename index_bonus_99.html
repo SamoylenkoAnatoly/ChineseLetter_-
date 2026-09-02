@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1424">
+  <title>Алхимия иероглифов</title>
+  <style>
+    :root {
+      --ink: #1a1424;
+      --night: #120e1a;
+      --panel: #efe4c4;
+      --paper: #f7edd4;
+      --cream: #cbb57a;
+      --purple: #6b4a8a;
+      --green: #4f8a4a;
+      --gold: #e0b14a;
+      --muted: #6d6458;
+      --red: #c45c4a;
+      --shadow: 5px 5px 0 var(--ink);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-width: 280px;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(10px, 2vw, 20px);
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(255,255,255,0.03) 50%, transparent 50%) 0 0 / 100% 4px,
+        radial-gradient(circle at 50% -18%, #3a2a52 0, var(--night) 62%);
+      font-family: "Courier New", "MS Gothic", monospace;
+      image-rendering: pixelated;
+    }
+
+    button { font: inherit; }
+
+    .game-shell {
+      width: min(100%, 700px);
+      border: 3px solid var(--cream);
+      outline: 4px solid var(--ink);
+      background: var(--panel);
+      box-shadow: 9px 9px 0 rgba(0,0,0,0.38);
+      overflow: hidden;
+    }
+
+    .top-stripe {
+      height: 8px;
+      background: repeating-linear-gradient(90deg, var(--purple) 0 18px, var(--gold) 18px 36px);
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .screen {
+      min-height: min(520px, calc(100svh - 40px));
+      padding: clamp(16px, 4vw, 30px);
+    }
+
+    .screen[hidden] { display: none; }
+
+    .start-screen, .level-screen, .victory-screen {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--purple);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, p { margin-top: 0; }
+
+    h1 {
+      max-width: 560px;
+      margin-bottom: 10px;
+      font-size: clamp(1.55rem, 5vw, 2.5rem);
+      line-height: 1;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 var(--gold);
+    }
+
+    .start-copy {
+      max-width: 480px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      width: min(100%, 560px);
+      margin-top: 12px;
+    }
+
+    .level-card {
+      min-height: 104px;
+      padding: 12px;
+      border: 3px solid var(--ink);
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 4px 4px 0 var(--ink);
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+    }
+
+    .level-card:hover { background: var(--cream); }
+    .level-card:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+    .level-card strong, .level-card span { display: block; }
+    .level-card strong {
+      margin-bottom: 7px;
+      color: var(--purple);
+      font-size: 0.86rem;
+      text-transform: uppercase;
+    }
+    .level-card span {
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .pixel-button {
+      min-height: 44px;
+      padding: 11px 20px;
+      border: 3px solid var(--ink);
+      color: #fff;
+      background: var(--purple);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pixel-button:hover { background: #8058a2; }
+    .pixel-button:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--ink); }
+    .pixel-button:focus-visible { outline: 3px dashed var(--purple); outline-offset: 5px; }
+
+    .pixel-button.secondary {
+      min-height: 36px;
+      padding: 7px 12px;
+      color: var(--ink);
+      background: var(--cream);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-size: 0.72rem;
+    }
+
+    .play-screen { padding: clamp(12px, 2.7vw, 22px); }
+
+    .play-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .round-count {
+      font-size: 0.78rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      height: 14px;
+      border: 2px solid var(--ink);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      background: repeating-linear-gradient(90deg, var(--green) 0 12px, #6aa45e 12px 16px);
+      transition: width 350ms steps(5, end);
+    }
+
+    .play-grid {
+      display: grid;
+      grid-template-columns: minmax(160px, 0.85fr) minmax(210px, 1.15fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .frog-zone, .brew-zone {
+      border: 3px solid var(--ink);
+      background: var(--paper);
+      padding: 10px;
+    }
+
+    .frog-zone {
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      background:
+        linear-gradient(transparent 72%, #6b4a8a 72% 76%, #24182f 76%),
+        repeating-linear-gradient(0deg, #e9dcb8 0 3px, #f3e8c8 3px 6px);
+    }
+
+    .frog {
+      width: 92px;
+      filter: drop-shadow(4px 5px 0 rgba(26,20,36,0.28));
+    }
+
+    .bubble {
+      margin-top: 8px;
+      max-width: 100%;
+      padding: 8px 10px;
+      border: 2px solid var(--ink);
+      background: #fff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .brew-zone { display: grid; gap: 8px; }
+
+    .cauldron-wrap {
+      position: relative;
+      min-height: 92px;
+      border: 2px solid var(--ink);
+      background: #2a2238;
+      color: #f7edd4;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px;
+    }
+
+    .cauldron-wrap.brewing {
+      animation: brew-flash 520ms steps(4, end);
+    }
+
+    .cauldron-wrap.wrong {
+      animation: brew-wrong 420ms steps(3, end);
+    }
+
+    .mix-item {
+      min-width: 28px;
+      padding: 2px 5px;
+      border: 2px solid var(--gold);
+      background: #3b3150;
+      font-family: "MS Gothic", "Noto Sans CJK SC", sans-serif;
+      font-size: 1.15rem;
+      line-height: 1.2;
+    }
+
+    .mix-empty {
+      color: #9a8fb0;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .brew-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+      gap: 6px;
+    }
+
+    .part-button {
+      min-height: 52px;
+      padding: 4px 2px 3px;
+      border: 2px solid var(--ink);
+      background: var(--cream);
+      box-shadow: 2px 2px 0 var(--ink);
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .part-button:hover { background: #dfc98a; }
+    .part-button:active { transform: translate(2px, 2px); }
+    .part-button .glyph {
+      display: block;
+      font-family: "MS Gothic", "Noto Sans CJK SC", sans-serif;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .part-button .hint {
+      display: block;
+      margin-top: 3px;
+      font-size: 0.58rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .feedback {
+      min-height: 1.4em;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .feedback.bad { color: var(--red); }
+    .feedback.good { color: var(--green); }
+
+    .victory-glyph {
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: clamp(3.4rem, 12vw, 5.5rem);
+      line-height: 1;
+      text-shadow: 4px 4px 0 var(--purple);
+    }
+
+    .victory-screen h2 {
+      margin-bottom: 8px;
+      font-size: clamp(1.55rem, 5vw, 2.3rem);
+      text-transform: uppercase;
+    }
+
+    .victory-stats {
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .victory-code {
+      margin: 0 0 22px;
+      color: var(--purple);
+      font-size: clamp(2rem, 8vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-shadow: 3px 3px 0 var(--gold);
+    }
+
+    @keyframes brew-flash {
+      0%, 100% { background: #2a2238; }
+      40% { background: #6b4a8a; }
+    }
+
+    @keyframes brew-wrong {
+      0%, 100% { transform: translateX(0); }
+      30% { transform: translateX(-6px); }
+      60% { transform: translateX(6px); }
+    }
+
+    @media (max-width: 520px) {
+      body { place-items: start center; padding: 8px; }
+      .screen { min-height: calc(100svh - 24px); }
+      .play-grid { grid-template-columns: 1fr; }
+      .level-grid { grid-template-columns: 1fr; }
+      .frog { width: 72px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell" aria-live="polite">
+    <div class="top-stripe" aria-hidden="true"></div>
+
+    <section class="screen start-screen" id="start-screen">
+      <div>
+        <p class="eyebrow">Ретро-лаборатория</p>
+        <h1>Алхимия иероглифов</h1>
+        <p class="start-copy">Лягушка называет значение. Соберите знак из деталей и сварите его в котле.</p>
+        <button class="pixel-button" id="start-button" type="button">Начать</button>
+      </div>
+    </section>
+
+    <section class="screen level-screen" id="level-screen" hidden>
+      <div>
+        <p class="eyebrow">Выбор отвара</p>
+        <h2>Выберите уровень</h2>
+        <div class="level-grid">
+          <button class="level-card" type="button" data-level="1">
+            <strong>Уровень 1</strong>
+            <span>Простые знаки: рот, человек, дерево.</span>
+          </button>
+          <button class="level-card" type="button" data-level="2">
+            <strong>Уровень 2</strong>
+            <span>Точки, сердце и составные знаки.</span>
+          </button>
+          <button class="level-card" type="button" data-level="3">
+            <strong>Уровень 3</strong>
+            <span>Луна, вечер и дыхание.</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen play-screen" id="play-screen" hidden>
+      <header class="play-header">
+        <span class="round-count" id="round-count">0 / 9</span>
+        <div class="progress-track" role="progressbar" aria-label="Прогресс" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="round-count">Вари!</span>
+      </header>
+
+      <div class="play-grid">
+        <section class="frog-zone" aria-label="Лягушка">
+          <svg class="frog" viewBox="0 0 120 90" role="img" aria-label="Алхимическая лягушка">
+            <path fill="#4f8a4a" d="M28 28h16V16h16v12h16V16h16v12h12v16h12v28H88v12H32V72H16V44h12z"/>
+            <path fill="#6bb35f" d="M36 44h48v20H36z"/>
+            <path fill="#fff8e4" d="M36 32h16v14H36zm32 0h16v14H68z"/>
+            <path fill="#1a1424" d="M42 36h8v8h-8zm32 0h8v8h-8z"/>
+            <path fill="#e0b14a" d="M20 20h10v10H20zm70 0h10v10H90z"/>
+            <path fill="#c45c4a" d="M52 62h16v6H52z"/>
+          </svg>
+          <p class="bubble" id="frog-speech">Нужен знак…</p>
+        </section>
+
+        <section class="brew-zone" aria-label="Котёл">
+          <div class="cauldron-wrap" id="cauldron">
+            <span class="mix-empty">Котёл пуст</span>
+          </div>
+          <div class="brew-actions">
+            <button class="pixel-button" id="brew-button" type="button">Сварить</button>
+            <button class="pixel-button secondary" id="clear-button" type="button">Сбросить</button>
+          </div>
+          <p class="feedback" id="feedback">Добавьте детали и нажмите «Сварить».</p>
+          <div class="palette" id="palette"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="screen victory-screen" id="victory-screen" hidden>
+      <div>
+        <div class="victory-glyph" aria-hidden="true">丹</div>
+        <p class="eyebrow">Отвар готов</p>
+        <h2>Победа!</h2>
+        <p class="victory-stats" id="victory-stats">Все 9 знаков сварены.</p>
+        <p class="victory-code" id="victory-code" aria-label="Код победы"></p>
+        <button class="pixel-button" id="restart-button" type="button">Выбрать уровень</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const PART_HINTS = {
+        "口": "рот",
+        "一": "черта",
+        "二": "две",
+        "丿": "влево",
+        "乀": "вправо",
+        "十": "крест",
+        "人": "человек",
+        "木": "дерево",
+        "目": "глаз",
+        "丶": "точка",
+        "丨": "палка",
+        "𠂇": "крюк",
+        "心": "сердце",
+        "日": "солнце",
+        "勹": "обёртка",
+        "白": "белый",
+        "勺": "ложка",
+        "月": "луна",
+        "夕": "вечер"
+      };
+
+      const LEVELS = {
+        1: {
+          palette: ["口", "一", "二", "丿", "乀", "十", "人", "木", "目"],
+          tasks: [
+            { char: "口", translation: "рот", recipe: ["口"] },
+            { char: "品", translation: "товар, качество", recipe: ["口", "口", "口"] },
+            { char: "日", translation: "солнце, день", recipe: ["口", "一"] },
+            { char: "目", translation: "глаз", recipe: ["口", "二"] },
+            { char: "人", translation: "человек", recipe: ["丿", "乀"] },
+            { char: "众", translation: "толпа", recipe: ["人", "人", "人"] },
+            { char: "木", translation: "дерево", recipe: ["十", "人"] },
+            { char: "林", translation: "лес", recipe: ["木", "木"] },
+            { char: "相", translation: "взаимный, облик", recipe: ["木", "目"] }
+          ]
+        },
+        2: {
+          palette: ["木", "丶", "口", "丨", "𠂇", "心", "丿", "目", "日", "勹", "白", "勺"],
+          tasks: [
+            { char: "术", translation: "искусство", recipe: ["木", "丶"] },
+            { char: "中", translation: "середина", recipe: ["口", "丨"] },
+            { char: "右", translation: "правый", recipe: ["𠂇", "口"] },
+            { char: "心", translation: "сердце", recipe: ["心"] },
+            { char: "必", translation: "обязательно", recipe: ["心", "丿"] },
+            { char: "想", translation: "думать", recipe: ["木", "目", "心"] },
+            { char: "白", translation: "белый", recipe: ["丿", "日"] },
+            { char: "勺", translation: "ложка", recipe: ["勹", "丶"] },
+            { char: "的", translation: "притяжательная частица", recipe: ["白", "勺"] }
+          ]
+        },
+        3: {
+          palette: ["月", "日", "𠂇", "丨", "夕", "口", "丶", "目", "心"],
+          tasks: [
+            { char: "月", translation: "луна", recipe: ["月"] },
+            { char: "明", translation: "светлый", recipe: ["日", "月"] },
+            { char: "有", translation: "иметь", recipe: ["𠂇", "月"] },
+            { char: "朋", translation: "друг", recipe: ["月", "月"] },
+            { char: "用", translation: "использовать", recipe: ["月", "丨"] },
+            { char: "夕", translation: "вечер", recipe: ["夕"] },
+            { char: "名", translation: "имя", recipe: ["夕", "口"] },
+            { char: "自", translation: "сам", recipe: ["丶", "目"] },
+            { char: "息", translation: "дыхание", recipe: ["丶", "目", "心"] }
+          ]
+        }
+      };
+
+      const LEVEL_CODES = { 1: "1111", 2: "1112", 3: "1113" };
+      const screens = {
+        start: document.getElementById("start-screen"),
+        levels: document.getElementById("level-screen"),
+        play: document.getElementById("play-screen"),
+        victory: document.getElementById("victory-screen")
+      };
+      const elements = {
+        startButton: document.getElementById("start-button"),
+        levelButtons: document.querySelectorAll("[data-level]"),
+        restartButton: document.getElementById("restart-button"),
+        brewButton: document.getElementById("brew-button"),
+        clearButton: document.getElementById("clear-button"),
+        roundCount: document.getElementById("round-count"),
+        progressTrack: document.getElementById("progress-track"),
+        progressFill: document.getElementById("progress-fill"),
+        frogSpeech: document.getElementById("frog-speech"),
+        cauldron: document.getElementById("cauldron"),
+        palette: document.getElementById("palette"),
+        feedback: document.getElementById("feedback"),
+        victoryStats: document.getElementById("victory-stats"),
+        victoryCode: document.getElementById("victory-code")
+      };
+
+      let currentLevel = 1;
+      let sequence = [];
+      let currentIndex = 0;
+      let mix = [];
+      let totalMistakes = 0;
+      let roundLocked = false;
+
+      function shuffle(items) {
+        const shuffled = [...items];
+        for (let i = shuffled.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+
+      function showScreen(name) {
+        Object.entries(screens).forEach(([key, screen]) => {
+          screen.hidden = key !== name;
+        });
+      }
+
+      function setFeedback(message, tone) {
+        elements.feedback.textContent = message;
+        elements.feedback.className = `feedback ${tone || ""}`.trim();
+      }
+
+      function recipeKey(parts) {
+        return [...parts].sort().join("|");
+      }
+
+      function updateMeters() {
+        const total = sequence.length || 9;
+        const completedPercent = (currentIndex / total) * 100;
+        elements.roundCount.textContent = `${currentIndex} / ${total}`;
+        elements.progressFill.style.width = `${completedPercent}%`;
+        elements.progressTrack.setAttribute("aria-valuenow", String(currentIndex));
+      }
+
+      function renderMix() {
+        elements.cauldron.replaceChildren();
+        if (!mix.length) {
+          const empty = document.createElement("span");
+          empty.className = "mix-empty";
+          empty.textContent = "Котёл пуст";
+          elements.cauldron.append(empty);
+          return;
+        }
+        mix.forEach((part) => {
+          const item = document.createElement("span");
+          item.className = "mix-item";
+          item.textContent = part;
+          elements.cauldron.append(item);
+        });
+      }
+
+      function renderPalette() {
+        elements.palette.replaceChildren();
+        LEVELS[currentLevel].palette.forEach((part) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "part-button";
+          button.innerHTML = `<span class="glyph">${part}</span><span class="hint">${PART_HINTS[part] || ""}</span>`;
+          button.addEventListener("click", () => {
+            if (roundLocked) return;
+            mix.push(part);
+            renderMix();
+            setFeedback("Деталь в котле. Можно варить.", "");
+          });
+          elements.palette.append(button);
+        });
+      }
+
+      function loadCurrentTask() {
+        roundLocked = false;
+        mix = [];
+        elements.cauldron.classList.remove("brewing", "wrong");
+        const task = sequence[currentIndex];
+        elements.frogSpeech.textContent = task.translation;
+        renderMix();
+        setFeedback("Добавьте детали и нажмите «Сварить».");
+      }
+
+      function brew() {
+        if (roundLocked) return;
+        const task = sequence[currentIndex];
+        if (!mix.length) {
+          setFeedback("Сначала бросьте детали в котёл.", "bad");
+          return;
+        }
+        if (recipeKey(mix) === recipeKey(task.recipe)) {
+          roundLocked = true;
+          elements.cauldron.classList.remove("wrong");
+          elements.cauldron.classList.add("brewing");
+          elements.frogSpeech.textContent = `Верно! Это ${task.char}.`;
+          setFeedback("Отвар удался!", "good");
+          currentIndex += 1;
+          updateMeters();
+          window.setTimeout(() => {
+            if (currentIndex >= sequence.length) {
+              finishGame();
+            } else {
+              loadCurrentTask();
+            }
+          }, 750);
+        } else {
+          totalMistakes += 1;
+          elements.cauldron.classList.remove("brewing");
+          elements.cauldron.classList.add("wrong");
+          elements.frogSpeech.textContent = "Не тот отвар. Сбрось котёл и попробуй ещё.";
+          setFeedback("Состав неверный.", "bad");
+        }
+      }
+
+      function startGame(level) {
+        currentLevel = level;
+        sequence = shuffle(LEVELS[level].tasks);
+        currentIndex = 0;
+        mix = [];
+        totalMistakes = 0;
+        roundLocked = false;
+        renderPalette();
+        showScreen("play");
+        updateMeters();
+        loadCurrentTask();
+      }
+
+      function finishGame() {
+        elements.victoryStats.textContent = `Уровень ${currentLevel} пройден. Ошибок: ${totalMistakes}.`;
+        elements.victoryCode.textContent = LEVEL_CODES[currentLevel];
+        window.setTimeout(() => showScreen("victory"), 400);
+      }
+
+      elements.startButton.addEventListener("click", () => showScreen("levels"));
+      elements.levelButtons.forEach((button) => {
+        button.addEventListener("click", () => startGame(Number(button.dataset.level)));
+      });
+      elements.restartButton.addEventListener("click", () => showScreen("levels"));
+      elements.brewButton.addEventListener("click", brew);
+      elements.clearButton.addEventListener("click", () => {
+        if (roundLocked) return;
+        mix = [];
+        elements.cauldron.classList.remove("wrong", "brewing");
+        renderMix();
+        setFeedback("Котёл очищен.");
+      });
+    })();
+  </script>
+</body>
+</html>
