@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1c2618">
+  <title>Сад иероглифов</title>
+  <style>
+    :root {
+      --ink: #2d3b24;
+      --night: #1c2618;
+      --panel: #efe6c8;
+      --paper: #f7f1dc;
+      --cream: #c9b87a;
+      --leaf: #4f8a4a;
+      --leaf-dark: #356338;
+      --soil: #7a5434;
+      --flower: #d45d7a;
+      --gold: #e0b14a;
+      --muted: #6d6a58;
+      --red: #c45c4a;
+      --shadow: 5px 5px 0 var(--ink);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-width: 280px;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(10px, 2vw, 20px);
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.04) 50%, transparent 50%) 0 0 / 100% 4px,
+        radial-gradient(circle at 50% -18%, #3e5a32 0, var(--night) 62%);
+      font-family: "Courier New", "MS Gothic", monospace;
+      image-rendering: pixelated;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .game-shell {
+      width: min(100%, 700px);
+      border: 3px solid var(--cream);
+      outline: 4px solid var(--ink);
+      background: var(--panel);
+      box-shadow: 9px 9px 0 rgba(0, 0, 0, 0.38);
+      overflow: hidden;
+    }
+
+    .top-stripe {
+      height: 8px;
+      background: repeating-linear-gradient(90deg, var(--leaf) 0 18px, var(--gold) 18px 36px);
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .screen {
+      min-height: min(520px, calc(100svh - 40px));
+      padding: clamp(16px, 4vw, 30px);
+    }
+
+    .screen[hidden] {
+      display: none;
+    }
+
+    .start-screen,
+    .level-screen,
+    .victory-screen {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--leaf-dark);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 560px;
+      margin-bottom: 10px;
+      font-size: clamp(1.55rem, 5vw, 2.65rem);
+      line-height: 1;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 var(--gold);
+    }
+
+    .start-copy {
+      max-width: 480px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .character-preview {
+      margin: 2px 0 22px;
+      color: var(--leaf-dark);
+      font-family: "MS Gothic", "Noto Sans CJK SC", sans-serif;
+      font-size: clamp(1.15rem, 4vw, 1.7rem);
+      letter-spacing: 0.2em;
+    }
+
+    .mode-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 13px;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      width: min(100%, 560px);
+      margin-top: 12px;
+    }
+
+    .level-card {
+      min-height: 104px;
+      padding: 14px;
+      border: 3px solid var(--ink);
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 4px 4px 0 var(--ink);
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+      transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+    }
+
+    .level-card:hover {
+      background: var(--cream);
+    }
+
+    .level-card:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .level-card strong,
+    .level-card span {
+      display: block;
+    }
+
+    .level-card strong {
+      margin-bottom: 7px;
+      color: var(--leaf-dark);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    .level-card span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .pixel-button {
+      min-height: 44px;
+      padding: 11px 20px;
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      color: #fff;
+      background: var(--leaf);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+    }
+
+    .pixel-button:hover {
+      background: #5c9b55;
+    }
+
+    .pixel-button:active {
+      transform: translate(4px, 4px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .pixel-button:focus-visible {
+      outline: 3px dashed var(--leaf-dark);
+      outline-offset: 5px;
+    }
+
+    .pixel-button.secondary {
+      min-height: 34px;
+      padding: 7px 11px;
+      color: var(--ink);
+      background: var(--cream);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-size: 0.72rem;
+    }
+
+    .battle-screen {
+      padding: clamp(12px, 2.7vw, 22px);
+    }
+
+    .battle-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .round-count {
+      font-size: 0.78rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .progress-track,
+    .grow-track {
+      height: 14px;
+      border: 2px solid var(--ink);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .progress-fill,
+    .grow-fill {
+      width: 0;
+      height: 100%;
+      background: repeating-linear-gradient(90deg, var(--leaf) 0 12px, #6aa45e 12px 16px);
+      transition: width 350ms steps(5, end);
+    }
+
+    .battle-grid {
+      display: grid;
+      grid-template-columns: minmax(185px, 0.95fr) minmax(225px, 1.05fr);
+      gap: clamp(14px, 3vw, 26px);
+      align-items: center;
+    }
+
+    .garden-zone {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      min-height: 290px;
+      padding: 12px;
+      border: 3px solid var(--ink);
+      background:
+        linear-gradient(transparent 68%, var(--soil) 68% 74%, #5f4026 74%),
+        repeating-linear-gradient(0deg, #dce8c8 0 3px, #e4eed4 3px 6px);
+      overflow: hidden;
+    }
+
+    .garden-wrap {
+      display: grid;
+      justify-items: center;
+      width: 100%;
+    }
+
+    .plant {
+      width: clamp(105px, 22vw, 145px);
+      transform-origin: center bottom;
+      filter: drop-shadow(5px 6px 0 rgba(45, 59, 36, 0.28));
+    }
+
+    .plant.growing {
+      animation: plant-grow 620ms steps(5, end);
+    }
+
+    .sparkle {
+      width: 86px;
+      height: 10px;
+      margin-top: 2px;
+      background: repeating-linear-gradient(90deg, transparent 0 8px, var(--gold) 8px 12px);
+      opacity: 0;
+    }
+
+    .garden-wrap.growing .sparkle {
+      animation: sparkle 620ms steps(4, end);
+    }
+
+    .plant-name {
+      margin: 10px 0 5px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .grow-wrap {
+      width: min(100%, 180px);
+    }
+
+    .grow-track {
+      height: 12px;
+    }
+
+    .task-zone {
+      display: grid;
+      justify-items: center;
+      min-width: 0;
+    }
+
+    .task-title {
+      margin-bottom: 8px;
+      font-size: clamp(0.82rem, 2.5vw, 1rem);
+      text-align: center;
+    }
+
+    .writer-frame {
+      position: relative;
+      width: min(100%, 255px);
+      aspect-ratio: 1;
+      border: 3px solid var(--ink);
+      background:
+        linear-gradient(45deg, transparent calc(50% - 1px), rgba(79, 138, 74, 0.16) 50%, transparent calc(50% + 1px)),
+        linear-gradient(-45deg, transparent calc(50% - 1px), rgba(79, 138, 74, 0.16) 50%, transparent calc(50% + 1px)),
+        linear-gradient(90deg, transparent calc(50% - 1px), rgba(79, 138, 74, 0.16) 50%, transparent calc(50% + 1px)),
+        linear-gradient(transparent calc(50% - 1px), rgba(79, 138, 74, 0.16) 50%, transparent calc(50% + 1px)),
+        var(--paper);
+      box-shadow: 5px 5px 0 var(--ink);
+      touch-action: none;
+    }
+
+    .writer-frame[hidden],
+    .choice-panel[hidden] {
+      display: none;
+    }
+
+    .choice-panel {
+      display: grid;
+      gap: 10px;
+      width: min(100%, 270px);
+      margin: 8px 0;
+    }
+
+    .choice-button {
+      min-height: 46px;
+      padding: 9px 12px;
+      border: 2px solid var(--ink);
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 3px 3px 0 var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 800;
+      transition: transform 80ms ease, background 120ms ease;
+    }
+
+    .choice-button:hover {
+      background: var(--cream);
+    }
+
+    .choice-button:active {
+      transform: translate(2px, 2px);
+    }
+
+    .choice-button.wrong {
+      color: #fff;
+      background: var(--red);
+    }
+
+    .choice-button.correct {
+      color: #fff;
+      background: var(--leaf);
+    }
+
+    .task-zone.matching .task-title {
+      display: grid;
+      gap: 7px;
+    }
+
+    .task-zone.matching #current-character {
+      color: var(--leaf-dark);
+      font-family: "MS Gothic", "Noto Sans CJK SC", sans-serif;
+      font-size: clamp(2.7rem, 10vw, 4.4rem);
+      line-height: 1;
+    }
+
+    #writer-target,
+    #writer-target svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .loading-note {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      color: var(--muted);
+      background: rgba(247, 241, 220, 0.92);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .loading-note[hidden] {
+      display: none;
+    }
+
+    .task-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: min(100%, 260px);
+      margin-top: 13px;
+    }
+
+    .feedback {
+      min-height: 2.4em;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .feedback.bad {
+      color: var(--red);
+    }
+
+    .feedback.good {
+      color: var(--leaf-dark);
+    }
+
+    .victory-glyph {
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: clamp(3.4rem, 12vw, 5.5rem);
+      line-height: 1;
+      text-shadow: 4px 4px 0 var(--leaf-dark);
+    }
+
+    .victory-screen h2 {
+      margin-bottom: 8px;
+      font-size: clamp(1.55rem, 5vw, 2.3rem);
+      text-transform: uppercase;
+    }
+
+    .victory-stats {
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .victory-code {
+      margin: 0 0 22px;
+      color: var(--leaf-dark);
+      font-size: clamp(2rem, 8vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-shadow: 3px 3px 0 var(--gold);
+    }
+
+    @keyframes plant-grow {
+      0% { transform: scale(0.72, 0.55); }
+      40% { transform: scale(1.08, 1.12); }
+      100% { transform: scale(1, 1); }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scaleX(0.4); }
+      40% { opacity: 1; transform: scaleX(1.2); }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        place-items: start center;
+        padding: 8px;
+      }
+
+      .screen {
+        min-height: calc(100svh - 24px);
+      }
+
+      .battle-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .garden-zone {
+        grid-row: 2;
+        min-height: 128px;
+      }
+
+      .plant {
+        width: 74px;
+      }
+
+      .plant-name {
+        margin-top: 3px;
+      }
+
+      .writer-frame {
+        width: min(68vw, 230px);
+      }
+
+      .battle-header {
+        margin-bottom: 10px;
+      }
+
+      .level-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .level-card {
+        min-height: 78px;
+      }
+    }
+
+    @media (max-height: 580px) and (min-width: 521px) {
+      .screen {
+        min-height: 0;
+      }
+
+      .garden-zone {
+        min-height: 245px;
+      }
+
+      .writer-frame {
+        width: min(42vh, 225px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell" aria-live="polite">
+    <div class="top-stripe" aria-hidden="true"></div>
+
+    <section class="screen start-screen" id="start-screen">
+      <div>
+        <p class="eyebrow">Ретро-тренировка</p>
+        <h1>Сад иероглифов</h1>
+        <p class="start-copy">Напишите 9 знаков и вырастите цветок в саду.</p>
+        <div class="character-preview" aria-label="Иероглифы в игре">月 明 有 朋 用 夕 名 自 息</div>
+        <div class="mode-actions">
+          <button class="pixel-button" id="start-button" type="button">Начать</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen level-screen" id="level-screen" hidden>
+      <div>
+        <p class="eyebrow">Выбор испытания</p>
+        <h2>Выберите уровень</h2>
+        <div class="level-grid">
+          <button class="level-card" type="button" data-level="1">
+            <strong>Уровень 1</strong>
+            <span>Напишите иероглиф по видимому контуру.</span>
+          </button>
+          <button class="level-card" type="button" data-level="2">
+            <strong>Уровень 2</strong>
+            <span>Вспомните и напишите иероглиф по переводу.</span>
+          </button>
+          <button class="level-card" type="button" data-level="3">
+            <strong>Уровень 3</strong>
+            <span>Сопоставьте иероглиф с его значением.</span>
+          </button>
+          <button class="level-card" type="button" data-level="4">
+            <strong>Уровень 4</strong>
+            <span>Сопоставьте иероглиф с его произношением.</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen battle-screen" id="battle-screen" hidden>
+      <header class="battle-header">
+        <span class="round-count" id="round-count">0 / 9</span>
+        <div class="progress-track" role="progressbar" aria-label="Прогресс игры" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="round-count">Расти!</span>
+      </header>
+
+      <div class="battle-grid">
+        <section class="garden-zone" aria-label="Сад">
+          <div class="garden-wrap" id="garden-wrap">
+            <svg class="plant" id="plant" viewBox="0 0 160 150" role="img" aria-label="Цветок"></svg>
+            <div class="sparkle" aria-hidden="true"></div>
+            <div>
+              <p class="plant-name" id="plant-name">Горшок</p>
+              <div class="grow-wrap">
+                <div class="grow-track" role="progressbar" aria-label="Рост" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="grow-track">
+                  <div class="grow-fill" id="grow-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="task-zone" id="task-zone" aria-label="Задание">
+          <h2 class="task-title"><span id="task-label">Напишите:</span> <span id="current-character">—</span></h2>
+          <div class="writer-frame" id="writer-frame">
+            <div id="writer-target" aria-label="Поле для написания иероглифа"></div>
+            <div class="loading-note" id="loading-note">Загрузка знака…</div>
+          </div>
+          <div class="choice-panel" id="choice-panel" hidden></div>
+          <div class="task-footer" id="task-footer">
+            <p class="feedback" id="feedback">Следуйте контуру и порядку черт.</p>
+            <button class="pixel-button secondary" id="retry-button" type="button">Сбросить</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="screen victory-screen" id="victory-screen" hidden>
+      <div>
+        <div class="victory-glyph" aria-hidden="true">花</div>
+        <p class="eyebrow">Сад расцвёл</p>
+        <h2>Победа!</h2>
+        <p class="victory-stats" id="victory-stats">Цветок выращен.</p>
+        <p class="victory-code" id="victory-code" aria-label="Код победы"></p>
+        <button class="pixel-button" id="restart-button" type="button">Выбрать уровень</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const CHARACTERS = [
+        { char: "月", translation: "луна", pronunciation: "yuè" },
+        { char: "明", translation: "светлый", pronunciation: "míng" },
+        { char: "有", translation: "иметь", pronunciation: "yǒu" },
+        { char: "朋", translation: "друг", pronunciation: "péng" },
+        { char: "用", translation: "использовать", pronunciation: "yòng" },
+        { char: "夕", translation: "вечер", pronunciation: "xī" },
+        { char: "名", translation: "имя", pronunciation: "míng" },
+        { char: "自", translation: "сам", pronunciation: "zì" },
+        { char: "息", translation: "дыхание", pronunciation: "xī" }
+      ];
+      const LEVEL_CODES = { 1: "3434", 2: "4445", 3: "5222", 4: "9219" };
+      const POT = `<path fill="#7a5434" d="M48 112h64v10H48z"/><path fill="#5f4026" d="M54 122h52v16H54z"/><path fill="#c9b87a" d="M42 104h76v8H42z"/>`;
+      const STAGES = [
+        { name: "Горшок", svg: POT },
+        { name: "Росток", svg: `${POT}<path fill="#4f8a4a" d="M74 88h12v16H74z"/>` },
+        { name: "Стебель", svg: `${POT}<path fill="#4f8a4a" d="M74 62h12v42H74z"/><path fill="#356338" d="M62 78h12v8H62zm24 0h12v8H86z"/>` },
+        { name: "Листья", svg: `${POT}<path fill="#4f8a4a" d="M74 48h12v56H74z"/><path fill="#356338" d="M50 70h24v10H50zm36 12h24v10H86z"/>` },
+        { name: "Куст", svg: `${POT}<path fill="#4f8a4a" d="M74 36h12v68H74z"/><path fill="#356338" d="M46 58h28v12H46zm40 16h28v12H86zM54 84h20v10H54z"/>` },
+        { name: "Бутон", svg: `${POT}<path fill="#4f8a4a" d="M74 40h12v64H74z"/><path fill="#356338" d="M48 66h26v10H48zm38 12h26v10H86z"/><path fill="#d45d7a" d="M70 24h20v16H70z"/>` },
+        { name: "Цветок", svg: `${POT}<path fill="#4f8a4a" d="M74 48h12v56H74z"/><path fill="#356338" d="M48 72h26v10H48zm38 10h26v10H86z"/><path fill="#d45d7a" d="M58 18h16v16H58zm28 0h16v16H86zM70 6h20v16H70z"/><path fill="#e0b14a" d="M74 22h12v12H74z"/>` },
+        { name: "Букет", svg: `${POT}<path fill="#4f8a4a" d="M74 50h12v54H74z"/><path fill="#356338" d="M44 70h30v10H44zm42 10h30v10H86z"/><path fill="#d45d7a" d="M48 20h16v16H48zm48 0h16v16h-16zM70 8h20v16H70z"/><path fill="#e0b14a" d="M74 24h12v12H74z"/><path fill="#c45c4a" d="M62 34h12v10H62zm24 0h12v10H86z"/>` },
+        { name: "Сад", svg: `${POT}<path fill="#4f8a4a" d="M74 52h12v52H74z"/><path fill="#356338" d="M40 74h34v10H40zm46 8h34v10H86z"/><path fill="#d45d7a" d="M42 24h16v16H42zm60 0h16v16h-16zM70 6h20v16H70z"/><path fill="#e0b14a" d="M74 22h12v12H74zM58 40h12v10H58zm32 0h12v10H90z"/><path fill="#c9b87a" d="M50 50h12v8H50zm48 0h12v8h-12z"/>` },
+        { name: "Цветение", svg: `${POT}<path fill="#4f8a4a" d="M74 50h12v54H74z"/><path fill="#356338" d="M38 72h36v10H38zm48 10h36v10H86z"/><path fill="#d45d7a" d="M36 18h18v16H36zm70 0h18v16h-18zM70 4h20v18H70z"/><path fill="#e0b14a" d="M74 22h12v12H74zM52 38h14v12H52zm42 0h14v12H94z"/><path fill="#c45c4a" d="M58 8h12v10H58zm32 0h12v10H90z"/><path fill="#fff8e4" d="M78 26h4v4h-4z"/>` }
+      ];
+      const screens = {
+        start: document.getElementById("start-screen"),
+        levels: document.getElementById("level-screen"),
+        battle: document.getElementById("battle-screen"),
+        victory: document.getElementById("victory-screen")
+      };
+      const elements = {
+        startButton: document.getElementById("start-button"),
+        levelButtons: document.querySelectorAll("[data-level]"),
+        restartButton: document.getElementById("restart-button"),
+        retryButton: document.getElementById("retry-button"),
+        target: document.getElementById("writer-target"),
+        writerFrame: document.getElementById("writer-frame"),
+        choicePanel: document.getElementById("choice-panel"),
+        taskZone: document.getElementById("task-zone"),
+        taskLabel: document.getElementById("task-label"),
+        currentCharacter: document.getElementById("current-character"),
+        roundCount: document.getElementById("round-count"),
+        progressTrack: document.getElementById("progress-track"),
+        progressFill: document.getElementById("progress-fill"),
+        growTrack: document.getElementById("grow-track"),
+        growFill: document.getElementById("grow-fill"),
+        gardenWrap: document.getElementById("garden-wrap"),
+        plant: document.getElementById("plant"),
+        plantName: document.getElementById("plant-name"),
+        feedback: document.getElementById("feedback"),
+        loadingNote: document.getElementById("loading-note"),
+        victoryStats: document.getElementById("victory-stats"),
+        victoryCode: document.getElementById("victory-code")
+      };
+
+      let sequence = [];
+      let currentIndex = 0;
+      let totalMistakes = 0;
+      let currentMistakes = 0;
+      let writer = null;
+      let roundToken = 0;
+      let roundLocked = false;
+      let currentLevel = 1;
+
+      function shuffle(items) {
+        const shuffled = [...items];
+        for (let i = shuffled.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+
+      function showScreen(name) {
+        Object.entries(screens).forEach(([key, screen]) => {
+          screen.hidden = key !== name;
+        });
+      }
+
+      function setFeedback(message, tone = "") {
+        elements.feedback.textContent = message;
+        elements.feedback.className = `feedback ${tone}`.trim();
+      }
+
+      function updateMeters() {
+        const completed = currentIndex;
+        const completedPercent = (completed / CHARACTERS.length) * 100;
+
+        elements.roundCount.textContent = `${completed} / ${CHARACTERS.length}`;
+        elements.progressFill.style.width = `${completedPercent}%`;
+        elements.progressTrack.setAttribute("aria-valuenow", String(completed));
+        elements.growFill.style.width = `${completedPercent}%`;
+        elements.growTrack.setAttribute("aria-valuenow", String(completed));
+      }
+
+      function clearWriter() {
+        roundToken += 1;
+        if (writer && typeof writer.cancelQuiz === "function") {
+          writer.cancelQuiz();
+        }
+        writer = null;
+        elements.target.replaceChildren();
+      }
+
+      function failCharacterLoad(token) {
+        if (token !== roundToken) return;
+        elements.loadingNote.hidden = false;
+        elements.loadingNote.textContent = "Не удалось загрузить знак. Проверьте интернет и нажмите «Сбросить».";
+        elements.retryButton.textContent = "Повторить";
+        setFeedback("Данные Hanzi Writer недоступны.", "bad");
+      }
+
+      function growPlant(stage, animate) {
+        const growth = STAGES[stage] || STAGES[STAGES.length - 1];
+        elements.plant.innerHTML = growth.svg;
+        elements.plant.setAttribute("aria-label", growth.name);
+        elements.plantName.textContent = growth.name;
+        elements.plant.classList.remove("growing");
+        elements.gardenWrap.classList.remove("growing");
+        if (animate && stage > 0) {
+          void elements.plant.offsetWidth;
+          elements.plant.classList.add("growing");
+          elements.gardenWrap.classList.add("growing");
+        }
+      }
+
+      function loadCurrentChallenge() {
+        clearWriter();
+        roundLocked = false;
+        currentMistakes = 0;
+        elements.retryButton.textContent = "Сбросить";
+        elements.retryButton.hidden = currentLevel >= 3;
+        elements.writerFrame.hidden = currentLevel >= 3;
+        elements.choicePanel.hidden = currentLevel < 3;
+        elements.taskZone.classList.toggle("matching", currentLevel >= 3);
+
+        const task = sequence[currentIndex];
+        const character = task.char;
+
+        if (currentLevel >= 3) {
+          elements.loadingNote.hidden = true;
+          elements.taskLabel.textContent = currentLevel === 3 ? "Выберите значение:" : "Выберите произношение:";
+          elements.currentCharacter.textContent = character;
+          setFeedback("Выберите один правильный вариант.");
+          loadMatchingOptions(task, roundToken);
+          return;
+        }
+
+        elements.choicePanel.replaceChildren();
+        elements.loadingNote.hidden = false;
+        elements.loadingNote.textContent = "Загрузка знака…";
+        elements.taskLabel.textContent = currentLevel === 2 ? "Перевод:" : "Напишите:";
+        elements.currentCharacter.textContent = currentLevel === 2 ? task.translation : character;
+        setFeedback(currentLevel === 2 ? "Вспомните знак и соблюдайте порядок черт." : "Следуйте контуру и порядку черт.");
+
+        if (typeof window.HanziWriter === "undefined") {
+          failCharacterLoad(roundToken);
+          return;
+        }
+
+        const token = roundToken;
+        const frameSize = Math.max(160, Math.round(elements.target.getBoundingClientRect().width));
+
+        try {
+          writer = window.HanziWriter.create(elements.target, character, {
+            width: frameSize,
+            height: frameSize,
+            padding: Math.round(frameSize * 0.08),
+            showCharacter: false,
+            showOutline: currentLevel === 1,
+            outlineColor: "#cdd9b8",
+            strokeColor: "#356338",
+            drawingColor: "#2d3b24",
+            highlightColor: "#e0b14a",
+            drawingWidth: Math.max(5, Math.round(frameSize * 0.025)),
+            strokeWidth: 2,
+            leniency: 1.15,
+            showHintAfterMisses: 3,
+            highlightOnComplete: true,
+            acceptBackwardsStrokes: false,
+            onLoadCharDataSuccess: () => {
+              if (token === roundToken) {
+                elements.loadingNote.hidden = true;
+              }
+            },
+            onLoadCharDataError: () => failCharacterLoad(token)
+          });
+
+          writer.quiz({
+            onMistake: () => {
+              if (token !== roundToken || roundLocked) return;
+              currentMistakes += 1;
+              totalMistakes += 1;
+              setFeedback(currentMistakes >= 3 ? "Подсказка подсветит верную черту." : "Не та черта — попробуйте ещё.", "bad");
+            },
+            onCorrectStroke: (data) => {
+              if (token !== roundToken || roundLocked) return;
+              setFeedback(`Верно! Черта ${data.strokeNum + 1}.`, "good");
+            },
+            onComplete: () => completeCharacter(token, "Росток пошёл в рост!")
+          });
+        } catch (error) {
+          failCharacterLoad(token);
+        }
+      }
+
+      function loadMatchingOptions(task, token) {
+        const key = currentLevel === 3 ? "translation" : "pronunciation";
+        const distractors = shuffle(
+          CHARACTERS.filter((candidate) => candidate.char !== task.char && candidate[key] !== task[key])
+        ).slice(0, 3);
+        const options = shuffle([task, ...distractors]);
+        elements.choicePanel.replaceChildren();
+
+        options.forEach((option) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "choice-button";
+          button.textContent = option[key];
+          button.addEventListener("click", () => {
+            if (token !== roundToken || roundLocked) return;
+            if (option.char === task.char) {
+              button.classList.add("correct");
+              elements.choicePanel.querySelectorAll("button").forEach((item) => {
+                item.disabled = true;
+              });
+              completeCharacter(token, "Верно! Цветок подрос.");
+            } else {
+              button.classList.add("wrong");
+              button.disabled = true;
+              currentMistakes += 1;
+              totalMistakes += 1;
+              setFeedback("Неверно — выберите другой вариант.", "bad");
+            }
+          });
+          elements.choicePanel.append(button);
+        });
+      }
+
+      function completeCharacter(token, message) {
+        if (token !== roundToken || roundLocked) return;
+        roundLocked = true;
+        setFeedback(message, "good");
+        currentIndex += 1;
+        growPlant(currentIndex, true);
+        updateMeters();
+
+        window.setTimeout(() => {
+          if (currentIndex >= CHARACTERS.length) {
+            finishGame();
+          } else {
+            loadCurrentChallenge();
+          }
+        }, 750);
+      }
+
+      function startGame(level) {
+        currentLevel = level;
+        sequence = shuffle(CHARACTERS);
+        currentIndex = 0;
+        totalMistakes = 0;
+        currentMistakes = 0;
+        roundLocked = false;
+        growPlant(0, false);
+        showScreen("battle");
+        updateMeters();
+        window.requestAnimationFrame(loadCurrentChallenge);
+      }
+
+      function finishGame() {
+        clearWriter();
+        elements.victoryStats.textContent = `Уровень ${currentLevel} пройден. Ошибок: ${totalMistakes}.`;
+        elements.victoryCode.textContent = LEVEL_CODES[currentLevel];
+        window.setTimeout(() => showScreen("victory"), 500);
+      }
+
+      elements.startButton.addEventListener("click", () => showScreen("levels"));
+      elements.levelButtons.forEach((button) => {
+        button.addEventListener("click", () => startGame(Number(button.dataset.level)));
+      });
+      elements.restartButton.addEventListener("click", () => showScreen("levels"));
+      elements.retryButton.addEventListener("click", () => {
+        if (!roundLocked && sequence.length) loadCurrentChallenge();
+      });
+    })();
+  </script>
+</body>
+</html>
