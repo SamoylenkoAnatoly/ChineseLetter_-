@@ -472,62 +472,68 @@
         "丿": "влево",
         "乀": "вправо",
         "十": "крест",
-        "人": "человек",
-        "木": "дерево",
-        "目": "глаз",
         "丶": "точка",
         "丨": "палка",
         "𠂇": "крюк",
         "心": "сердце",
-        "日": "солнце",
         "勹": "обёртка",
-        "白": "белый",
-        "勺": "ложка",
         "月": "луна",
-        "夕": "вечер"
+        "夕": "вечер",
+        "大": "большой",
+        "水": "вода",
+        "火": "огонь",
+        "土": "земля",
+        "小": "малый",
+        "山": "гора",
+        "田": "поле",
+        "力": "сила",
+        "王": "царь",
+        "工": "труд",
+        "女": "женщина",
+        "手": "рука"
       };
 
       const LEVELS = {
         1: {
-          palette: ["口", "一", "二", "丿", "乀", "十", "人", "木", "目"],
+          palette: ["口", "一", "二", "丿", "乀", "十", "大", "水", "火", "土"],
           tasks: [
             { char: "口", translation: "рот", recipe: ["口"] },
             { char: "品", translation: "товар, качество", recipe: ["口", "口", "口"] },
             { char: "日", translation: "солнце, день", recipe: ["口", "一"] },
             { char: "目", translation: "глаз", recipe: ["口", "二"] },
             { char: "人", translation: "человек", recipe: ["丿", "乀"] },
-            { char: "众", translation: "толпа", recipe: ["人", "人", "人"] },
-            { char: "木", translation: "дерево", recipe: ["十", "人"] },
-            { char: "林", translation: "лес", recipe: ["木", "木"] },
-            { char: "相", translation: "взаимный, облик", recipe: ["木", "目"] }
+            { char: "众", translation: "толпа", recipe: ["丿", "乀", "丿", "乀", "丿", "乀"] },
+            { char: "木", translation: "дерево", recipe: ["十", "丿", "乀"] },
+            { char: "林", translation: "лес", recipe: ["十", "丿", "乀", "十", "丿", "乀"] },
+            { char: "相", translation: "взаимный, облик", recipe: ["十", "丿", "乀", "口", "二"] }
           ]
         },
         2: {
-          palette: ["木", "丶", "口", "丨", "𠂇", "心", "丿", "目", "日", "勹", "白", "勺"],
+          palette: ["口", "一", "二", "丿", "乀", "十", "丶", "丨", "𠂇", "心", "勹", "小", "山", "田", "力"],
           tasks: [
-            { char: "术", translation: "искусство", recipe: ["木", "丶"] },
+            { char: "术", translation: "искусство", recipe: ["十", "丿", "乀", "丶"] },
             { char: "中", translation: "середина", recipe: ["口", "丨"] },
             { char: "右", translation: "правый", recipe: ["𠂇", "口"] },
             { char: "心", translation: "сердце", recipe: ["心"] },
             { char: "必", translation: "обязательно", recipe: ["心", "丿"] },
-            { char: "想", translation: "думать", recipe: ["木", "目", "心"] },
-            { char: "白", translation: "белый", recipe: ["丿", "日"] },
+            { char: "想", translation: "думать", recipe: ["十", "丿", "乀", "口", "二", "心"] },
+            { char: "白", translation: "белый", recipe: ["丿", "口", "一"] },
             { char: "勺", translation: "ложка", recipe: ["勹", "丶"] },
-            { char: "的", translation: "притяжательная частица", recipe: ["白", "勺"] }
+            { char: "的", translation: "притяжательная частица", recipe: ["丿", "口", "一", "勹", "丶"] }
           ]
         },
         3: {
-          palette: ["月", "日", "𠂇", "丨", "夕", "口", "丶", "目", "心"],
+          palette: ["月", "口", "一", "𠂇", "丨", "夕", "丶", "二", "心", "王", "工", "女", "手"],
           tasks: [
             { char: "月", translation: "луна", recipe: ["月"] },
-            { char: "明", translation: "светлый", recipe: ["日", "月"] },
+            { char: "明", translation: "светлый", recipe: ["口", "一", "月"] },
             { char: "有", translation: "иметь", recipe: ["𠂇", "月"] },
             { char: "朋", translation: "друг", recipe: ["月", "月"] },
             { char: "用", translation: "использовать", recipe: ["月", "丨"] },
             { char: "夕", translation: "вечер", recipe: ["夕"] },
             { char: "名", translation: "имя", recipe: ["夕", "口"] },
-            { char: "自", translation: "сам", recipe: ["丶", "目"] },
-            { char: "息", translation: "дыхание", recipe: ["丶", "目", "心"] }
+            { char: "自", translation: "сам", recipe: ["丶", "口", "二"] },
+            { char: "息", translation: "дыхание", recipe: ["丶", "口", "二", "心"] }
           ]
         }
       };
