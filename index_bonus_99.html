@@ -251,6 +251,39 @@
       animation: brew-flash 520ms steps(4, end);
     }
 
+    .cauldron-wrap.fusing {
+      min-height: 110px;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .fuse-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .fuse-plus, .fuse-arrow {
+      color: var(--gold);
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .fuse-part {
+      animation: fuse-shrink 520ms steps(4, end) forwards;
+    }
+
+    .result-glyph {
+      font-family: "MS Gothic", "Noto Sans CJK SC", sans-serif;
+      font-size: 2.4rem;
+      line-height: 1;
+      color: var(--gold);
+      text-shadow: 3px 3px 0 #120e1a;
+      animation: fuse-appear 420ms steps(4, end);
+    }
+
     .cauldron-wrap.wrong {
       animation: brew-wrong 420ms steps(3, end);
     }
@@ -360,6 +393,16 @@
       0%, 100% { transform: translateX(0); }
       30% { transform: translateX(-6px); }
       60% { transform: translateX(6px); }
+    }
+
+    @keyframes fuse-shrink {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0.7); opacity: 0.45; }
+    }
+
+    @keyframes fuse-appear {
+      0% { transform: scale(0.4); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     @media (max-width: 520px) {
@@ -646,12 +689,40 @@
       function loadCurrentTask() {
         roundLocked = false;
         mix = [];
-        elements.cauldron.classList.remove("brewing", "wrong");
+        elements.cauldron.classList.remove("brewing", "wrong", "fusing");
         const task = sequence[currentIndex];
         elements.frogSpeech.textContent = task.translation;
         renderPalette(task);
         renderMix();
         setFeedback("Добавьте детали и нажмите «Сварить».");
+      }
+
+      function showFusion(task) {
+        elements.cauldron.replaceChildren();
+        elements.cauldron.classList.add("fusing");
+        const row = document.createElement("div");
+        row.className = "fuse-row";
+        task.recipe.forEach((part, index) => {
+          if (index > 0) {
+            const plus = document.createElement("span");
+            plus.className = "fuse-plus";
+            plus.textContent = "+";
+            row.append(plus);
+          }
+          const item = document.createElement("span");
+          item.className = "mix-item fuse-part";
+          item.textContent = part;
+          row.append(item);
+        });
+        const arrow = document.createElement("span");
+        arrow.className = "fuse-arrow";
+        arrow.textContent = "→";
+        row.append(arrow);
+        const result = document.createElement("span");
+        result.className = "result-glyph";
+        result.textContent = task.char;
+        result.setAttribute("aria-label", `Получился знак ${task.char}`);
+        elements.cauldron.append(row, result);
       }
 
       function brew() {
@@ -665,8 +736,9 @@
           roundLocked = true;
           elements.cauldron.classList.remove("wrong");
           elements.cauldron.classList.add("brewing");
+          showFusion(task);
           elements.frogSpeech.textContent = `Верно! Это ${task.char}.`;
-          setFeedback("Отвар удался!", "good");
+          setFeedback("Отвар сложился в знак!", "good");
           currentIndex += 1;
           updateMeters();
           window.setTimeout(() => {
@@ -675,10 +747,10 @@
             } else {
               loadCurrentTask();
             }
-          }, 750);
+          }, 1100);
         } else {
           totalMistakes += 1;
-          elements.cauldron.classList.remove("brewing");
+          elements.cauldron.classList.remove("brewing", "fusing");
           elements.cauldron.classList.add("wrong");
           elements.frogSpeech.textContent = "Не тот отвар. Сбрось котёл и попробуй ещё.";
           setFeedback("Состав неверный.", "bad");
@@ -712,7 +784,7 @@
       elements.clearButton.addEventListener("click", () => {
         if (roundLocked) return;
         mix = [];
-        elements.cauldron.classList.remove("wrong", "brewing");
+        elements.cauldron.classList.remove("wrong", "brewing", "fusing");
         renderMix();
         setFeedback("Котёл очищен.");
       });
