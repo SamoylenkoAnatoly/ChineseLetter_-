@@ -34,6 +34,25 @@ CHARS = [
     ("息", "xī", "дыхание", "4919"),
 ]
 
+WORDS = [
+    ("明白", "míngbai", "понимать; ясный", "3907"),
+    ("有名", "yǒumíng", "известный", "6128"),
+    ("有用", "yǒuyòng", "полезный", "8345"),
+    ("用心", "yòngxīn", "старательно, внимательно", "2571"),
+    ("中心", "zhōngxīn", "центр", "7469"),
+    ("人口", "rénkǒu", "население", "9014"),
+    ("人品", "rénpǐn", "характер, моральные качества", "5386"),
+    ("人心", "rénxīn", "людские сердца, общественное мнение", "1623"),
+    ("名人", "míngrén", "знаменитость", "4850"),
+    ("用品", "yòngpǐn", "принадлежности, товары", "6297"),
+    ("日用品", "rìyòngpǐn", "предметы повседневного обихода", "3748"),
+    ("众人", "zhòngrén", "все, толпа", "8162"),
+    ("明月", "míngyuè", "яркая луна", "0539"),
+    ("日月", "rìyuè", "солнце и луна; время", "4970"),
+    ("月日", "yuèrì", "месяцы и дни; время", "7215"),
+    ("日用", "rìyòng", "повседневного пользования", "0864"),
+]
+
 
 def practice_html(char, pinyin, meaning):
     cfg = json.dumps({"char": char, "pinyin": pinyin, "meaning": meaning}, ensure_ascii=False)
@@ -122,6 +141,111 @@ def exc_html(char, pinyin, meaning, prize):
 """
 
 
+def word_targets(chars):
+    return "\n".join(
+        "      <div class=\"writer-wrap\">"
+        "<div id=\"target-{i}\" aria-label=\"Поле для написания иероглифа {ch}\"></div>"
+        "</div>".format(i=i, ch=ch)
+        for i, ch in enumerate(chars)
+    )
+
+
+def word_practice_html(word, pinyin, meaning):
+    chars = list(word)
+    cfg = json.dumps(
+        {"chars": chars, "pinyin": pinyin, "meaning": meaning}, ensure_ascii=False
+    )
+    src = f"index_{word}_practice.html"
+    return f"""<!DOCTYPE html>
+<!--
+  <iframe src="{src}" scrolling="no"
+    style="border:0;width:100%;max-width:420px;height:640px;overflow:hidden;touch-action:none;overscroll-behavior:none"></iframe>
+  <script src="embed-parent.js"></script>
+-->
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>{word} — ввод по чертам</title>
+  <link rel="stylesheet" href="hanzi-common.css">
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="hanzi-embed.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Китайское слово</h1>
+    <div class="hanzi" aria-hidden="true">{word}</div>
+    <p class="meta">{pinyin} · {meaning}</p>
+    <p class="hint">Нарисуйте {word} по чертам: каждый иероглиф по очереди</p>
+    <div class="word-grid">
+{word_targets(chars)}
+    </div>
+    <p id="progress" class="progress">Иероглиф 1 из {len(chars)} · черта 0 из 0</p>
+    <p id="status" class="status" role="status">Обведите контур, начиная с первой черты</p>
+    <div class="actions">
+      <button type="button" id="animate-btn">Показать черты</button>
+      <button type="button" class="primary" id="retry-btn">Заново</button>
+    </div>
+  </main>
+  <script>window.HANZI = {cfg};</script>
+  <script src="hanzi-word-practice.js"></script>
+</body>
+</html>
+"""
+
+
+def word_exc_html(word, pinyin, meaning, prize):
+    chars = list(word)
+    cfg = json.dumps(
+        {
+            "chars": chars,
+            "pinyin": pinyin,
+            "meaning": meaning,
+            "prize": prize,
+        },
+        ensure_ascii=False,
+    )
+    src = f"index_{word}_exc.html"
+    return f"""<!DOCTYPE html>
+<!--
+  <iframe src="{src}" scrolling="no"
+    style="border:0;width:100%;max-width:420px;height:720px;overflow:hidden;touch-action:none;overscroll-behavior:none"></iframe>
+  <script src="embed-parent.js"></script>
+-->
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>{word} — 5 написаний</title>
+  <link rel="stylesheet" href="hanzi-common.css">
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="hanzi-embed.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Китайское слово</h1>
+    <div class="hanzi" aria-hidden="true">{word}</div>
+    <p class="meta">{pinyin} · {meaning}</p>
+    <p class="hint">Напишите {word} по чертам 5 раз: каждый иероглиф по очереди</p>
+    <div class="rounds" id="rounds" aria-label="Прогресс: 5 написаний"></div>
+    <div class="word-grid">
+{word_targets(chars)}
+      <div id="prize" class="prize" aria-live="polite"><span>{prize}</span></div>
+    </div>
+    <p id="progress" class="progress">Написание 1 из 5 · иероглиф 1 из {len(chars)} · черта 0 из 0</p>
+    <p id="status" class="status" role="status">Обведите контур, начиная с первой черты</p>
+    <div class="actions">
+      <button type="button" id="animate-btn">Показать черты</button>
+      <button type="button" class="primary" id="retry-btn">Заново</button>
+    </div>
+  </main>
+  <script>window.HANZI = {cfg};</script>
+  <script src="hanzi-word-exc.js"></script>
+</body>
+</html>
+"""
+
+
 def redirect_html(target):
     return f"""<!DOCTYPE html>
 <html lang="ru">
@@ -146,13 +270,20 @@ def main():
         (ROOT / f"index_{char}_exc.html").write_text(
             exc_html(char, pinyin, meaning, prize), encoding="utf-8"
         )
+    for word, pinyin, meaning, prize in WORDS:
+        (ROOT / f"index_{word}_practice.html").write_text(
+            word_practice_html(word, pinyin, meaning), encoding="utf-8"
+        )
+        (ROOT / f"index_{word}_exc.html").write_text(
+            word_exc_html(word, pinyin, meaning, prize), encoding="utf-8"
+        )
     (ROOT / "index.html").write_text(
         redirect_html("index_口_practice.html"), encoding="utf-8"
     )
     (ROOT / "index_口.html").write_text(
         redirect_html("index_口_exc.html"), encoding="utf-8"
     )
-    print(f"wrote {len(CHARS) * 2} pages")
+    print(f"wrote {len(CHARS) * 2 + len(WORDS) * 2} pages")
 
 
 if __name__ == "__main__":

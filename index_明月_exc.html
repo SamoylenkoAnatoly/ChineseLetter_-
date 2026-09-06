@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--
+  <iframe src="index_明月_exc.html" scrolling="no"
+    style="border:0;width:100%;max-width:420px;height:720px;overflow:hidden;touch-action:none;overscroll-behavior:none"></iframe>
+  <script src="embed-parent.js"></script>
+-->
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>明月 — 5 написаний</title>
+  <link rel="stylesheet" href="hanzi-common.css">
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="hanzi-embed.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Китайское слово</h1>
+    <div class="hanzi" aria-hidden="true">明月</div>
+    <p class="meta">míngyuè · яркая луна</p>
+    <p class="hint">Напишите 明月 по чертам 5 раз: каждый иероглиф по очереди</p>
+    <div class="rounds" id="rounds" aria-label="Прогресс: 5 написаний"></div>
+    <div class="word-grid">
+      <div class="writer-wrap"><div id="target-0" aria-label="Поле для написания иероглифа 明"></div></div>
+      <div class="writer-wrap"><div id="target-1" aria-label="Поле для написания иероглифа 月"></div></div>
+      <div id="prize" class="prize" aria-live="polite"><span>0539</span></div>
+    </div>
+    <p id="progress" class="progress">Написание 1 из 5 · иероглиф 1 из 2 · черта 0 из 0</p>
+    <p id="status" class="status" role="status">Обведите контур, начиная с первой черты</p>
+    <div class="actions">
+      <button type="button" id="animate-btn">Показать черты</button>
+      <button type="button" class="primary" id="retry-btn">Заново</button>
+    </div>
+  </main>
+  <script>window.HANZI = {"chars": ["明", "月"], "pinyin": "míngyuè", "meaning": "яркая луна", "prize": "0539"};</script>
+  <script src="hanzi-word-exc.js"></script>
+</body>
+</html>

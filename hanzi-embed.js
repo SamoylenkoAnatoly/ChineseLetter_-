@@ -303,6 +303,69 @@
     global.parent.postMessage({ type: "hanzi-embed-size", height: height }, "*");
   }
 
+  function fitWriters(writers, els) {
+    const main = document.querySelector("main");
+    if (!main) return;
+
+    const viewportH =
+      (global.visualViewport && global.visualViewport.height) || global.innerHeight;
+    let used = 0;
+    Array.prototype.forEach.call(main.children, function (child) {
+      if (child.classList.contains("word-grid")) return;
+      const cs = getComputedStyle(child);
+      used +=
+        child.offsetHeight +
+        parseFloat(cs.marginTop) +
+        parseFloat(cs.marginBottom);
+    });
+
+    const grid = els[0].closest(".word-grid");
+    let gap = 10;
+    if (grid) {
+      const gridGap = parseFloat(getComputedStyle(grid).columnGap);
+      if (!isNaN(gridGap) && gridGap > 0) gap = gridGap;
+    }
+
+    const mainStyle = getComputedStyle(main);
+    const bodyStyle = getComputedStyle(document.body);
+    const chrome =
+      used +
+      parseFloat(mainStyle.paddingTop) +
+      parseFloat(mainStyle.paddingBottom) +
+      parseFloat(bodyStyle.paddingTop) +
+      parseFloat(bodyStyle.paddingBottom) +
+      12;
+    const availH = viewportH - chrome;
+    const contentW =
+      main.clientWidth -
+      parseFloat(mainStyle.paddingLeft) -
+      parseFloat(mainStyle.paddingRight);
+    const availW = Math.min(contentW, global.innerWidth);
+    const count = writers.length;
+    const nextSize = Math.max(
+      96,
+      Math.min(
+        240,
+        Math.floor((availW - (count - 1) * gap) / count),
+        Math.floor(availH)
+      )
+    );
+
+    els.forEach(function (el, i) {
+      el.style.width = nextSize + "px";
+      el.style.height = nextSize + "px";
+      if (el.parentElement && el.parentElement.classList.contains("writer-wrap")) {
+        el.parentElement.style.width = nextSize + "px";
+        el.parentElement.style.height = nextSize + "px";
+      }
+      writers[i].updateDimensions({
+        width: nextSize,
+        height: nextSize,
+        padding: Math.round(nextSize * 0.085)
+      });
+    });
+  }
+
   global.HanziEmbed = {
     preparePage: preparePage,
     enableTouchDrawing: enableTouchDrawing,
@@ -320,6 +383,24 @@
       if (global.visualViewport) {
         global.visualViewport.addEventListener("resize", function () {
           fitWriter(writer, el);
+          reportHeight();
+        });
+      }
+    },
+    setupWord: function (writers, els) {
+      preparePage();
+      writers.forEach(function (writer, i) {
+        enableTouchDrawing(writer, els[i]);
+      });
+      fitWriters(writers, els);
+      reportHeight();
+      global.addEventListener("resize", function () {
+        fitWriters(writers, els);
+        reportHeight();
+      });
+      if (global.visualViewport) {
+        global.visualViewport.addEventListener("resize", function () {
+          fitWriters(writers, els);
           reportHeight();
         });
       }

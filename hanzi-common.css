@@ -144,6 +144,28 @@ h1 {
   -webkit-touch-callout: none;
 }
 
+.round-slot.wide {
+  width: auto;
+  min-width: 40px;
+  padding: 0 6px;
+  font-size: 14px;
+}
+
+.word-grid {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 auto 16px;
+}
+
+.word-grid .writer-wrap {
+  width: 176px;
+  height: 176px;
+  margin: 0;
+}
+
 .writer-wrap::before {
   content: "";
   position: absolute;
@@ -163,7 +185,8 @@ h1 {
   border-radius: 8px;
 }
 
-#character-target {
+#character-target,
+.word-grid [id^="target-"] {
   position: relative;
   z-index: 1;
   width: 100%;
@@ -172,7 +195,8 @@ h1 {
   cursor: crosshair;
 }
 
-#character-target canvas {
+#character-target canvas,
+.word-grid canvas {
   display: block;
   touch-action: none;
 }
