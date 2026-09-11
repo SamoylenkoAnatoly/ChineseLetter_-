@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0b0806">
+  <title>Глубокая шахта — копай иероглифы</title>
+  <style>
+    :root {
+      --bg: #060403;
+      --shell: #151009;
+      --edge: #3a2a18;
+      --paper: #f2e3c2;
+      --muted: #9a8668;
+      --amber: #ffb84d;
+      --gold: #ffd257;
+      --green: #9fe07c;
+      --red: #ff7a5c;
+      --tunnel: #0b0704;
+      --cjk: "MS Gothic", "Noto Sans CJK SC", "SimSun", monospace;
+      --mono: "Lucida Console", Consolas, "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-width: 280px; min-height: 100%; margin: 0; }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(8px, 2vw, 16px);
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 50% -20%, #1c140c 0, var(--bg) 60%),
+        var(--bg);
+      font-family: var(--mono);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button { font: inherit; }
+
+    .game-shell {
+      position: relative;
+      width: min(100%, 640px);
+      height: min(calc(100svh - 16px), 720px);
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      border: 4px solid var(--edge);
+      background: var(--shell);
+      box-shadow: 0 0 0 4px #0a0705, 0 18px 50px rgba(0, 0, 0, 0.7), inset 0 0 46px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+
+    .game-shell.quake { animation: quake 0.4s linear; }
+    .game-shell.quake-sm { animation: quake-sm 0.32s linear; }
+
+    @keyframes quake {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-5px, 3px); }
+      40% { transform: translate(5px, -3px); }
+      60% { transform: translate(-4px, -2px); }
+      80% { transform: translate(3px, 2px); }
+    }
+
+    @keyframes quake-sm {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-3px, 2px); }
+      55% { transform: translate(3px, -2px); }
+      80% { transform: translate(-2px, 1px); }
+    }
+
+    .screen { flex: 1; display: grid; min-height: 0; }
+    .screen[hidden] { display: none; }
+
+    .start-screen, .victory-screen {
+      place-items: center;
+      align-content: center;
+      padding: clamp(16px, 4vw, 30px);
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255, 170, 60, 0.07), transparent 55%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.014) 0 2px, transparent 2px 4px),
+        #120c07;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--amber);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+
+    h1, h2 { margin: 0 0 12px; line-height: 1.1; text-transform: uppercase; }
+
+    h1 {
+      max-width: 440px;
+      font-size: clamp(1.5rem, 6vw, 2.3rem);
+      text-shadow: 4px 4px 0 rgba(255, 170, 60, 0.18);
+    }
+
+    h2 { font-size: clamp(1.3rem, 5vw, 1.9rem); }
+
+    .start-copy {
+      max-width: 440px;
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+
+    .start-note {
+      margin: 0 0 20px;
+      color: var(--amber);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      min-height: 46px;
+      padding: 12px 30px;
+      color: #241505;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border: 3px solid #241505;
+      background: linear-gradient(180deg, #ffd257, #e08f2a);
+      box-shadow: 0 5px 0 #5d3a10, 0 10px 22px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+    }
+
+    .btn:hover { filter: brightness(1.07); }
+    .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #5d3a10; }
+    .btn:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+
+    .hero-miner {
+      width: clamp(96px, 26vw, 140px);
+      margin-bottom: 14px;
+      animation: bob 2.4s steps(2) infinite;
+    }
+
+    .hero-miner .pick { transform: rotate(-14deg); }
+
+    .hud {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-bottom: 3px solid var(--edge);
+      background: #1a130b;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .hud b { color: var(--paper); }
+
+    .progress {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 2px;
+      margin: 0 6px;
+    }
+
+    .progress .seg {
+      width: 8px;
+      height: 13px;
+      border: 2px solid #4a3520;
+      background: #241a10;
+    }
+
+    .progress .seg.on {
+      border-color: #8a5c1e;
+      background: linear-gradient(180deg, #ffd257, #d98a24);
+      box-shadow: 0 0 6px rgba(255, 210, 87, 0.5);
+    }
+
+    .shaft-viewport {
+      position: relative;
+      flex: 1;
+      min-height: 200px;
+      overflow: hidden;
+      border-bottom: 3px solid var(--edge);
+      background: #0c0805;
+    }
+
+    .world {
+      position: absolute;
+      inset: 0 0 auto 0;
+      will-change: transform;
+      transition: transform 0.85s cubic-bezier(0.22, 0.9, 0.34, 1);
+    }
+
+    .surface {
+      position: relative;
+      height: 150px;
+      background:
+        radial-gradient(1.6px 1.6px at 18% 22%, rgba(242, 227, 194, 0.8) 50%, transparent 60%),
+        radial-gradient(1.2px 1.2px at 44% 12%, rgba(242, 227, 194, 0.55) 50%, transparent 60%),
+        radial-gradient(1.6px 1.6px at 74% 26%, rgba(242, 227, 194, 0.7) 50%, transparent 60%),
+        radial-gradient(1px 1px at 88% 10%, rgba(242, 227, 194, 0.45) 50%, transparent 60%),
+        linear-gradient(180deg, #1b2438 0, #3a3f4a 55%, #7a5c33 88%, #8a6a3c 100%);
+    }
+
+    .surface svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+    .surface::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 12px;
+      border-top: 3px solid #2c4a1e;
+      background: repeating-linear-gradient(90deg, #4a7a36 0 9px, #3d6829 9px 13px);
+    }
+
+    .strata { position: relative; }
+
+    .layer {
+      position: relative;
+      height: 64px;
+      background: var(--tunnel);
+    }
+
+    .layer .rock {
+      position: absolute;
+      inset: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .layer .cracks { position: absolute; inset: 0; opacity: 0; transition: opacity 0.12s linear; }
+    .layer.hit .cracks { opacity: 1; }
+
+    .layer .cracks i {
+      position: absolute;
+      width: 3px;
+      background: repeating-linear-gradient(180deg, rgba(8, 5, 3, 0.85) 0 7px, transparent 7px 11px);
+    }
+
+    .layer .cracks i:nth-child(1) { left: 40%; top: 10%; height: 78%; transform: rotate(12deg); }
+    .layer .cracks i:nth-child(2) { left: 50%; top: 6%; height: 86%; transform: rotate(-3deg); }
+    .layer .cracks i:nth-child(3) { left: 59%; top: 14%; height: 72%; transform: rotate(-16deg); }
+
+    .layer .glyph {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -52%) rotate(-1.5deg);
+      font-family: var(--cjk);
+      font-size: 42px;
+      line-height: 1;
+      color: rgba(18, 10, 4, 0.52);
+      text-shadow: 0 2px 0 rgba(255, 235, 200, 0.16), 0 -1px 2px rgba(0, 0, 0, 0.5);
+      transition: opacity 0.2s ease;
+    }
+
+    .layer .post {
+      position: absolute;
+      top: 8px;
+      bottom: 0;
+      width: 10px;
+      border: 2px solid #2c1c0d;
+      background: repeating-linear-gradient(0deg, #5d3d1e 0 10px, #4a3018 10px 14px);
+      opacity: 0;
+      transition: opacity 0.3s ease 0.1s;
+    }
+
+    .layer .post.pl { left: 6px; }
+    .layer .post.pr { right: 6px; }
+
+    .layer.dug {
+      box-shadow: inset 0 16px 18px -8px #000, inset 0 -10px 14px -6px #000;
+    }
+
+    .layer.dug .rock, .layer.dug .glyph { opacity: 0; }
+    .layer.dug .post { opacity: 1; }
+
+    .layer.dug::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 2px;
+      right: 2px;
+      height: 8px;
+      border: 2px solid #2c1c0d;
+      background: repeating-linear-gradient(90deg, #5d3d1e 0 12px, #4a3018 12px 17px);
+      z-index: 1;
+    }
+
+    .layer.b0 .rock {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 30%, rgba(0, 0, 0, 0.18)),
+        repeating-linear-gradient(90deg, #6b4a2a 0 34px, #75512e 34px 40px, #654426 40px 58px);
+    }
+
+    .layer.b1 .rock {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 25%, rgba(0, 0, 0, 0.3)),
+        radial-gradient(2px 2px at 22% 32%, #57504a 45%, transparent 60%),
+        radial-gradient(2px 2px at 68% 58%, #4c463f 45%, transparent 60%),
+        radial-gradient(2px 2px at 86% 26%, #57504a 45%, transparent 60%),
+        repeating-linear-gradient(90deg, #292420 0 30px, #2f2a25 30px 38px);
+    }
+
+    .layer.b2 .rock {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 25%, rgba(0, 0, 0, 0.26)),
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.14) 0 2px, transparent 2px 12px),
+        repeating-linear-gradient(90deg, #565a60 0 28px, #4e5258 28px 36px);
+    }
+
+    .layer.b3 .rock {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 25%, rgba(0, 0, 0, 0.3)),
+        radial-gradient(3px 3px at 15% 40%, #d18a3a 45%, transparent 55%),
+        radial-gradient(3px 3px at 45% 72%, #c67f33 45%, transparent 55%),
+        radial-gradient(3px 3px at 74% 30%, #d18a3a 45%, transparent 55%),
+        radial-gradient(3px 3px at 90% 62%, #c67f33 45%, transparent 55%),
+        repeating-linear-gradient(90deg, #4c4050 0 32px, #443849 32px 40px);
+    }
+
+    .layer.b4 .rock {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 25%, rgba(0, 0, 0, 0.3)),
+        radial-gradient(3px 3px at 18% 36%, #ffd257 45%, transparent 55%),
+        radial-gradient(3px 3px at 50% 66%, #e8b23c 45%, transparent 55%),
+        radial-gradient(3px 3px at 78% 28%, #ffd257 45%, transparent 55%),
+        radial-gradient(3px 3px at 92% 60%, #e8b23c 45%, transparent 55%),
+        repeating-linear-gradient(90deg, #5f4b28 0 30px, #544224 30px 38px);
+    }
+
+    .layer.v0 { clip-path: polygon(0 8px, 10px 8px, 10px 0, calc(100% - 12px) 0, calc(100% - 12px) 6px, 100% 6px, 100% 100%, 14px 100%, 14px calc(100% - 8px), 0 calc(100% - 8px)); }
+    .layer.v1 { clip-path: polygon(0 0, calc(100% - 10px) 0, calc(100% - 10px) 8px, 100% 8px, 100% calc(100% - 6px), calc(100% - 14px) calc(100% - 6px), calc(100% - 14px) 100%, 12px 100%, 12px calc(100% - 9px), 0 calc(100% - 9px)); }
+    .layer.v2 { clip-path: polygon(0 6px, 12px 6px, 12px 0, calc(100% - 8px) 0, calc(100% - 8px) 10px, 100% 10px, 100% 100%, 0 100%); }
+
+    .layer.nope .glyph { animation: glyph-nope 0.4s linear; }
+
+    @keyframes glyph-nope {
+      0%, 100% { color: rgba(18, 10, 4, 0.52); transform: translate(-50%, -52%) rotate(-1.5deg); }
+      25% { color: rgba(255, 90, 60, 0.9); transform: translate(calc(-50% - 4px), -52%) rotate(-3deg); }
+      60% { color: rgba(255, 90, 60, 0.9); transform: translate(calc(-50% + 4px), -52%) rotate(0deg); }
+    }
+
+    .chamber {
+      position: relative;
+      height: 340px;
+      border-top: 4px solid #3a2a10;
+      background:
+        radial-gradient(circle at 50% 38%, rgba(255, 210, 87, 0.22), transparent 55%),
+        linear-gradient(180deg, #241708 0, #1b1206 40%, #120b04 100%);
+    }
+
+    .chamber::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 26px;
+      border-top: 4px solid #2c2010;
+      background: repeating-linear-gradient(90deg, #4a3a20 0 14px, #3d2f18 14px 18px);
+    }
+
+    .chamber .code {
+      position: absolute;
+      top: 42px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: clamp(30px, 9vw, 44px);
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-shadow: 0 0 18px rgba(255, 210, 87, 0.6), 0 3px 0 #6b4a10;
+      animation: code-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes code-pulse {
+      0%, 100% { text-shadow: 0 0 14px rgba(255, 210, 87, 0.45), 0 3px 0 #6b4a10; }
+      50% { text-shadow: 0 0 26px rgba(255, 210, 87, 0.9), 0 3px 0 #6b4a10; }
+    }
+
+    .chest {
+      position: absolute;
+      left: 50%;
+      top: 128px;
+      width: clamp(110px, 30vw, 150px);
+      margin-left: calc(clamp(110px, 30vw, 150px) / -2);
+      filter: drop-shadow(0 0 22px rgba(255, 210, 87, 0.35));
+    }
+
+    .rope {
+      position: absolute;
+      left: 50%;
+      top: 22px;
+      width: 3px;
+      margin-left: -1.5px;
+      z-index: 5;
+      background: repeating-linear-gradient(180deg, #7a5a34 0 8px, #5d4426 8px 10px);
+      transition: height 0.85s cubic-bezier(0.22, 0.9, 0.34, 1);
+    }
+
+    .miner {
+      position: absolute;
+      left: 50%;
+      width: 96px;
+      height: 96px;
+      margin-left: -48px;
+      z-index: 6;
+      will-change: top;
+      transition: top 0.85s cubic-bezier(0.22, 0.9, 0.34, 1);
+      pointer-events: none;
+    }
+
+    .miner svg { display: block; width: 100%; height: 100%; }
+
+    .miner .m-body { animation: bob 2.4s steps(2) infinite; }
+    .miner.land svg { animation: land 0.35s steps(3); transform-origin: 50% 100%; }
+
+    @keyframes bob {
+      from { transform: translateY(0); }
+      to { transform: translateY(-2px); }
+    }
+
+    @keyframes land {
+      0% { transform: scaleY(1); }
+      40% { transform: scaleY(0.84); }
+      100% { transform: scaleY(1); }
+    }
+
+    .pick {
+      transform: rotate(-14deg);
+      transform-box: view-box;
+      transform-origin: 30px 22px;
+    }
+
+    .miner.swing .pick { animation: swing 0.5s linear; }
+
+    @keyframes swing {
+      0% { transform: rotate(-14deg); }
+      35% { transform: rotate(-68deg); }
+      75% { transform: rotate(30deg); }
+      100% { transform: rotate(-14deg); }
+    }
+
+    .fx-bit, .fx-spark {
+      position: absolute;
+      z-index: 7;
+      pointer-events: none;
+    }
+
+    .fx-bit { width: 6px; height: 6px; animation: fall 0.75s ease-in forwards; }
+    .fx-spark { width: 3px; height: 3px; background: var(--gold); animation: spark 0.5s ease-out forwards; }
+
+    @keyframes fall {
+      from { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      70% { opacity: 1; }
+      to { transform: translate(var(--dx, 0px), 86px) rotate(160deg); opacity: 0; }
+    }
+
+    @keyframes spark {
+      from { transform: translate(0, 0); opacity: 1; }
+      to { transform: translate(var(--dx, 0px), var(--dy, -30px)); opacity: 0; }
+    }
+
+    .glow {
+      position: absolute;
+      left: 50%;
+      top: 56%;
+      width: 380px;
+      height: 380px;
+      transform: translate(-50%, -60%);
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255, 187, 84, 0.24), rgba(255, 150, 50, 0.1) 45%, transparent 70%);
+      animation: flick 2.8s ease-in-out infinite;
+    }
+
+    @keyframes flick {
+      0%, 100% { opacity: 0.9; }
+      45% { opacity: 1; }
+      62% { opacity: 0.8; }
+    }
+
+    .darkness {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0.7;
+      background: radial-gradient(ellipse at 50% 46%, transparent 32%, rgba(0, 0, 0, 0.72) 80%);
+      transition: opacity 0.6s ease;
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.14) 0 2px, transparent 2px 4px);
+    }
+
+    .panel {
+      padding: 10px;
+      background: #191209;
+    }
+
+    .q-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .q-glyph {
+      min-width: 40px;
+      padding: 1px 7px;
+      border: 2px solid #4a3520;
+      background: #241a10;
+      font-family: var(--cjk);
+      font-size: 24px;
+      line-height: 1.3;
+      color: #ffcf8a;
+      text-shadow: 0 0 8px rgba(255, 190, 90, 0.35);
+      text-align: center;
+    }
+
+    .q-mode {
+      padding: 3px 8px;
+      border: 2px solid;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .q-mode.mode-tr { color: #ffd9a0; border-color: #a06a2c; background: #3a2510; }
+    .q-mode.mode-py { color: #bcd7ff; border-color: #3d5a86; background: #16233a; }
+
+    .q-count {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .option {
+      min-height: 42px;
+      padding: 9px 6px;
+      color: var(--paper);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      border: 3px solid #4a3520;
+      background: #241a10;
+      box-shadow: 0 3px 0 #120c07;
+      cursor: pointer;
+    }
+
+    .option:hover:not(:disabled) { transform: translateY(-1px); background: #2c2013; }
+    .option:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 #120c07; }
+    .option:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+    .option:disabled { cursor: default; }
+    .option.correct { border-color: #7fae5c; background: #2f5a22; color: #d8f5c2; }
+    .option.wrong { border-color: #a2492f; background: #5a2418; color: #ffd2c2; opacity: 0.8; }
+
+    .feedback {
+      min-height: 1.5em;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-align: center;
+    }
+
+    .feedback.good { color: var(--green); }
+    .feedback.bad { color: var(--red); }
+
+    .victory-stats { margin: 0 0 16px; color: var(--muted); font-size: 0.88rem; }
+
+    .code-label {
+      margin: 0 0 6px;
+      color: var(--amber);
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+    }
+
+    .victory-code {
+      margin: 0 0 24px;
+      padding: 12px 22px 12px calc(22px + 0.35em);
+      border: 3px solid #241505;
+      background: #241505;
+      color: var(--gold);
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      box-shadow: 0 5px 0 #0d0803, 0 0 34px rgba(255, 210, 87, 0.3);
+      animation: code-pulse 2s ease-in-out infinite;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .no-anim { transition: none !important; }
+
+    @media (max-height: 520px) {
+      .hero-miner { display: none; }
+      .start-copy { font-size: 0.8rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell" id="game-shell">
+    <section class="screen start-screen" id="start-screen">
+      <div>
+        <svg class="hero-miner" viewBox="0 0 40 32" shape-rendering="crispEdges" aria-hidden="true">
+          <defs>
+            <radialGradient id="lg0" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#ffd98a" stop-opacity="0.8"/>
+              <stop offset="1" stop-color="#ffd98a" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="19" cy="2" r="5" fill="url(#lg0)"/>
+          <g class="m-body">
+            <rect x="17" y="1" width="4" height="2" fill="#ffe9a8"/>
+            <rect x="12" y="3" width="12" height="4" fill="#f2b632"/>
+            <rect x="10" y="7" width="16" height="2" fill="#d99a25"/>
+            <rect x="13" y="9" width="10" height="5" fill="#e8b083"/>
+            <rect x="15" y="11" width="2" height="2" fill="#241505"/>
+            <rect x="20" y="11" width="2" height="2" fill="#241505"/>
+            <rect x="12" y="14" width="12" height="8" fill="#3a5a8c"/>
+            <rect x="16" y="14" width="4" height="8" fill="#2c4470"/>
+            <rect x="9" y="15" width="3" height="5" fill="#3a5a8c"/>
+            <rect x="9" y="20" width="3" height="2" fill="#e8b083"/>
+            <rect x="13" y="22" width="4" height="4" fill="#26334d"/>
+            <rect x="19" y="22" width="4" height="4" fill="#26334d"/>
+            <rect x="12" y="26" width="5" height="3" fill="#4a2f1a"/>
+            <rect x="19" y="26" width="5" height="3" fill="#4a2f1a"/>
+            <g class="pick">
+              <rect x="24" y="12" width="9" height="3" fill="#c9d2da"/>
+              <rect x="22" y="15" width="2" height="2" fill="#9aa5ae"/>
+              <rect x="33" y="15" width="2" height="2" fill="#9aa5ae"/>
+              <rect x="27" y="15" width="2" height="3" fill="#8a5a2b"/>
+              <rect x="29" y="18" width="2" height="3" fill="#8a5a2b"/>
+              <rect x="31" y="21" width="2" height="3" fill="#8a5a2b"/>
+              <rect x="24" y="19" width="6" height="3" fill="#3a5a8c"/>
+              <rect x="29" y="20" width="3" height="3" fill="#e8b083"/>
+            </g>
+          </g>
+        </svg>
+        <p class="eyebrow">Буровая выработка №8</p>
+        <h1>Глубокая шахта</h1>
+        <p class="start-copy">Ты — решил помочь гномам в раскопках. Восемнадцать слоёв породы хранят девять иероглифов: в каждом слое подбери к высеченному знаку верный перевод или пиньинь. Верный ответ — удар кирки, и шахта уходит глубже. Доберись до таинственного предмета.</p>
+        <p class="start-note">9 иероглифов · 18 слоёв · тайный предмет на дне</p>
+        <button class="btn" id="start-button" type="button">Начать</button>
+      </div>
+    </section>
+
+    <section class="screen play-screen" id="play-screen" hidden>
+      <header class="hud">
+        <span>Глубина <b id="depth-now">0</b>/180 м</span>
+        <div class="progress" role="progressbar" aria-label="Прогресс бурения" aria-valuemin="0" aria-valuemax="18" aria-valuenow="0" id="progress"></div>
+        <span>Ошибки: <b id="err-count">0</b></span>
+      </header>
+
+      <div class="shaft-viewport" id="viewport">
+        <div class="world" id="world">
+          <div class="surface" aria-hidden="true">
+            <svg viewBox="0 0 220 150" preserveAspectRatio="xMidYMax slice">
+              <polygon points="92,30 102,30 78,128 66,128" fill="#3a2413"/>
+              <polygon points="118,30 128,30 154,128 142,128" fill="#3a2413"/>
+              <rect x="60" y="26" width="100" height="8" fill="#4a2f18"/>
+              <circle cx="110" cy="18" r="11" fill="none" stroke="#6b4a2c" stroke-width="5"/>
+              <path d="M99 18h22M110 7v22" stroke="#6b4a2c" stroke-width="3"/>
+              <circle cx="110" cy="18" r="3" fill="#6b4a2c"/>
+            </svg>
+          </div>
+          <div class="strata" id="strata"></div>
+          <div class="chamber" aria-hidden="true">
+            <div class="code">8111</div>
+            <svg class="chest" viewBox="0 0 48 36" shape-rendering="crispEdges">
+              <rect x="2" y="14" width="44" height="20" fill="#3a2210"/>
+              <rect x="4" y="16" width="40" height="16" fill="#7a4a22"/>
+              <rect x="2" y="6" width="44" height="10" fill="#3a2210"/>
+              <rect x="3" y="7" width="42" height="8" fill="#8a5527"/>
+              <rect x="3" y="7" width="42" height="2" fill="#a86c38"/>
+              <rect x="10" y="6" width="4" height="26" fill="#c98a3d"/>
+              <rect x="34" y="6" width="4" height="26" fill="#c98a3d"/>
+              <rect x="22" y="13" width="6" height="9" fill="#ffd257"/>
+              <rect x="24" y="16" width="2" height="4" fill="#7a4a22"/>
+              <rect x="4" y="32" width="6" height="2" fill="#2a1810"/>
+              <rect x="38" y="32" width="6" height="2" fill="#2a1810"/>
+            </svg>
+          </div>
+          <div class="rope" id="rope" aria-hidden="true"></div>
+          <div class="miner" id="miner" aria-hidden="true">
+            <svg viewBox="0 0 40 32" shape-rendering="crispEdges">
+              <defs>
+                <radialGradient id="lg1" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stop-color="#ffd98a" stop-opacity="0.8"/>
+                  <stop offset="1" stop-color="#ffd98a" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <circle cx="19" cy="2" r="5" fill="url(#lg1)"/>
+              <g class="m-body">
+                <rect x="17" y="1" width="4" height="2" fill="#ffe9a8"/>
+                <rect x="12" y="3" width="12" height="4" fill="#f2b632"/>
+                <rect x="10" y="7" width="16" height="2" fill="#d99a25"/>
+                <rect x="13" y="9" width="10" height="5" fill="#e8b083"/>
+                <rect x="15" y="11" width="2" height="2" fill="#241505"/>
+                <rect x="20" y="11" width="2" height="2" fill="#241505"/>
+                <rect x="12" y="14" width="12" height="8" fill="#3a5a8c"/>
+                <rect x="16" y="14" width="4" height="8" fill="#2c4470"/>
+                <rect x="9" y="15" width="3" height="5" fill="#3a5a8c"/>
+                <rect x="9" y="20" width="3" height="2" fill="#e8b083"/>
+                <rect x="13" y="22" width="4" height="4" fill="#26334d"/>
+                <rect x="19" y="22" width="4" height="4" fill="#26334d"/>
+                <rect x="12" y="26" width="5" height="3" fill="#4a2f1a"/>
+                <rect x="19" y="26" width="5" height="3" fill="#4a2f1a"/>
+                <g class="pick">
+                  <rect x="24" y="12" width="9" height="3" fill="#c9d2da"/>
+                  <rect x="22" y="15" width="2" height="2" fill="#9aa5ae"/>
+                  <rect x="33" y="15" width="2" height="2" fill="#9aa5ae"/>
+                  <rect x="27" y="15" width="2" height="3" fill="#8a5a2b"/>
+                  <rect x="29" y="18" width="2" height="3" fill="#8a5a2b"/>
+                  <rect x="31" y="21" width="2" height="3" fill="#8a5a2b"/>
+                  <rect x="24" y="19" width="6" height="3" fill="#3a5a8c"/>
+                  <rect x="29" y="20" width="3" height="3" fill="#e8b083"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <div id="fx" aria-hidden="true"></div>
+        </div>
+        <div class="glow" aria-hidden="true"></div>
+        <div class="darkness" id="darkness" aria-hidden="true"></div>
+        <div class="scanlines" aria-hidden="true"></div>
+      </div>
+
+      <div class="panel">
+        <div class="q-head">
+          <span class="q-glyph" id="q-glyph">口</span>
+          <span class="q-mode mode-tr" id="q-mode">Выбери перевод</span>
+          <span class="sr-only" id="sr-q"></span>
+          <span class="q-count" id="q-count">Слой 1/18</span>
+        </div>
+        <div class="options" id="options"></div>
+        <p class="feedback" id="feedback" role="status">Бей киркой: выбери верный вариант.</p>
+      </div>
+    </section>
+
+    <section class="screen victory-screen" id="victory-screen" hidden>
+      <div>
+        <p class="eyebrow">Глубина 180 метров</p>
+        <h2>Сокровищница открыта</h2>
+        <p class="victory-stats" id="victory-stats"></p>
+        <p class="code-label">Тайный код</p>
+        <p class="victory-code" id="victory-code" aria-label="Код победы 8111"></p>
+        <button class="btn" id="restart-button" type="button">Играть снова</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const CHARS = [
+        { char: "口", pinyin: "kǒu", answer: "рот" },
+        { char: "品", pinyin: "pǐn", answer: "товар" },
+        { char: "日", pinyin: "rì", answer: "солнце" },
+        { char: "目", pinyin: "mù", answer: "глаз" },
+        { char: "人", pinyin: "rén", answer: "человек" },
+        { char: "众", pinyin: "zhòng", answer: "толпа" },
+        { char: "木", pinyin: "mù", answer: "дерево" },
+        { char: "林", pinyin: "lín", answer: "лес" },
+        { char: "相", pinyin: "xiāng", answer: "взаимный" }
+      ];
+      const EXTRA_TR = ["луна", "имя", "друг", "вечер", "сердце", "огонь", "вода", "камень"];
+      const EXTRA_PY = ["mā", "hé", "shān", "yǔ", "huǒ", "tián", "shuǐ", "shí"];
+      const RUBBLE_COLORS = ["#6b4a2a", "#4c3a20", "#292420", "#565a60", "#8a6a30"];
+
+      const VICTORY_CODE = "8111";
+      const TOTAL = 18;
+      const LAYER_H = 64;
+      const SURFACE_H = 150;
+      const CHAMBER_H = 340;
+      const MINER_H = 96;
+      const LAYER_M = 10;
+      const TOTAL_M = TOTAL * LAYER_M;
+
+      const $ = (id) => document.getElementById(id);
+      const els = {
+        shell: $("game-shell"),
+        screens: { start: $("start-screen"), play: $("play-screen"), victory: $("victory-screen") },
+        startButton: $("start-button"),
+        restartButton: $("restart-button"),
+        depthNow: $("depth-now"),
+        errCount: $("err-count"),
+        progress: $("progress"),
+        viewport: $("viewport"),
+        world: $("world"),
+        strata: $("strata"),
+        rope: $("rope"),
+        miner: $("miner"),
+        fx: $("fx"),
+        darkness: $("darkness"),
+        qGlyph: $("q-glyph"),
+        qMode: $("q-mode"),
+        srQ: $("sr-q"),
+        qCount: $("q-count"),
+        options: $("options"),
+        feedback: $("feedback"),
+        victoryStats: $("victory-stats"),
+        victoryCode: $("victory-code")
+      };
+
+      let sequence = [];
+      let layers = [];
+      let cur = 0;
+      let errors = 0;
+      let depth = 0;
+      let locked = false;
+      let running = false;
+
+      function shuffle(list) {
+        for (let i = list.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = list[i];
+          list[i] = list[j];
+          list[j] = tmp;
+        }
+        return list;
+      }
+
+      function noAdjacent(list) {
+        for (let i = 1; i < list.length; i += 1) {
+          if (list[i].c.char === list[i - 1].c.char) return false;
+        }
+        return true;
+      }
+
+      function buildSequence() {
+        let list = [];
+        for (let attempt = 0; attempt < 40; attempt += 1) {
+          list = [];
+          CHARS.forEach((c) => {
+            list.push({ c: c, mode: "tr" });
+            list.push({ c: c, mode: "py" });
+          });
+          shuffle(list);
+          if (noAdjacent(list)) break;
+        }
+        return list;
+      }
+
+      function showScreen(name) {
+        Object.keys(els.screens).forEach((key) => {
+          els.screens[key].hidden = key !== name;
+        });
+      }
+
+      function setFeedback(message, tone) {
+        els.feedback.textContent = message;
+        els.feedback.className = "feedback" + (tone ? " " + tone : "");
+      }
+
+      function bandOf(i) {
+        return i < 4 ? 0 : i < 8 ? 1 : i < 12 ? 2 : i < 16 ? 3 : 4;
+      }
+
+      function buildLayers() {
+        els.strata.innerHTML = "";
+        layers = [];
+        sequence.forEach((q, i) => {
+          const layer = document.createElement("div");
+          layer.className = "layer b" + bandOf(i) + " v" + (i % 3);
+          layer.innerHTML =
+            '<div class="rock"></div>' +
+            '<div class="cracks"><i></i><i></i><i></i></div>' +
+            '<i class="post pl"></i><i class="post pr"></i>' +
+            '<span class="glyph" aria-hidden="true">' + q.c.char + "</span>";
+          els.strata.appendChild(layer);
+          layers.push(layer);
+        });
+      }
+
+      function updateHud() {
+        els.depthNow.textContent = depth;
+        els.errCount.textContent = errors;
+        els.progress.setAttribute("aria-valuenow", String(Math.min(cur + 1, TOTAL)));
+        Array.prototype.forEach.call(els.progress.children, (seg, i) => {
+          seg.classList.toggle("on", i < depth / LAYER_M);
+        });
+        els.darkness.style.opacity = 0.7 + Math.min(0.28, (depth / TOTAL_M) * 0.28);
+      }
+
+      function layerTop(i) {
+        return SURFACE_H + i * LAYER_H;
+      }
+
+      function place(instant) {
+        const vpH = els.viewport.clientHeight || 320;
+        const anchor = vpH * 0.56;
+        let focus;
+        let minerTop;
+        if (cur >= TOTAL) {
+          const cTop = layerTop(TOTAL);
+          focus = cTop + 170;
+          minerTop = cTop + CHAMBER_H - 26 - MINER_H + 2;
+        } else {
+          const top = layerTop(cur);
+          focus = top + LAYER_H * 0.6;
+          minerTop = top - MINER_H + 8;
+        }
+        const apply = () => {
+          els.world.style.transform = "translateY(" + (-(focus - anchor)) + "px)";
+          els.miner.style.top = minerTop + "px";
+          els.rope.style.height = Math.max(0, minerTop - 22) + "px";
+        };
+        if (instant) {
+          [els.world, els.miner, els.rope].forEach((el) => el.classList.add("no-anim"));
+          apply();
+          void els.world.offsetHeight;
+          [els.world, els.miner, els.rope].forEach((el) => el.classList.remove("no-anim"));
+        } else {
+          apply();
+        }
+      }
+
+      function spawnFx(i) {
+        const top = layerTop(i);
+        for (let k = 0; k < 10; k += 1) {
+          const bit = document.createElement("i");
+          bit.className = "fx-bit";
+          bit.style.left = "calc(50% + " + (Math.random() * 60 - 30) + "px)";
+          bit.style.top = top + 14 + Math.random() * 30 + "px";
+          bit.style.background = RUBBLE_COLORS[Math.floor(Math.random() * RUBBLE_COLORS.length)];
+          bit.style.setProperty("--dx", (Math.random() * 80 - 40) + "px");
+          bit.addEventListener("animationend", () => bit.remove());
+          els.fx.appendChild(bit);
+        }
+        for (let k = 0; k < 5; k += 1) {
+          const spark = document.createElement("i");
+          spark.className = "fx-spark";
+          spark.style.left = "calc(50% + " + (Math.random() * 48 - 24) + "px)";
+          spark.style.top = top + 18 + Math.random() * 20 + "px";
+          spark.style.setProperty("--dx", (Math.random() * 70 - 35) + "px");
+          spark.style.setProperty("--dy", -(18 + Math.random() * 40) + "px");
+          spark.addEventListener("animationend", () => spark.remove());
+          els.fx.appendChild(spark);
+        }
+      }
+
+      function quake(small) {
+        const cls = small ? "quake-sm" : "quake";
+        els.shell.classList.remove("quake", "quake-sm");
+        void els.shell.offsetWidth;
+        els.shell.classList.add(cls);
+        window.setTimeout(() => els.shell.classList.remove(cls), 460);
+      }
+
+      function poolFor(q) {
+        if (q.mode === "tr") {
+          return CHARS.map((c) => c.answer).concat(EXTRA_TR);
+        }
+        const uniq = [];
+        CHARS.forEach((c) => {
+          if (uniq.indexOf(c.pinyin) === -1) uniq.push(c.pinyin);
+        });
+        return uniq.concat(EXTRA_PY);
+      }
+
+      function answerOf(q) {
+        return q.mode === "tr" ? q.c.answer : q.c.pinyin;
+      }
+
+      function buildOptions(q) {
+        const answer = answerOf(q);
+        const distractors = shuffle(poolFor(q).filter((v) => v !== answer)).slice(0, 3);
+        const words = shuffle([answer].concat(distractors));
+        els.options.innerHTML = "";
+        words.forEach((word) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "option";
+          button.textContent = word;
+          button.addEventListener("click", () => onAnswer(button, q));
+          els.options.appendChild(button);
+        });
+      }
+
+      function renderQ() {
+        const q = sequence[cur];
+        const isTr = q.mode === "tr";
+        els.qGlyph.textContent = q.c.char;
+        els.qMode.textContent = isTr ? "Выбери перевод" : "Выбери пиньинь";
+        els.qMode.className = "q-mode " + (isTr ? "mode-tr" : "mode-py");
+        els.srQ.textContent = "Иероглиф " + q.c.char + ". " + (isTr ? "Выбери перевод." : "Выбери пиньинь.");
+        els.qCount.textContent = "Слой " + (cur + 1) + "/" + TOTAL;
+        setFeedback(isTr ? "Что означает высеченный знак?" : "Как читается высеченный знак?", "");
+        buildOptions(q);
+        locked = false;
+      }
+
+      function dig(q) {
+        locked = true;
+        const isTr = q.mode === "tr";
+        setFeedback(
+          isTr
+            ? "Верно: " + q.c.char + " (" + q.c.pinyin + ") — «" + q.c.answer + "». Порода поддаётся!"
+            : "Верно: " + q.c.char + " читается «" + q.c.pinyin + "» — " + q.c.answer + ". Кирка бьёт глубже!",
+          "good"
+        );
+        els.miner.classList.remove("swing");
+        void els.miner.offsetWidth;
+        els.miner.classList.add("swing");
+        const layer = layers[cur];
+        window.setTimeout(() => {
+          layer.classList.add("hit");
+          spawnFx(cur);
+        }, 240);
+        window.setTimeout(() => {
+          layer.classList.remove("hit");
+          layer.classList.add("dug");
+          quake(true);
+          depth = (cur + 1) * LAYER_M;
+          updateHud();
+        }, 520);
+        window.setTimeout(() => {
+          els.miner.classList.remove("swing");
+          cur += 1;
+          place(false);
+          if (cur >= TOTAL) {
+            finish();
+          } else {
+            window.setTimeout(() => {
+              renderQ();
+              els.miner.classList.add("land");
+              window.setTimeout(() => els.miner.classList.remove("land"), 420);
+            }, 700);
+          }
+        }, 640);
+      }
+
+      function onAnswer(button, q) {
+        if (locked || button.disabled) return;
+        if (button.textContent === answerOf(q)) {
+          Array.prototype.forEach.call(els.options.children, (item) => {
+            item.disabled = true;
+          });
+          button.classList.add("correct");
+          dig(q);
+        } else {
+          button.disabled = true;
+          button.classList.add("wrong");
+          errors += 1;
+          updateHud();
+          quake(false);
+          const layer = layers[cur];
+          layer.classList.remove("nope");
+          void layer.offsetWidth;
+          layer.classList.add("nope");
+          window.setTimeout(() => layer.classList.remove("nope"), 460);
+          setFeedback("Кирка отскакивает: «" + button.textContent + "» не то. Примерься снова.", "bad");
+        }
+      }
+
+      function finish() {
+        window.setTimeout(() => els.miner.classList.add("land"), 900);
+        window.setTimeout(() => {
+          els.miner.classList.remove("land");
+          els.victoryStats.textContent = errors === 0
+            ? "Все 18 слоёв пройдены. Ни одной ошибки — чистое бурение!"
+            : "Все 18 слоёв пройдены. Ошибок: " + errors + ".";
+          els.victoryCode.textContent = VICTORY_CODE;
+          showScreen("victory");
+        }, 1900);
+      }
+
+      function startGame() {
+        sequence = buildSequence();
+        buildLayers();
+        els.fx.innerHTML = "";
+        els.miner.classList.remove("swing", "land");
+        cur = 0;
+        errors = 0;
+        depth = 0;
+        running = true;
+        els.progress.innerHTML = "";
+        for (let i = 0; i < TOTAL; i += 1) {
+          const seg = document.createElement("i");
+          seg.className = "seg";
+          els.progress.appendChild(seg);
+        }
+        updateHud();
+        showScreen("play");
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            place(true);
+            renderQ();
+          });
+        });
+      }
+
+      els.startButton.addEventListener("click", startGame);
+      els.restartButton.addEventListener("click", startGame);
+
+      window.addEventListener("resize", () => {
+        if (running && !els.screens.play.hidden) place(true);
+      });
+    })();
+  </script>
+</body>
+</html>
