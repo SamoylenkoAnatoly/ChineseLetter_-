@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#070a18">
+<title>Страж неонового леса — битва с гоблином</title>
+<style>
+  :root {
+    --bg: #070a18;
+    --shell: #0a0f22;
+    --edge: #1c2a55;
+    --ink: #e8f6ff;
+    --muted: #8fa3c8;
+    --cyan: #4ff2d6;
+    --lime: #a4ff5f;
+    --mag: #ff5ce1;
+    --amber: #ffc94d;
+    --red: #ff5c6a;
+    --cjk: "MS Gothic", "Noto Sans CJK SC", "SimSun", "Microsoft YaHei", monospace;
+    --mono: "Lucida Console", Consolas, "Courier New", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { min-width: 280px; min-height: 100%; margin: 0; }
+
+  body {
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: clamp(8px, 2vw, 16px);
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 50% -20%, #131c3f 0, var(--bg) 60%),
+      var(--bg);
+    font-family: var(--mono);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button { font: inherit; }
+
+  .game-shell {
+    position: relative;
+    width: min(100%, 540px);
+    height: min(calc(100svh - 16px), 640px);
+    min-height: 430px;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid var(--edge);
+    background: var(--shell);
+    box-shadow: 0 0 0 3px #05070f, 0 16px 46px rgba(0, 0, 0, .65), inset 0 0 42px rgba(6, 10, 30, .8);
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .game-shell.quake { animation: quake .42s linear; }
+
+  @keyframes quake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-6px 3px); }
+    40% { transform: translate(6px, -3px); }
+    60% { transform: translate(-4px, -2px); }
+    80% { transform: translate(3px, 2px); }
+  }
+
+  .screen { flex: 1; display: grid; min-height: 0; }
+  .screen[hidden] { display: none; }
+
+  .start-screen, .victory-screen, .defeat-screen {
+    place-items: center;
+    align-content: center;
+    padding: clamp(16px, 4vw, 30px);
+    text-align: center;
+    background:
+      radial-gradient(circle at 50% 24%, rgba(79, 242, 214, .08), transparent 55%),
+      radial-gradient(circle at 78% 82%, rgba(255, 92, 225, .07), transparent 50%),
+      #080d1e;
+  }
+
+  .eyebrow {
+    margin: 0 0 10px;
+    color: var(--cyan);
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+  }
+
+  h1, h2 { margin: 0 0 12px; line-height: 1.14; text-transform: uppercase; }
+
+  h1 {
+    max-width: 420px;
+    font-size: clamp(1.4rem, 6vw, 2.1rem);
+    text-shadow: -3px -2px 0 rgba(255, 92, 225, .35), 3px 2px 0 rgba(79, 242, 214, .35);
+  }
+
+  h2 { font-size: clamp(1.25rem, 5vw, 1.8rem); }
+
+  .lead {
+    max-width: 420px;
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-size: .84rem;
+    line-height: 1.6;
+  }
+
+  .rules {
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+    max-width: 400px;
+  }
+
+  .rules li {
+    position: relative;
+    margin: 0 0 7px;
+    padding-left: 20px;
+    color: #b9cdf0;
+    font-size: .78rem;
+    line-height: 1.45;
+  }
+
+  .rules li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: .52em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 8px var(--lime);
+  }
+
+  .btn {
+    padding: 12px 32px;
+    background: rgba(79, 242, 214, .08);
+    border: 1px solid rgba(79, 242, 214, .7);
+    border-radius: 10px;
+    color: #c9fff2;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(79, 242, 214, .22), inset 0 0 12px rgba(79, 242, 214, .08);
+    transition: background .2s, box-shadow .2s, transform .15s;
+  }
+
+  .btn:hover, .btn:focus-visible {
+    background: rgba(79, 242, 214, .18);
+    box-shadow: 0 0 26px rgba(79, 242, 214, .4), inset 0 0 14px rgba(79, 242, 214, .14);
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  .kbd-hint { margin: 14px 0 0; color: var(--muted); font-size: .66rem; letter-spacing: .14em; }
+
+  /* ===== battle ===== */
+
+  .battle-screen { display: flex; flex-direction: column; background: #080d1e; }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(79, 242, 214, .22);
+    background: rgba(6, 9, 24, .72);
+  }
+
+  .hearts { display: flex; gap: 5px; min-width: 74px; }
+
+  .hearts svg {
+    width: 21px;
+    height: 21px;
+    filter: drop-shadow(0 0 5px rgba(255, 92, 225, .7));
+    transition: opacity .3s, transform .3s, filter .3s;
+  }
+
+  .hearts svg.lost { opacity: .22; transform: scale(.82); filter: grayscale(1); }
+  .hearts svg.pop { animation: heartPop .5s ease; }
+
+  @keyframes heartPop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.55) rotate(-8deg); filter: drop-shadow(0 0 12px #ff5c6a); }
+    100% { transform: scale(.82); }
+  }
+
+  .rune-count {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: #8fd9ff;
+    white-space: nowrap;
+  }
+
+  .hp { display: flex; align-items: center; gap: 8px; }
+
+  .hp-label {
+    font-size: .58rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hp-bar { display: flex; gap: 2px; width: clamp(64px, 20vw, 108px); }
+
+  .hp-bar span {
+    flex: 1;
+    height: 9px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #ff7ce0, var(--mag));
+    box-shadow: 0 0 6px rgba(255, 92, 225, .55);
+    transition: background .35s, box-shadow .35s, opacity .35s;
+  }
+
+  .hp-bar span.off { background: #20284a; box-shadow: none; opacity: .55; }
+
+  .battle-screen.enraged .hp-bar span:not(.off) {
+    background: linear-gradient(180deg, #ff8a94, var(--red));
+    box-shadow: 0 0 8px rgba(255, 92, 106, .7);
+  }
+
+  /* scene */
+
+  .scene {
+    position: relative;
+    flex: 1;
+    min-height: 205px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 118%, rgba(79, 242, 214, .1), transparent 55%),
+      linear-gradient(180deg, #0d1737 0%, #0a1029 52%, #070c1e 100%);
+    transition: box-shadow .6s;
+  }
+
+  .battle-screen.enraged .scene { box-shadow: inset 0 0 64px rgba(255, 60, 80, .2); }
+
+  .moon {
+    position: absolute;
+    top: 7%;
+    left: 9%;
+    width: clamp(46px, 13%, 76px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 36% 34%, #f2faff, #bcd8ff 58%, #8fb0e8 100%);
+    box-shadow: 0 0 34px rgba(190, 220, 255, .4), 0 0 90px rgba(190, 220, 255, .18);
+  }
+
+  .stars-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .star { fill: #cfe6ff; animation: twinkle 3.4s ease-in-out infinite; }
+  .star:nth-child(2n) { animation-delay: 1.1s; animation-duration: 2.6s; }
+  .star:nth-child(3n) { animation-delay: 2s; animation-duration: 4.2s; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: .25; }
+    50% { opacity: 1; }
+  }
+
+  .trees { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 62%; }
+
+  .trees.far path { fill: #141f4a; }
+  .trees.near path { fill: #070c1e; }
+  .trees.rim path { fill: none; stroke: rgba(79, 242, 214, .17); stroke-width: 1.4; }
+
+  .fog {
+    position: absolute;
+    width: 76%;
+    height: 30%;
+    border-radius: 50%;
+    background: rgba(160, 200, 255, .07);
+    filter: blur(20px);
+    pointer-events: none;
+  }
+
+  .fog.f1 { bottom: 16%; left: -18%; animation: drift 26s ease-in-out infinite alternate; }
+  .fog.f2 { bottom: 4%; right: -20%; animation: drift 34s ease-in-out infinite alternate-reverse; }
+
+  @keyframes drift {
+    from { transform: translateX(0); }
+    to { transform: translateX(120px); }
+  }
+
+  .amb {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #bdfff0;
+    box-shadow: 0 0 8px var(--cyan), 0 0 18px rgba(79, 242, 214, .55);
+    opacity: .8;
+    pointer-events: none;
+    animation: ambFloat 7s ease-in-out infinite alternate;
+  }
+
+  .amb.a1 { top: 30%; left: 14%; }
+  .amb.a2 { top: 52%; left: 82%; animation-delay: -2s; animation-duration: 9s; }
+  .amb.a3 { top: 66%; left: 22%; animation-delay: -4s; animation-duration: 8s; }
+  .amb.a4 { top: 24%; left: 68%; animation-delay: -1.4s; animation-duration: 10s; }
+
+  @keyframes ambFloat {
+    from { transform: translate(0, 0); opacity: .25; }
+    50% { opacity: .9; }
+    to { transform: translate(26px, -20px); opacity: .3; }
+  }
+
+  /* rune card */
+
+  .rune-card {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 96px;
+    height: 96px;
+    margin-left: -48px;
+    animation: floatRune 3.4s ease-in-out infinite;
+    z-index: 6;
+  }
+
+  @keyframes floatRune {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+  }
+
+  .ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+
+  .ring circle { fill: none; stroke-width: 4; }
+
+  .ring-bg { stroke: rgba(79, 242, 214, .16); }
+
+  .ring-fg {
+    stroke: var(--cyan);
+    stroke-linecap: round;
+    stroke-dasharray: 289.027;
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 0 4px rgba(79, 242, 214, .8));
+    transition: stroke .3s;
+  }
+
+  .rune-card.low .ring-fg {
+    stroke: var(--red);
+    filter: drop-shadow(0 0 6px rgba(255, 92, 106, .9));
+  }
+
+  .rune-card.low { animation: floatRune 3.4s ease-in-out infinite, cardPulse .5s ease-in-out infinite; }
+
+  @keyframes cardPulse {
+    0%, 100% { scale: 1; }
+    50% { scale: 1.05; }
+  }
+
+  .rune {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--cjk);
+    font-size: 46px;
+    color: #eafff8;
+    text-shadow: 0 0 10px rgba(79, 242, 214, .9), 0 0 30px rgba(79, 242, 214, .5), 0 0 60px rgba(79, 242, 214, .3);
+  }
+
+  .rune-card.burst .rune { animation: runeBurst .45s ease-out; }
+
+  @keyframes runeBurst {
+    0% { transform: scale(1); opacity: 1; }
+    45% { transform: scale(1.45); opacity: 1; }
+    100% { transform: scale(.1); opacity: 0; }
+  }
+
+  /* goblin */
+
+  .goblin-wrap {
+    --gob: var(--cyan);
+    --eye: var(--cyan);
+    position: absolute;
+    bottom: 3%;
+    left: 50%;
+    width: clamp(116px, 34%, 158px);
+    margin-left: calc(clamp(116px, 34%, 158px) / -2);
+    z-index: 5;
+  }
+
+  .battle-screen.enraged .goblin-wrap { --gob: var(--red); --eye: #ff4757; }
+
+  .goblin-svg { display: block; width: 100%; overflow: visible; }
+
+  .st { fill: #0b1228; stroke: var(--gob); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; transition: stroke .5s; }
+  .arm { fill: none; }
+  .eye { fill: var(--eye); transition: fill .5s; filter: drop-shadow(0 0 6px var(--eye)); }
+  .brow, .grin, .teeth, .cl { fill: none; stroke: var(--gob); stroke-width: 2.6; stroke-linecap: round; transition: stroke .5s; }
+
+  .g-body { animation: breathe 3.2s ease-in-out infinite; transform-origin: 100px 160px; }
+  .battle-screen.enraged .g-body { animation-duration: 1.5s; }
+
+  @keyframes breathe {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(5px) scale(1.015); }
+  }
+
+  .goblin-wrap.hit { animation: ghit .45s ease; }
+
+  @keyframes ghit {
+    0% { transform: translate(0, 0); filter: none; }
+    30% { transform: translate(-13px, 2px); filter: brightness(2) saturate(1.6) drop-shadow(0 0 12px var(--lime)); }
+    70% { transform: translate(6px, -1px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  .goblin-wrap.attack { animation: gwind .34s ease; }
+
+  @keyframes gwind {
+    0% { transform: translate(0, 0) scale(1); }
+    60% { transform: translate(0, -7px) scale(1.05); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  .goblin-wrap.dying { animation: gdie .85s ease-in forwards; }
+
+  @keyframes gdie {
+    0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+    100% { transform: translate(0, 30px) rotate(9deg) scale(.25); opacity: 0; filter: brightness(2.4); }
+  }
+
+  /* fx */
+
+  .axe {
+    position: absolute;
+    z-index: 9;
+    width: 140px;
+    height: 60px;
+    pointer-events: none;
+  }
+
+  .axe svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform-origin: 5px 30px;
+    filter: drop-shadow(0 0 8px rgba(79, 242, 214, .55));
+  }
+
+  .slash {
+    position: absolute;
+    z-index: 9;
+    width: 110px;
+    height: 46px;
+    border: 4px solid transparent;
+    border-top-color: #eafff8;
+    border-radius: 50%;
+    filter: drop-shadow(0 0 8px var(--cyan));
+    pointer-events: none;
+  }
+
+  .spark {
+    position: absolute;
+    z-index: 8;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 8px var(--lime);
+    pointer-events: none;
+  }
+
+  .spark.big { width: 10px; height: 10px; background: var(--mag); box-shadow: 0 0 12px var(--mag); }
+
+  .dmg {
+    position: absolute;
+    z-index: 8;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--amber);
+    text-shadow: 0 0 10px rgba(255, 201, 77, .8);
+    pointer-events: none;
+  }
+
+  .thorn {
+    position: absolute;
+    z-index: 9;
+    width: 46px;
+    height: 12px;
+    background: linear-gradient(90deg, var(--mag), #ffd257);
+    clip-path: polygon(0 50%, 22% 0, 60% 22%, 100% 50%, 60% 78%, 22% 100%);
+    filter: drop-shadow(0 0 8px rgba(255, 92, 225, .8));
+    pointer-events: none;
+  }
+
+  .hurt {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(ellipse at center, transparent 38%, rgba(255, 40, 60, .55));
+  }
+
+  .hurt.on { animation: hurtFlash .55s ease-out; }
+
+  @keyframes hurtFlash {
+    0% { opacity: 0; }
+    25% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* meadow (options) */
+
+  .meadow {
+    position: relative;
+    height: clamp(118px, 23vh, 158px);
+    background:
+      linear-gradient(180deg, rgba(79, 242, 214, .05), transparent 40%),
+      linear-gradient(180deg, #0a1029, #080d1e);
+    border-top: 1px solid rgba(79, 242, 214, .22);
+    overflow: hidden;
+  }
+
+  .fly {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 13px 6px 9px;
+    background: rgba(10, 18, 44, .88);
+    border: 1px solid rgba(79, 242, 214, .55);
+    border-radius: 999px;
+    color: #dff6ff;
+    font-size: .88rem;
+    letter-spacing: .04em;
+    cursor: pointer;
+    box-shadow: 0 0 14px rgba(79, 242, 214, .18), inset 0 0 8px rgba(79, 242, 214, .08);
+    transition: border-color .2s, box-shadow .2s, opacity .25s;
+    touch-action: manipulation;
+    will-change: transform;
+  }
+
+  .fly::after {
+    content: "";
+    position: absolute;
+    inset: -13px;
+    border-radius: 999px;
+  }
+
+  .fly:hover, .fly:focus-visible {
+    border-color: #9dfce9;
+    box-shadow: 0 0 22px rgba(79, 242, 214, .4), inset 0 0 10px rgba(79, 242, 214, .16);
+    outline: none;
+  }
+
+  .fly:active { scale: .94; }
+
+  .glow-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #eafff6, var(--cyan));
+    box-shadow: 0 0 9px var(--cyan), 0 0 22px rgba(79, 242, 214, .6);
+    animation: flyBob 2.3s ease-in-out infinite;
+  }
+
+  @keyframes flyBob {
+    0%, 100% { transform: translateY(-2px); opacity: .85; }
+    50% { transform: translateY(2px); opacity: 1; }
+  }
+
+  .fly-py { font-family: var(--mono); }
+
+  .fly.good { border-color: var(--lime); box-shadow: 0 0 22px rgba(164, 255, 95, .55); }
+  .fly.good .glow-dot { background: radial-gradient(circle at 35% 35%, #f4ffe9, var(--lime)); box-shadow: 0 0 10px var(--lime), 0 0 24px rgba(164, 255, 95, .7); }
+
+  .fly.bad { border-color: var(--red); animation: flyShake .34s ease; }
+  .fly.bad .glow-dot { background: #ffd9dd; box-shadow: 0 0 10px var(--red); }
+
+  @keyframes flyShake {
+    0%, 100% { margin-left: 0; }
+    25% { margin-left: -7px; }
+    55% { margin-left: 7px; }
+    80% { margin-left: -4px; }
+  }
+
+  .fly.hint { border-color: var(--lime); animation: hintPulse .45s ease 3; }
+
+  @keyframes hintPulse {
+    50% { box-shadow: 0 0 26px rgba(164, 255, 95, .85), inset 0 0 12px rgba(164, 255, 95, .3); }
+  }
+
+  .fly.dim { opacity: .3; }
+
+  .feedback {
+    min-height: 2.6em;
+    margin: 0;
+    padding: 7px 14px 9px;
+    border-top: 1px solid rgba(79, 242, 214, .14);
+    color: #bfe9ff;
+    font-size: .78rem;
+    line-height: 1.45;
+    text-align: center;
+    background: rgba(6, 9, 24, .72);
+  }
+
+  /* victory / defeat */
+
+  .victory-stats, .defeat-stats { margin: 0 0 16px; color: var(--muted); font-size: .82rem; line-height: 1.6; }
+
+  .code-label {
+    margin: 0 0 6px;
+    color: var(--mag);
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+  }
+
+  .victory-code {
+    margin: 0 0 8px;
+    font-size: clamp(2.1rem, 11vw, 3rem);
+    font-weight: 700;
+    letter-spacing: .32em;
+    text-indent: .32em;
+    color: #eafff8;
+    text-shadow: 0 0 12px rgba(255, 92, 225, .8), 0 0 38px rgba(255, 92, 225, .45), 0 0 74px rgba(79, 242, 214, .35);
+    animation: codeGlow 2.4s ease-in-out infinite;
+  }
+
+  @keyframes codeGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.35); }
+  }
+
+  .defeat-screen h2 { text-shadow: 0 0 18px rgba(255, 92, 106, .5); }
+
+  @media (max-height: 560px) {
+    .meadow { height: 104px; }
+    .scene { min-height: 150px; }
+    .rune-card { width: 78px; height: 78px; margin-left: -39px; }
+    .rune { font-size: 36px; }
+    .rules li { font-size: .72rem; }
+    .feedback { font-size: .7rem; }
+  }
+
+  @media (max-width: 380px) {
+    .fly { padding: 5px 10px 5px 7px; font-size: .78rem; gap: 6px; }
+    .hp-bar { width: 58px; }
+    .rune-count { font-size: .62rem; letter-spacing: .14em; }
+  }
+</style>
+</head>
+<body>
+<main class="game-shell" id="shell">
+
+  <section class="screen start-screen" id="start-screen">
+    <div>
+      <p class="eyebrow">неоновый лес · полночь</p>
+      <h1>Страж неонового леса</h1>
+      <p class="lead">Гоблин-страж расхитил светящиеся иероглифы леса и обратил их в руны-щиты. Назови пиньинь каждой руны — и она обернётся против вора.</p>
+      <ul class="rules">
+        <li>Над гоблином вспыхивает иероглиф-руна</li>
+        <li>Поймай светлячка с верным пиньинем, пока горит кольцо</li>
+        <li>Верно — топор рубит гоблина; ошибка или время — гоблин бьёт тебя</li>
+        <li>3 сердца · 9 рун · светлячки летают всё злее</li>
+      </ul>
+      <button class="btn" id="start-btn" type="button">Начать</button>
+      <p class="kbd-hint">клавиши 1–5 тоже работают</p>
+    </div>
+  </section>
+
+  <section class="screen battle-screen" id="battle-screen" hidden>
+    <header class="topbar">
+      <div class="hearts" id="hearts" aria-label="Сердца игрока"></div>
+      <div class="rune-count" id="rune-count">Руна 1/9</div>
+      <div class="hp">
+        <span class="hp-label">гоблин</span>
+        <div class="hp-bar" id="hp-bar"></div>
+      </div>
+    </header>
+
+    <div class="scene" id="scene">
+      <div class="moon" aria-hidden="true"></div>
+      <svg class="stars-svg" viewBox="0 0 400 240" preserveAspectRatio="none" aria-hidden="true">
+        <circle class="star" cx="40" cy="30" r="1.4"/><circle class="star" cx="95" cy="64" r="1.1"/>
+        <circle class="star" cx="150" cy="22" r="1.6"/><circle class="star" cx="210" cy="48" r="1.2"/>
+        <circle class="star" cx="262" cy="18" r="1.5"/><circle class="star" cx="318" cy="58" r="1.2"/>
+        <circle class="star" cx="368" cy="26" r="1.6"/><circle class="star" cx="60" cy="96" r="1.1"/>
+        <circle class="star" cx="185" cy="88" r="1.2"/><circle class="star" cx="290" cy="104" r="1.3"/>
+        <circle class="star" cx="350" cy="92" r="1.1"/><circle class="star" cx="120" cy="118" r="1.2"/>
+      </svg>
+      <svg class="trees far" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 200 L0 130 L28 96 L54 128 L74 100 L104 64 L132 102 L156 84 L184 46 L214 92 L236 76 L266 40 L296 88 L318 70 L348 36 L378 86 L402 66 L430 30 L460 80 L484 62 L512 96 L536 80 L562 118 L582 104 L600 124 L600 200 Z"/>
+      </svg>
+      <svg class="trees near" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 200 L0 150 L36 108 L64 148 L92 116 L124 74 L156 120 L188 92 L222 52 L254 104 L282 84 L314 44 L346 98 L376 78 L406 40 L438 96 L468 74 L500 112 L528 94 L556 130 L600 100 L600 200 Z"/>
+      </svg>
+      <svg class="trees rim" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 200 L0 150 L36 108 L64 148 L92 116 L124 74 L156 120 L188 92 L222 52 L254 104 L282 84 L314 44 L346 98 L376 78 L406 40 L438 96 L468 74 L500 112 L528 94 L556 130 L600 100 L600 200 Z"/>
+      </svg>
+      <div class="fog f1" aria-hidden="true"></div>
+      <div class="fog f2" aria-hidden="true"></div>
+      <i class="amb a1" aria-hidden="true"></i><i class="amb a2" aria-hidden="true"></i>
+      <i class="amb a3" aria-hidden="true"></i><i class="amb a4" aria-hidden="true"></i>
+
+      <div class="rune-card" id="rune-card">
+        <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="ring-bg" cx="50" cy="50" r="46"/>
+          <circle class="ring-fg" id="ring-fg" cx="50" cy="50" r="46"/>
+        </svg>
+        <span class="rune" id="rune-char">月</span>
+      </div>
+
+      <div class="goblin-wrap" id="goblin" aria-hidden="true">
+        <svg class="goblin-svg" viewBox="0 0 200 210">
+          <g class="g-body">
+            <path class="st" d="M63 74 Q30 46 36 14 Q54 28 70 60 Z"/>
+            <path class="st" d="M137 74 Q170 46 164 14 Q146 28 130 60 Z"/>
+            <path class="st" d="M100 44 Q138 44 140 86 Q141 116 100 118 Q59 116 60 86 Q62 44 100 44 Z"/>
+            <path class="st" d="M70 112 Q50 150 62 186 Q100 200 138 186 Q150 150 130 112 Q116 128 100 128 Q84 128 70 112 Z"/>
+            <path class="st arm" d="M66 120 Q44 138 40 166"/>
+            <path class="st arm" d="M134 120 Q158 136 162 164"/>
+            <path class="cl" d="M40 166 l-6 10 M40 166 l0 12 M40 166 l6 10"/>
+            <path class="cl" d="M162 164 l-6 10 M162 164 l0 12 M162 164 l6 10"/>
+            <path class="brow" d="M75 71 L96 78 M125 71 L104 78"/>
+            <circle class="eye" cx="86" cy="86" r="6"/>
+            <circle class="eye" cx="114" cy="86" r="6"/>
+            <path class="grin" d="M82 100 Q100 112 118 100"/>
+            <path class="teeth" d="M86 101 l4 6 4-6 M96 104 l4 6 4-6 M106 103 l4 6 4-6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="meadow" id="meadow" aria-label="Светлячки с вариантами пиньиня"></div>
+    <p class="feedback" id="feedback" role="status" aria-live="polite">Поймай светлячка с верным пиньинем!</p>
+  </section>
+
+  <section class="screen victory-screen" id="victory-screen" hidden>
+    <div>
+      <p class="eyebrow">рассвет в лесу</p>
+      <h2>Страж повержен</h2>
+      <p class="victory-stats" id="victory-stats"></p>
+      <p class="code-label">Тайный код</p>
+      <p class="victory-code" id="victory-code" aria-label="Тайный код 2333">2333</p>
+      <button class="btn" id="again-btn" type="button">Играть снова</button>
+    </div>
+  </section>
+
+  <section class="screen defeat-screen" id="defeat-screen" hidden>
+    <div>
+      <p class="eyebrow">лес погас</p>
+      <h2>Гоблин хихикает в темноте</h2>
+      <p class="defeat-stats" id="defeat-stats"></p>
+      <button class="btn" id="retry-btn" type="button">Играть снова</button>
+    </div>
+  </section>
+
+  <div class="hurt" id="hurt" aria-hidden="true"></div>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = (s) => document.querySelector(s);
+
+  const shell = $("#shell");
+  const battle = $("#battle-screen");
+  const scene = $("#scene");
+  const meadow = $("#meadow");
+  const feedback = $("#feedback");
+  const runeCard = $("#rune-card");
+  const runeChar = $("#rune-char");
+  const ringFg = $("#ring-fg");
+  const goblin = $("#goblin");
+  const heartsEl = $("#hearts");
+  const hpBar = $("#hp-bar");
+  const runeCount = $("#rune-count");
+  const hurt = $("#hurt");
+
+  const RUNES = [
+    { ch: "月", py: "yuè", tr: "луна" },
+    { ch: "夕", py: "xī", tr: "вечер" },
+    { ch: "名", py: "míng", tr: "имя" },
+    { ch: "朋", py: "péng", tr: "друг" },
+    { ch: "用", py: "yòng", tr: "использовать" },
+    { ch: "有", py: "yǒu", tr: "иметь" },
+    { ch: "自", py: "zì", tr: "сам" },
+    { ch: "明", py: "míng", tr: "свет" },
+    { ch: "息", py: "xī", tr: "дыхание" }
+  ];
+
+  const FAMILY = {
+    "yuè": ["yuē", "yuán", "yuě", "yún"],
+    "xī": ["xí", "xì", "xǐ", "xīn"],
+    "míng": ["mìng", "mǐn", "mín", "měng"],
+    "péng": ["píng", "páng", "pén", "fēng"],
+    "yòng": ["yōng", "yǒng", "yāng", "yóng"],
+    "yǒu": ["yóu", "yòu", "yū", "yǒng"],
+    "zì": ["zǐ", "cì", "zhī", "zī"]
+  };
+
+  const GENERIC = ["mā", "hé", "shān", "yǔ", "huǒ", "tián", "kǒu", "rì"];
+
+  const SLOTS = {
+    3: [[.18, .34], [.50, .66], [.82, .34]],
+    4: [[.13, .30], [.38, .70], [.63, .30], [.88, .68]],
+    5: [[.09, .28], [.30, .68], [.50, .26], [.72, .66], [.91, .32]]
+  };
+
+  const STAGES = [
+    { opts: 3, time: 12, amp: 5, rt: 0, swap: 0 },
+    { opts: 3, time: 11, amp: 6, rt: 0, swap: 0 },
+    { opts: 4, time: 10, amp: 8, rt: 2800, swap: 0 },
+    { opts: 4, time: 9, amp: 11, rt: 2400, swap: 0 },
+    { opts: 4, time: 8, amp: 14, rt: 2000, swap: 0 },
+    { opts: 4, time: 7, amp: 18, rt: 1600, swap: 0 },
+    { opts: 5, time: 6, amp: 22, rt: 1300, swap: 0 },
+    { opts: 5, time: 5, amp: 26, rt: 1000, swap: 2600 },
+    { opts: 5, time: 4.5, amp: 32, rt: 750, swap: 1900 }
+  ];
+
+  const C = 2 * Math.PI * 46;
+  const HEART_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#ff5ce1" d="M12 20.3C7 16.6 3 13.2 3 9.3 3 6.4 5.2 4.5 7.6 4.5c1.7 0 3.3.9 4.4 2.4 1.1-1.5 2.7-2.4 4.4-2.4 2.4 0 4.6 1.9 4.6 4.8 0 3.9-4 7.3-9 11Z"/></svg>';
+  const AXE_SVG = '<svg viewBox="0 0 140 60" aria-hidden="true"><defs><linearGradient id="axe-blade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8fb6d8"/><stop offset=".55" stop-color="#eafff8"/><stop offset="1" stop-color="#4ff2d6"/></linearGradient></defs><circle cx="5" cy="30" r="5" fill="#4ff2d6"/><rect x="4" y="26" width="88" height="8" rx="4" fill="#2b2050" stroke="rgba(79,242,214,.55)" stroke-width="1.6"/><path d="M92 6 C118 8 134 18 136 30 C134 42 118 52 92 54 C101 44 104 30 92 6 Z" fill="url(#axe-blade)" stroke="#4ff2d6" stroke-width="2"/><path d="M98 15 C110 20 116 25 118 30" fill="none" stroke="#ffffff" stroke-width="1.6" opacity=".65"/></svg>';
+
+  /* ---------- audio ---------- */
+
+  const AudioFX = (() => {
+    let ctx = null;
+    const ensure = () => {
+      if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return false; } }
+      if (ctx && ctx.state === "suspended") ctx.resume();
+      return !!ctx;
+    };
+    const tone = (f, d, type, v, when, f2) => {
+      if (!ensure()) return;
+      const t = ctx.currentTime + (when || 0);
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(f, t);
+      if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(v || 0.12, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(g).connect(ctx.destination);
+      o.start(t); o.stop(t + d + 0.05);
+    };
+    return {
+      init: ensure,
+      good() { tone(660, .12, "triangle", .11); tone(880, .14, "triangle", .11, .07); tone(1320, .2, "sine", .09, .14); },
+      bad() { tone(160, .25, "sawtooth", .11, 0, 70); tone(90, .3, "square", .07, .05, 50); },
+      growl() { tone(75, .4, "sawtooth", .1, 0, 45); },
+      whoosh() { tone(620, .13, "sine", .05, 0, 160); tone(1100, .09, "sine", .03, 0, 320); },
+      hit() { tone(220, .1, "square", .09, 0, 120); },
+      win() { [523, 659, 784, 1046].forEach((f, i) => tone(f, .18, "triangle", .11, i * .12)); tone(1568, .45, "sine", .09, .5); },
+      lose() { [330, 262, 196, 147].forEach((f, i) => tone(f, .22, "sawtooth", .08, i * .14)); }
+    };
+  })();
+
+  /* ---------- state ---------- */
+
+  let state = "start";
+  let runeIdx = 0;
+  let hearts = 3;
+  let hpG = 9;
+  let mistakes = 0;
+  let enraged = false;
+  let busy = false;
+
+  let timerOn = false;
+  let tStart = 0;
+  let tDur = 1;
+
+  let flies = [];
+  let swapNext = Infinity;
+  let rafId = 0;
+  let fliesFrozen = false;
+
+  /* ---------- helpers ---------- */
+
+  const shuffle = (a) => {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const pickDistractors = (py, n) => {
+    const fam = (FAMILY[py] || []).slice();
+    const res = fam.slice(0, n);
+    if (res.length < n) {
+      const pool = GENERIC.filter((g) => g !== py && !res.includes(g));
+      shuffle(pool);
+      res.push(...pool.slice(0, n - res.length));
+    }
+    return res;
+  };
+
+  const showScreen = (id) => {
+    ["start-screen", "battle-screen", "victory-screen", "defeat-screen"].forEach((s) => {
+      document.getElementById(s).hidden = (s !== id);
+    });
+  };
+
+  const relCenter = (el) => {
+    const r = el.getBoundingClientRect();
+    const s = scene.getBoundingClientRect();
+    return { x: r.left - s.left + r.width / 2, y: r.top - s.top + r.height / 2 };
+  };
+
+  const replay = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+
+  /* ---------- hud ---------- */
+
+  const buildHud = () => {
+    heartsEl.innerHTML = HEART_SVG + HEART_SVG + HEART_SVG;
+    hpBar.innerHTML = "<span></span>".repeat(9);
+    updateHearts();
+    updateHp();
+  };
+
+  const updateHearts = (popIdx) => {
+    [...heartsEl.children].forEach((h, i) => {
+      h.classList.toggle("lost", i >= hearts);
+      if (i === popIdx) replay(h, "pop");
+    });
+  };
+
+  const updateHp = () => {
+    [...hpBar.children].forEach((s, i) => s.classList.toggle("off", i >= hpG));
+  };
+
+  const updateCount = () => {
+    runeCount.textContent = "Руна " + (runeIdx + 1) + "/9";
+  };
+
+  /* ---------- timer ---------- */
+
+  const startTimer = (sec) => {
+    tDur = sec * 1000;
+    tStart = performance.now();
+    timerOn = true;
+    ringFg.style.strokeDashoffset = 0;
+    runeCard.classList.remove("low");
+  };
+
+  const stopTimer = () => { timerOn = false; };
+
+  const tickTimer = (now) => {
+    const ratio = Math.min((now - tStart) / tDur, 1);
+    ringFg.style.strokeDashoffset = (C * ratio).toFixed(1);
+    runeCard.classList.toggle("low", ratio > 0.72);
+    if (ratio >= 1) {
+      timerOn = false;
+      goblinStrike("Кольцо погасло — гоблин бьёт!");
+    }
+  };
+
+  /* ---------- fireflies ---------- */
+
+  const buildOptions = (rune) => {
+    const st = STAGES[runeIdx];
+    meadow.innerHTML = "";
+    fliesFrozen = false;
+    const opts = shuffle([rune.py, ...pickDistractors(rune.py, st.opts - 1)]);
+    const order = shuffle(opts.map((_, i) => i));
+    const now = performance.now();
+    flies = opts.map((py, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "fly";
+      b.dataset.py = py;
+      b.setAttribute("aria-label", "Вариант " + py);
+      const dot = document.createElement("span");
+      dot.className = "glow-dot";
+      dot.style.animationDelay = (-Math.random() * 2.3).toFixed(2) + "s";
+      const label = document.createElement("span");
+      label.className = "fly-py";
+      label.textContent = py;
+      b.append(dot, label);
+      b.addEventListener("pointerdown", (e) => {
+        if (e.button !== 0) return;
+        if (onAnswer(b)) fliesFrozen = true;
+      });
+      b.addEventListener("click", () => onAnswer(b));
+      meadow.appendChild(b);
+      return {
+        el: b,
+        slot: order[i],
+        ox: 0, oy: 0, tox: 0, toy: 0,
+        tr: now + 500 + Math.random() * st.rt
+      };
+    });
+    swapNext = st.swap ? now + st.swap + 800 : Infinity;
+  };
+
+  const moveFlies = (now) => {
+    if (fliesFrozen) return;
+    const st = STAGES[runeIdx];
+    if (!st) return;
+    const W = meadow.clientWidth;
+    const H = meadow.clientHeight;
+    const slots = SLOTS[st.opts];
+    if (st.swap && now >= swapNext && flies.length > 1) {
+      const a = Math.floor(Math.random() * flies.length);
+      let b = Math.floor(Math.random() * flies.length);
+      if (b === a) b = (b + 1) % flies.length;
+      const t = flies[a].slot;
+      flies[a].slot = flies[b].slot;
+      flies[b].slot = t;
+      swapNext = now + st.swap * (0.75 + Math.random() * 0.5);
+    }
+    for (const f of flies) {
+      if (st.rt && now >= f.tr) {
+        f.tox = (Math.random() * 2 - 1) * st.amp;
+        f.toy = (Math.random() * 2 - 1) * st.amp * 0.7;
+        f.tr = now + st.rt * (0.7 + Math.random() * 0.6);
+      }
+      f.ox += (f.tox - f.ox) * 0.06;
+      f.oy += (f.toy - f.oy) * 0.06;
+      const base = slots[f.slot] || [.5, .5];
+      const x = Math.max(38, Math.min(W - 38, base[0] * W + f.ox));
+      const y = Math.max(24, Math.min(H - 24, base[1] * H + f.oy));
+      f.el.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0) translate(-50%,-50%)";
+    }
+  };
+
+  /* ---------- fx ---------- */
+
+  const axeChop = () => {
+    const c = relCenter(goblin);
+    const w = document.createElement("div");
+    w.className = "axe";
+    w.style.left = (c.x - 74) + "px";
+    w.style.top = (c.y + 34) + "px";
+    w.innerHTML = AXE_SVG;
+    scene.appendChild(w);
+    const svg = w.firstElementChild;
+    AudioFX.whoosh();
+    svg.animate([
+      { transform: "rotate(-98deg)" },
+      { transform: "rotate(16deg)" }
+    ], { duration: 260, easing: "cubic-bezier(.3,.6,.8,1)", fill: "forwards" });
+    setTimeout(() => {
+      svg.animate([
+        { transform: "rotate(16deg)", opacity: 1 },
+        { transform: "rotate(24deg) translate(-16px,10px)", opacity: 0 }
+      ], { duration: 300, delay: 170, easing: "ease-out", fill: "forwards" });
+    }, 280);
+    setTimeout(() => w.remove(), 780);
+  };
+
+  const spawnSlash = () => {
+    const c = relCenter(goblin);
+    const s = document.createElement("i");
+    s.className = "slash";
+    s.style.left = (c.x - 8) + "px";
+    s.style.top = (c.y - 18) + "px";
+    scene.appendChild(s);
+    s.animate([
+      { transform: "rotate(-42deg) scale(.5)", opacity: 1 },
+      { transform: "rotate(-30deg) scale(1.2)", opacity: 0 }
+    ], { duration: 380, easing: "ease-out" }).onfinish = () => s.remove();
+  };
+
+  const burstDots = (n, cls, spread) => {
+    const c = relCenter(goblin);
+    for (let i = 0; i < n; i++) {
+      const d = document.createElement("i");
+      d.className = cls;
+      d.style.left = c.x + "px";
+      d.style.top = (c.y - 26) + "px";
+      scene.appendChild(d);
+      const a = Math.random() * Math.PI * 2;
+      const r = spread * (0.55 + Math.random() * 0.65);
+      d.animate([
+        { transform: "translate(-50%,-50%) scale(1)", opacity: 1 },
+        { transform: "translate(calc(-50% + " + (Math.cos(a) * r).toFixed(0) + "px),calc(-50% + " + (Math.sin(a) * r).toFixed(0) + "px)) scale(.2)", opacity: 0 }
+      ], { duration: 480 + Math.random() * 260, easing: "cubic-bezier(.2,.7,.4,1)" }).onfinish = () => d.remove();
+    }
+  };
+
+  const dmgFloat = () => {
+    const c = relCenter(goblin);
+    const d = document.createElement("b");
+    d.className = "dmg";
+    d.textContent = "−1";
+    d.style.left = (c.x + 30) + "px";
+    d.style.top = (c.y - 48) + "px";
+    scene.appendChild(d);
+    d.animate([
+      { transform: "translate(-50%,0)", opacity: 1 },
+      { transform: "translate(-50%,-42px)", opacity: 0 }
+    ], { duration: 760, easing: "ease-out" }).onfinish = () => d.remove();
+  };
+
+  const thornThrow = () => {
+    const from = relCenter(goblin);
+    const to = { x: scene.clientWidth / 2 + (Math.random() * 60 - 30), y: scene.clientHeight + 26 };
+    const t = document.createElement("div");
+    t.className = "thorn";
+    t.style.left = from.x + "px";
+    t.style.top = (from.y - 12) + "px";
+    scene.appendChild(t);
+    const dx = to.x - from.x;
+    const dy = to.y - from.y + 12;
+    const ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    t.animate([
+      { transform: "translate(-50%,-50%) rotate(" + ang + "deg) scale(.7)", opacity: 1 },
+      { transform: "translate(calc(-50% + " + dx + "px),calc(-50% + " + dy + "px)) rotate(" + ang + "deg) scale(1.15)", opacity: 1 }
+    ], { duration: 450, easing: "cubic-bezier(.4,0,1,1)" }).onfinish = () => t.remove();
+  };
+
+  /* ---------- round flow ---------- */
+
+  const ensureLoop = () => { if (!rafId) rafId = requestAnimationFrame(loop); };
+
+  const loop = () => {
+    if (state !== "battle") { rafId = 0; return; }
+    const now = performance.now();
+    if (timerOn) tickTimer(now);
+    moveFlies(now);
+    rafId = requestAnimationFrame(loop);
+  };
+
+  const nextRune = () => {
+    const rune = RUNES[runeIdx];
+    runeChar.textContent = rune.ch;
+    runeCard.classList.remove("burst", "low");
+    updateCount();
+    buildOptions(rune);
+    startTimer(STAGES[runeIdx].time);
+    busy = false;
+    feedback.textContent = "Поймай светлячка с верным пиньинем!";
+    ensureLoop();
+  };
+
+  const onAnswer = (btn) => {
+    if (state !== "battle" || busy || !timerOn) return false;
+    const rune = RUNES[runeIdx];
+    stopTimer();
+    busy = true;
+    if (btn.dataset.py === rune.py) {
+      btn.classList.add("good");
+      flies.forEach((f) => { if (f.el !== btn) f.el.classList.add("dim"); });
+      strikeGoblin(rune);
+    } else {
+      btn.classList.add("bad");
+      const good = flies.find((f) => f.el.dataset.py === rune.py);
+      if (good) good.el.classList.add("hint");
+      flies.forEach((f) => { if (f !== good && f.el !== btn) f.el.classList.add("dim"); });
+      goblinStrike("Мимо! Гоблин бьёт…");
+    }
+    return true;
+  };
+
+  const strikeGoblin = (rune) => {
+    AudioFX.good();
+    replay(runeCard, "burst");
+    axeChop();
+    setTimeout(() => {
+      replay(goblin, "hit");
+      AudioFX.hit();
+      spawnSlash();
+      burstDots(8, "spark", 80);
+      dmgFloat();
+      hpG--;
+      updateHp();
+      let msg = rune.ch + " — " + rune.py + " · " + rune.tr + ". Топор рубит гоблина!";
+      if (hpG <= 5 && !enraged) {
+        enraged = true;
+        battle.classList.add("enraged");
+        AudioFX.growl();
+        msg = "Гоблин В ЯРОСТИ! " + msg;
+      }
+      feedback.textContent = msg;
+    }, 290);
+    setTimeout(() => {
+      if (hpG <= 0) goblinDie();
+      else { runeIdx++; nextRune(); }
+    }, 1150);
+  };
+
+  const goblinStrike = (msg) => {
+    feedback.textContent = msg;
+    replay(goblin, "attack");
+    setTimeout(thornThrow, 330);
+    setTimeout(() => {
+      mistakes++;
+      hearts--;
+      AudioFX.bad();
+      replay(hurt, "on");
+      replay(shell, "quake");
+      updateHearts(hearts);
+    }, 780);
+    setTimeout(() => {
+      if (hearts <= 0) { defeat(); return; }
+      feedback.textContent = "Сердце потеряно! Та же руна — попробуй ещё.";
+      buildOptions(RUNES[runeIdx]);
+      startTimer(STAGES[runeIdx].time);
+      busy = false;
+    }, 1120);
+  };
+
+  const goblinDie = () => {
+    state = "dying";
+    stopTimer();
+    AudioFX.win();
+    goblin.classList.add("dying");
+    burstDots(16, "spark big", 130);
+    setTimeout(victory, 950);
+  };
+
+  const victory = () => {
+    state = "victory";
+    $("#victory-stats").textContent = "Сердец осталось: " + hearts + " · Промахов: " + mistakes;
+    showScreen("victory-screen");
+  };
+
+  const defeat = () => {
+    state = "defeat";
+    stopTimer();
+    AudioFX.lose();
+    $("#defeat-stats").textContent = "Рун разбито: " + (9 - hpG) + " из 9 · Промахов: " + mistakes;
+    showScreen("defeat-screen");
+  };
+
+  const restart = () => {
+    runeIdx = 0;
+    hearts = 3;
+    hpG = 9;
+    mistakes = 0;
+    enraged = false;
+    busy = false;
+    battle.classList.remove("enraged");
+    goblin.classList.remove("dying", "hit", "attack");
+    buildHud();
+    state = "battle";
+    showScreen("battle-screen");
+    nextRune();
+  };
+
+  /* ---------- wiring ---------- */
+
+  $("#start-btn").addEventListener("click", () => { AudioFX.init(); restart(); });
+  $("#again-btn").addEventListener("click", restart);
+  $("#retry-btn").addEventListener("click", restart);
+
+  document.addEventListener("keydown", (e) => {
+    if (state !== "battle" || busy) return;
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= flies.length) flies[n - 1].el.click();
+  });
+
+  buildHud();
+})();
+</script>
+</body>
+</html>
