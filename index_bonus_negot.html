@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0f2e">
+<title>Ночной базар — убедите покупателя</title>
+<style>
+:root{
+  --night:#0a0f2e;
+  --night-2:#141c4d;
+  --panel:#101740;
+  --text:#ffe9c4;
+  --muted:#a9a3d6;
+  --amber:#ffcf7e;
+  --amber-hot:#ff9d2e;
+  --pink:#ff7ab0;
+  --red:#e2493b;
+  --paper:#f7e7c3;
+  --ink:#2a1010;
+  --green:#7dff9a;
+  --cjk:"KaiTi","STKaiti","Kaiti SC","DFKai-SB","AR PL UKai CN","Noto Serif CJK SC","MS Gothic",serif;
+  --ui:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{min-width:280px;min-height:100%;margin:0}
+body{
+  min-height:100vh;
+  display:grid;place-items:center;
+  padding:clamp(6px,1.6vw,12px);
+  color:var(--text);
+  font-family:var(--ui);
+  background:
+    radial-gradient(700px 420px at 80% -10%,rgba(255,140,90,.10),transparent 60%),
+    radial-gradient(600px 500px at -10% 110%,rgba(90,120,255,.12),transparent 60%),
+    radial-gradient(2px 2px at 12% 22%,rgba(255,255,255,.5),transparent),
+    radial-gradient(2px 2px at 30% 8%,rgba(255,255,255,.4),transparent),
+    radial-gradient(2px 2px at 55% 16%,rgba(255,255,255,.55),transparent),
+    radial-gradient(2px 2px at 74% 6%,rgba(255,255,255,.35),transparent),
+    radial-gradient(2px 2px at 90% 20%,rgba(255,255,255,.5),transparent),
+    radial-gradient(2px 2px at 22% 40%,rgba(255,255,255,.3),transparent),
+    radial-gradient(2px 2px at 84% 44%,rgba(255,255,255,.35),transparent),
+    linear-gradient(180deg,#0c1238 0%,var(--night) 55%,#070b22 100%);
+}
+@supports (height:100svh){body{min-height:100svh}}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+
+.stage{
+  position:relative;
+  width:min(100%,430px);
+  height:min(calc(100vh - 12px),720px);
+  min-height:520px;
+  display:flex;flex-direction:column;
+  padding:clamp(10px,2.4vw,16px);
+  border:1px solid rgba(255,175,90,.18);
+  border-radius:14px;
+  background:linear-gradient(170deg,rgba(22,30,80,.72),rgba(10,15,46,.88));
+  box-shadow:0 18px 50px rgba(0,0,10,.6),inset 0 0 60px rgba(60,40,140,.14);
+  overflow:hidden;
+}
+@supports (height:100svh){.stage{height:min(calc(100svh - 12px),720px)}}
+
+.garland{position:absolute;top:0;left:0;right:0;width:100%;height:36px;z-index:2;pointer-events:none}
+.garland path{stroke:#3a2a55;stroke-width:2;fill:none}
+.garland circle{animation:blink 2.6s ease-in-out infinite}
+.garland circle:nth-child(odd){animation-delay:1.3s}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.45}}
+
+.lantern{
+  position:absolute;top:30px;z-index:2;width:26px;height:34px;
+  border-radius:11px;
+  background:radial-gradient(circle at 50% 34%,#ff8f6b,#d43a2f 62%,#8f1f1c);
+  box-shadow:0 0 18px 4px rgba(255,110,70,.35),inset 0 -5px 8px rgba(90,10,10,.5);
+  transform-origin:top center;
+  animation:sway 5.5s ease-in-out infinite alternate;
+}
+.lantern::before{content:"";position:absolute;top:-12px;left:50%;width:2px;height:12px;margin-left:-1px;background:#5a4a2a}
+.lantern::after{content:"";position:absolute;bottom:-8px;left:50%;width:4px;height:8px;margin-left:-2px;background:#e8b34a;box-shadow:0 3px 7px rgba(255,190,90,.7)}
+.lantern-l{left:14px}
+.lantern-r{right:14px;animation-delay:2.7s;animation-duration:6.4s}
+@keyframes sway{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+
+.yj{
+  position:absolute;top:72px;right:12px;z-index:2;
+  writing-mode:vertical-rl;
+  font-family:var(--cjk);
+  font-size:13px;letter-spacing:.35em;
+  color:var(--pink);
+  border:1px solid rgba(255,122,176,.55);
+  border-radius:8px;
+  padding:7px 3px;
+  background:rgba(255,90,160,.06);
+  text-shadow:0 0 8px rgba(255,122,176,.9),0 0 18px rgba(255,122,176,.5);
+  animation:neon 3.4s ease-in-out infinite;
+}
+@keyframes neon{0%,100%{opacity:1}50%{opacity:.6}}
+
+.screen{position:relative;z-index:3;flex:1;display:flex;flex-direction:column;min-height:0}
+
+#screen-start{align-items:center;justify-content:center;text-align:center;gap:clamp(8px,1.8vh,14px);padding-top:26px}
+.eyebrow{margin:0;color:var(--muted);font-size:.74rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+h1{
+  margin:0;font-size:clamp(1.7rem,7vw,2.5rem);line-height:1.05;letter-spacing:.04em;
+  color:#ffd98f;
+  text-shadow:0 0 8px rgba(255,190,90,.55),0 0 26px rgba(255,140,50,.35),0 0 60px rgba(255,110,40,.25);
+  animation:flicker 4.5s linear infinite;
+}
+@keyframes flicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.75}94%{opacity:1}96%{opacity:.85}97%{opacity:1}}
+.start-sub{margin:0;color:var(--text);font-weight:600}
+.apple{display:block;filter:drop-shadow(0 10px 18px rgba(255,80,50,.25))}
+.apple-lg{width:clamp(110px,30vw,150px);margin:4px 0}
+.rules{
+  margin:0;max-width:330px;text-align:left;
+  color:var(--muted);font-size:.85rem;line-height:1.55;
+  border:1px dashed rgba(255,175,90,.3);
+  border-radius:10px;padding:10px 12px;
+  background:rgba(10,15,46,.45);
+}
+.rules b{color:var(--amber)}
+
+.btn{
+  color:#1c1204;font-weight:800;letter-spacing:.03em;
+  padding:13px 34px;
+  border:2px solid #7a4a12;border-radius:12px;
+  background:linear-gradient(180deg,#ffd76a,#ffab2e 60%,#f28a12);
+  box-shadow:0 5px 0 #8a520f,0 10px 22px rgba(255,150,50,.3);
+  cursor:pointer;
+  transition:transform .12s,box-shadow .12s,filter .12s;
+}
+.btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #8a520f}
+
+#screen-game{gap:clamp(7px,1.4vh,12px);justify-content:space-between}
+.scene{position:relative;height:clamp(104px,17vh,126px);flex:none}
+.buyer{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:96px;z-index:1}
+.b-head{position:relative;width:72px;height:72px;margin:0 auto;border-radius:50%;background:linear-gradient(180deg,#ffd9a8,#f2bd7e)}
+.b-head::before{content:"";position:absolute;top:-7px;left:-5px;right:-5px;height:32px;border-radius:50%;background:#3a2417}
+.b-head::after{content:"";position:absolute;top:12px;left:50%;width:3px;height:10px;margin-left:8px;border-radius:2px;background:#3a2417;opacity:.5}
+.b-brow,.b-eye,.b-mouth,.b-blush{position:absolute;transition:all .25s ease}
+.b-brow{top:25px;width:15px;height:3px;border-radius:2px;background:#3a2417}
+.b-brow-l{left:14px}
+.b-brow-r{right:14px}
+.b-eye{top:34px;width:9px;height:9px;border-radius:50%;background:#241105}
+.b-eye-l{left:21px}
+.b-eye-r{right:21px}
+.b-mouth{left:50%;bottom:15px;width:22px;height:9px;transform:translateX(-50%);border-bottom:3px solid #7a3b20;border-radius:0 0 14px 14px}
+.b-blush-l{left:6px;top:46px}
+.b-blush-r{right:6px;top:46px}
+.b-blush{width:11px;height:6px;border-radius:50%;background:#ff8f8f;opacity:0}
+.b-body{width:96px;height:30px;margin-top:-7px;border-radius:18px 18px 6px 6px;background:linear-gradient(180deg,#4a5ba8,#38478a)}
+.buyer{filter:drop-shadow(0 6px 10px rgba(0,0,0,.45))}
+
+.buyer[data-mood="angry"] .b-brow-l{transform:rotate(20deg) translateY(3px)}
+.buyer[data-mood="angry"] .b-brow-r{transform:rotate(-20deg) translateY(3px)}
+.buyer[data-mood="angry"] .b-eye{transform:scaleY(.55)}
+.buyer[data-mood="angry"] .b-eye-l{transform:scaleY(.55) translateY(2px)}
+.buyer[data-mood="angry"] .b-mouth{width:20px;height:7px;border:0;border-top:3px solid #7a3b20;border-radius:8px 8px 0 0;transform:translateX(-50%) translateY(3px)}
+.buyer[data-mood="skeptic"] .b-brow-l{transform:translateY(-5px) rotate(-10deg)}
+.buyer[data-mood="skeptic"] .b-mouth{width:15px;height:3px;border:0;background:#7a3b20;border-radius:2px}
+.buyer[data-mood="think"] .b-brow-r{transform:translateY(-4px)}
+.buyer[data-mood="think"] .b-eye-l{transform:translate(-2px,-3px)}
+.buyer[data-mood="think"] .b-eye-r{transform:translate(-2px,-3px)}
+.buyer[data-mood="think"] .b-mouth{width:9px;height:9px;border:3px solid #7a3b20;border-radius:50%}
+.buyer[data-mood="pleased"] .b-blush{opacity:.4}
+.buyer[data-mood="pleased"] .b-brow{transform:translateY(-2px)}
+.buyer[data-mood="wow"] .b-brow{transform:translateY(-6px)}
+.buyer[data-mood="wow"] .b-eye{transform:scale(1.4)}
+.buyer[data-mood="wow"] .b-mouth{width:14px;height:13px;border:3px solid #7a3b20;border-radius:50%}
+.buyer[data-mood="happy"] .b-brow{transform:translateY(-3px)}
+.buyer[data-mood="happy"] .b-mouth{width:27px;height:13px;border-bottom-width:4px}
+.buyer[data-mood="happy"] .b-blush{opacity:.75}
+.buyer[data-mood="happy"] .b-eye{height:5px;transform:translateY(-1px)}
+.b-head.nod{animation:no-nod .5s}
+@keyframes no-nod{0%,100%{transform:rotate(0)}30%{transform:rotate(-6deg)}65%{transform:rotate(5deg)}}
+
+.bubble{
+  position:absolute;left:0;top:2px;z-index:2;
+  max-width:46%;
+  padding:8px 11px;
+  border:1px solid rgba(255,190,110,.5);
+  border-radius:12px;
+  background:linear-gradient(180deg,#fff4dc,#f3e2b8);
+  color:#3a2410;
+  font-size:.8rem;font-weight:700;line-height:1.35;
+  box-shadow:0 6px 16px rgba(0,0,10,.4);
+}
+.bubble::after{
+  content:"";position:absolute;right:-7px;top:22px;
+  border:7px solid transparent;border-left-color:#f3e2b8;border-right:0;
+}
+.bubble.pop{animation:bpop .25s ease-out}
+@keyframes bpop{from{transform:scale(.55);opacity:0}to{transform:scale(1);opacity:1}}
+
+.meter-block{flex:none;display:flex;flex-direction:column;gap:4px}
+.meter-top{display:flex;flex-wrap:wrap;align-items:center;gap:3px 7px;font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.meter-top>span{white-space:nowrap}
+.apple-mini{width:20px;height:20px;flex:none;filter:drop-shadow(0 0 6px rgba(255,120,80,.5))}
+.meter-count{margin-left:auto;color:var(--amber);letter-spacing:.02em;text-transform:none}
+.meter{
+  position:relative;height:22px;border-radius:11px;
+  border:1px solid rgba(255,175,90,.4);
+  background:#0a0e2c;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.7),0 0 12px rgba(255,150,60,.12);
+  overflow:hidden;
+}
+.meter-fill{
+  height:100%;width:0%;
+  border-radius:11px;
+  background:linear-gradient(90deg,#c96a12,var(--amber-hot) 55%,#ffd76a);
+  box-shadow:0 0 14px rgba(255,160,50,.8);
+  transition:width .55s cubic-bezier(.3,.8,.3,1);
+}
+.meter-val{
+  position:absolute;right:9px;top:0;line-height:22px;
+  font-size:.74rem;font-weight:800;color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,.8);
+}
+.meter.bump{animation:bump .4s}
+@keyframes bump{35%{transform:scale(1.035)}}
+
+.hanzi-card{
+  position:relative;flex:1;min-height:110px;max-height:180px;
+  margin:14px auto 22px;width:min(78%,240px);
+  display:grid;place-items:center;
+  border:3px solid #a3271f;border-radius:14px;
+  background:
+    radial-gradient(circle at 50% 0,rgba(255,120,60,.16),transparent 60%),
+    linear-gradient(180deg,#fdf0cd,var(--paper) 60%,#ecd8a4);
+  box-shadow:0 14px 30px rgba(0,0,10,.5),inset 0 0 0 1px rgba(255,240,200,.6),inset 0 0 34px rgba(180,90,40,.16);
+  transform-origin:top center;
+  animation:card-sway 6s ease-in-out infinite alternate;
+}
+@keyframes card-sway{from{transform:rotate(-.8deg)}to{transform:rotate(.8deg)}}
+.hanzi-card::before{content:"";position:absolute;top:-16px;left:50%;width:2px;height:16px;margin-left:-1px;background:rgba(255,200,120,.5)}
+.hanzi-card::after{
+  content:"";position:absolute;bottom:-20px;left:50%;width:6px;height:18px;margin-left:-3px;
+  border-radius:3px;background:#c33;box-shadow:0 4px 8px rgba(0,0,0,.4);
+}
+.hanzi{
+  font-family:var(--cjk);
+  font-size:clamp(64px,17vh,100px);line-height:1;
+  color:var(--ink);
+  text-shadow:0 0 20px rgba(255,110,50,.3);
+  user-select:none;
+}
+.hanzi-card.pop{animation:card-pop .5s}
+@keyframes card-pop{30%{transform:scale(1.06)}}
+
+.argline{
+  flex:none;min-height:20px;
+  text-align:center;font-size:.8rem;font-weight:700;
+  opacity:0;transition:opacity .3s;
+}
+.argline.show{opacity:1}
+.argline.good{color:#b6ffcc}
+.argline.bad{color:#ffb3b3}
+
+.answers{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ans{
+  min-height:50px;
+  padding:8px 10px;
+  border:1px solid rgba(255,177,78,.4);
+  border-radius:11px;
+  background:linear-gradient(180deg,#1b2450,#131a3e);
+  color:#ffe3b0;
+  font-size:.9rem;font-weight:700;line-height:1.25;
+  cursor:pointer;
+  transition:transform .12s,border-color .12s,box-shadow .12s,opacity .2s;
+}
+.ans:hover{border-color:var(--amber);box-shadow:0 0 14px rgba(255,180,80,.25);transform:translateY(-1px)}
+.ans:disabled{cursor:default}
+.ans.dim{opacity:.45;transform:none;box-shadow:none}
+.ans.good{border-color:var(--green);background:#123320;color:#d2ffe0;box-shadow:0 0 16px rgba(90,255,140,.35)}
+.ans.bad{border-color:#ff5d5d;background:#3a1520;color:#ffd6d6;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.stage.shake{animation:stage-shake .45s}
+@keyframes stage-shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}35%{transform:translateX(6px)}55%{transform:translateX(-4px)}75%{transform:translateX(2px)}}
+
+#screen-win{align-items:center;justify-content:center;text-align:center;gap:clamp(8px,1.6vh,13px)}
+h2{margin:0;font-size:clamp(1.4rem,5.5vw,1.9rem);color:#ffd98f;text-shadow:0 0 10px rgba(255,180,80,.6),0 0 30px rgba(255,120,40,.35)}
+.win-apple-wrap{position:relative;width:clamp(92px,24vw,120px)}
+.stamp{
+  position:absolute;top:6px;left:50%;z-index:2;
+  transform:translateX(-50%) rotate(-14deg);
+  padding:2px 12px;
+  border:3px solid #ff4d4d;border-radius:7px;
+  color:#ff4d4d;font-weight:900;letter-spacing:.22em;text-transform:uppercase;font-size:.85rem;
+  background:rgba(20,4,4,.55);
+  text-shadow:0 0 10px rgba(255,60,60,.7);
+}
+.receipt{
+  width:min(88%,300px);
+  padding:12px 14px 10px;
+  border:1px solid rgba(255,220,150,.35);
+  border-radius:4px;
+  background:linear-gradient(180deg,#fdf3d7,#f1dfae);
+  color:#4a3212;
+  font-size:.82rem;line-height:1.5;
+  box-shadow:0 12px 30px rgba(0,0,10,.55);
+}
+.receipt .shop{font-weight:900;letter-spacing:.08em;text-align:center}
+.receipt .row{display:flex;justify-content:space-between;gap:10px}
+.receipt .row span:last-child{text-align:right;white-space:nowrap}
+.code-caption{
+  margin:9px 0 4px;padding-top:8px;
+  border-top:2px dashed rgba(120,80,30,.35);
+  text-align:center;font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#7a5518;
+}
+.code-digits{display:flex;justify-content:center;gap:9px;padding:2px 0 6px}
+.code-digits span{
+  font-size:1.9rem;font-weight:900;color:#a3271f;
+  min-width:34px;padding:2px 4px;
+  border-bottom:2px solid rgba(163,39,31,.4);
+  opacity:0;transform:scale(2.2);filter:blur(5px);
+  animation:digit .55s cubic-bezier(.2,.9,.3,1.3) forwards;
+  animation-delay:var(--d);
+  text-shadow:0 0 12px rgba(255,80,40,.25);
+}
+@keyframes digit{to{opacity:1;transform:scale(1);filter:blur(0)}}
+.coin-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
+.coin{
+  position:absolute;top:-26px;
+  width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle at 34% 32%,#ffefb5,#f0b32c 60%,#b97c10);
+  box-shadow:0 0 8px rgba(255,190,70,.8);
+  animation:coin-fall linear forwards;
+  animation-duration:var(--t);animation-delay:var(--dl);
+}
+@keyframes coin-fall{
+  from{transform:translateY(-20px) rotateY(0);opacity:1}
+  to{transform:translateY(480px) rotateY(560deg);opacity:.15}
+}
+.fly-coin{
+  position:absolute;width:16px;height:16px;border-radius:50%;z-index:6;
+  background:radial-gradient(circle at 34% 32%,#ffefb5,#f0b32c 62%,#b97c10);
+  box-shadow:0 0 10px rgba(255,190,70,.9);
+  transition:transform .6s cubic-bezier(.3,.7,.4,1),opacity .6s;
+  pointer-events:none;
+}
+@media (max-height:600px){
+  .scene{height:96px}
+  .hanzi{font-size:clamp(54px,15vh,84px)}
+  .answers{gap:6px}
+  .ans{min-height:44px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="appleDef" viewBox="0 0 120 120">
+    <defs>
+      <radialGradient id="aplG" cx="38%" cy="30%" r="75%">
+        <stop offset="0%" stop-color="#ff9d72"/>
+        <stop offset="45%" stop-color="#ee3d2c"/>
+        <stop offset="100%" stop-color="#a51414"/>
+      </radialGradient>
+      <mask id="biteM">
+        <rect width="120" height="120" fill="#fff"/>
+        <circle cx="92" cy="40" r="16" fill="#000"/>
+        <circle cx="103" cy="52" r="8" fill="#000"/>
+      </mask>
+    </defs>
+    <g mask="url(#biteM)">
+      <path d="M60,30 C38,12 12,28 14,60 C16,90 40,112 60,110 C80,112 104,90 106,60 C108,28 82,12 60,30 Z" fill="url(#aplG)"/>
+      <ellipse cx="42" cy="46" rx="9" ry="14" fill="#ffffff" opacity="0.32" transform="rotate(-18 42 46)"/>
+    </g>
+    <circle cx="92" cy="40" r="13" fill="#f6e0b0" stroke="#d9ab6a" stroke-width="1.5"/>
+    <circle cx="103" cy="52" r="6.5" fill="#f6e0b0" stroke="#d9ab6a" stroke-width="1.5"/>
+    <path d="M60,28 C60,17 64,10 71,6" stroke="#5a3a1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M70,14 C82,2 97,7 97,7 C97,22 84,28 73,22 C70,20 69,17 70,14 Z" fill="#4c9a3a"/>
+    <path d="M76,12 C86,8 92,9 94,10" stroke="#2e6b24" stroke-width="2" fill="none"/>
+  </symbol>
+</svg>
+
+<div class="stage" id="stage">
+  <svg class="garland" viewBox="0 0 320 36" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,6 Q160,34 320,6"/>
+    <circle cx="40" cy="13" r="4" fill="#ffd27a"/>
+    <circle cx="80" cy="18" r="4" fill="#ff8fb0"/>
+    <circle cx="120" cy="21" r="4" fill="#8fd8ff"/>
+    <circle cx="160" cy="22" r="4" fill="#a2ff9e"/>
+    <circle cx="200" cy="21" r="4" fill="#ffd27a"/>
+    <circle cx="240" cy="18" r="4" fill="#ff8fb0"/>
+    <circle cx="280" cy="13" r="4" fill="#8fd8ff"/>
+  </svg>
+  <div class="lantern lantern-l"></div>
+  <div class="lantern lantern-r"></div>
+  <div class="yj" aria-hidden="true">夜市</div>
+
+  <section class="screen" id="screen-start">
+    <p class="eyebrow">лавка «золотой укус»</p>
+    <h1>НОЧНОЙ БАЗАР</h1>
+    <p class="start-sub">Убеди покупателя заплатить<br>за надкусанное яблоко</p>
+    <svg class="apple apple-lg"><use href="#appleDef"/></svg>
+    <div class="rules">
+      Покупатель упрям: он расщёлкивается только на <b>9 весомых аргументов</b>.
+      Аргумент — это <b>верный перевод иероглифа</b>: <b>+12%</b> готовности платить.<br>
+      Ошибка его злит: <b>−6%</b>, а иероглиф вернётся позже.
+    </div>
+    <button class="btn" id="btn-start">Начать торг</button>
+  </section>
+
+  <section class="screen" id="screen-game" hidden>
+    <div class="scene">
+      <div class="bubble pop" id="bubble">Надкусанное?! Да ни за что!</div>
+      <div class="buyer" data-mood="skeptic" id="buyer">
+        <div class="b-head">
+          <div class="b-brow b-brow-l"></div>
+          <div class="b-brow b-brow-r"></div>
+          <div class="b-eye b-eye-l"></div>
+          <div class="b-eye b-eye-r"></div>
+          <div class="b-blush b-blush-l"></div>
+          <div class="b-blush b-blush-r"></div>
+          <div class="b-mouth"></div>
+        </div>
+        <div class="b-body"></div>
+      </div>
+    </div>
+
+    <div class="meter-block">
+      <div class="meter-top">
+        <svg class="apple-mini"><use href="#appleDef"/></svg>
+        <span>купец готов заплатить</span>
+        <span class="meter-count" id="count">аргументы: 0/9</span>
+      </div>
+      <div class="meter" id="meter">
+        <div class="meter-fill" id="meter-fill"></div>
+        <span class="meter-val" id="meter-val">0%</span>
+      </div>
+    </div>
+
+    <div class="hanzi-card" id="card">
+      <span class="hanzi" id="hanzi">的</span>
+    </div>
+
+    <p class="argline" id="argline"></p>
+
+    <div class="answers" id="answers">
+      <button class="ans"></button>
+      <button class="ans"></button>
+      <button class="ans"></button>
+      <button class="ans"></button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-win" hidden>
+    <h2>Сделка состоялась!</h2>
+    <div class="win-apple-wrap">
+      <div class="stamp">продано</div>
+      <svg class="apple" style="width:100%"><use href="#appleDef"/></svg>
+    </div>
+    <div class="receipt">
+      <div class="shop">ЛАВКА «ЗОЛОТОЙ УКУС»</div>
+      <div class="row"><span>Товар</span><span>яблоко (надкусано)</span></div>
+      <div class="row"><span>Убеждение</span><span>100%</span></div>
+      <div class="code-caption">код покупателя</div>
+      <div class="code-digits" id="code">
+        <span style="--d:.25s">4</span>
+        <span style="--d:.65s">1</span>
+        <span style="--d:1.05s">1</span>
+        <span style="--d:1.45s">4</span>
+      </div>
+    </div>
+    <button class="btn" id="btn-again">Играть снова</button>
+    <div class="coin-layer" id="coins"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+
+var HANZI=[
+  {ch:'术',ru:'метод, приём',arg:'Техника откуса — метод мастеров!'},
+  {ch:'中',ru:'середина, центр',arg:'Укус ровно в центре — знак качества!'},
+  {ch:'右',ru:'правый, право',arg:'Вы получаете право на этот вкус!'},
+  {ch:'心',ru:'сердце',arg:'Гарантия от всего сердца!'},
+  {ch:'必',ru:'обязательно',arg:'Вы обязательно его полюбите!'},
+  {ch:'想',ru:'думать, хотеть',arg:'Подумайте: второго такого нет!'},
+  {ch:'白',ru:'белый',arg:'Мякоть белоснежная — свежайшая!'},
+  {ch:'勺',ru:'ложка',arg:'Приложу ложку — для элегантности!'},
+  {ch:'的',ru:'частица «дэ»',arg:'Моё яблоко — качество моё!'}
+];
+var EXTRA=['солнце','луна','дерево','рот','глаз','друг','имя','вещи','ясный, светлый','использовать','смотреть','сам, себя','толпа','вечер','отдых'];
+var OBJ=[
+  ['Надкусанное?! Да ни за что!','Я не плачу за чужой укус!','Такое и бесплатно не возьмут...'],
+  ['Хм... пока неубедительно.','Докажи, что оно того стоит!','За огрызок — такие деньги?!'],
+  ['Ладно... ты почти убедил...','Ещё чуть-чуть — и я согласен...','Ну же, есть ещё доводы?']
+];
+var REACT=['Хм... звучит логично.','Ну, с этим не поспоришь.','Весомый аргумент...','Интересная мысль...','А вот это сильно!'];
+
+var stage=$('#stage'),screens={start:$('#screen-start'),game:$('#screen-game'),win:$('#screen-win')};
+var bubble=$('#bubble'),buyer=$('#buyer'),meter=$('#meter'),fill=$('#meter-fill'),val=$('#meter-val');
+var count=$('#count'),card=$('#card'),hanzi=$('#hanzi'),argline=$('#argline');
+var ansBtns=Array.prototype.slice.call(document.querySelectorAll('.ans'));
+var coins=$('#coins');
+
+var state={queue:[],current:null,progress:0,solved:{},locked:false};
+
+function rnd(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function shuffle(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=a[i];a[i]=a[j];a[j]=t;
+  }
+  return a;
+}
+function show(name){
+  for(var k in screens){screens[k].hidden=(k!==name)}
+}
+
+var AC=null;
+function initAudio(){
+  if(AC){try{AC.resume()}catch(e){}return}
+  try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}
+}
+function tone(freq,delay,dur,type,gain){
+  if(!AC)return;
+  try{
+    var t=AC.currentTime+delay;
+    var o=AC.createOscillator(),g=AC.createGain();
+    o.type=type||'sine';o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(gain||0.12,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g);g.connect(AC.destination);
+    o.start(t);o.stop(t+dur+0.05);
+  }catch(e){}
+}
+function sndOK(){tone(620,0,.12);tone(880,.1,.16,'sine',.14)}
+function sndNO(){tone(150,0,.24,'square',.06)}
+function sndWIN(){[523,659,784,1047].forEach(function(f,i){tone(f,i*.13,.18,'triangle',.14)})}
+
+function say(text){
+  bubble.textContent=text;
+  bubble.classList.remove('pop');
+  void bubble.offsetWidth;
+  bubble.classList.add('pop');
+}
+function setMood(m){buyer.dataset.mood=m}
+function nod(){
+  var head=buyer.querySelector('.b-head');
+  head.classList.remove('nod');void head.offsetWidth;head.classList.add('nod');
+}
+function moodFor(p){return p<30?'skeptic':(p<65?'think':'pleased')}
+function objFor(p){return OBJ[p<30?0:(p<65?1:2)]}
+
+function updateMeter(){
+  var shown=Math.max(0,Math.min(100,state.progress));
+  fill.style.width=shown+'%';
+  val.textContent=shown+'%';
+}
+function bumpMeter(){
+  meter.classList.remove('bump');
+  void meter.offsetWidth;
+  meter.classList.add('bump');
+}
+function updateCount(){
+  var n=0;
+  for(var k in state.solved){if(state.solved[k])n++}
+  count.textContent='аргументы: '+n+'/9';
+}
+
+function flyCoin(){
+  var a=card.getBoundingClientRect(),b=fill.getBoundingClientRect(),s=stage.getBoundingClientRect();
+  var c=document.createElement('div');
+  c.className='fly-coin';
+  c.style.left=(a.left-s.left+a.width/2-8)+'px';
+  c.style.top=(a.top-s.top+a.height/2-8)+'px';
+  stage.appendChild(c);
+  var dx=(b.right-s.left-10)-(a.left-s.left+a.width/2-8);
+  var dy=(b.top-s.top+b.height/2)-(a.top-s.top+a.height/2-8);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    c.style.transform='translate('+dx+'px,'+dy+'px) scale(.65)';
+    c.style.opacity='0';
+  })});
+  setTimeout(function(){c.remove()},700);
+}
+function spawnCoins(){
+  for(var i=0;i<16;i++){
+    var c=document.createElement('div');
+    c.className='coin';
+    c.style.left=(4+Math.random()*92)+'%';
+    c.style.setProperty('--t',(0.9+Math.random()*1.2)+'s');
+    c.style.setProperty('--dl',(Math.random()*0.9)+'s');
+    coins.appendChild(c);
+  }
+  setTimeout(function(){coins.innerHTML=''},3200);
+}
+
+function showQuestion(){
+  state.locked=false;
+  state.current=state.queue.shift();
+  hanzi.textContent=state.current.ch;
+  card.classList.remove('pop');
+  argline.className='argline';
+  argline.textContent='';
+
+  var pool=HANZI.filter(function(h){return h.ru!==state.current.ru}).map(function(h){return h.ru}).concat(EXTRA);
+  var opts=[state.current.ru];
+  var picked=shuffle(pool.filter(function(r,i,a){return a.indexOf(r)===i}));
+  for(var i=0;opts.length<4&&i<picked.length;i++){opts.push(picked[i])}
+  opts=shuffle(opts);
+
+  ansBtns.forEach(function(btn,i){
+    btn.textContent=opts[i];
+    btn.className='ans';
+    btn.disabled=false;
+  });
+
+  setMood(moodFor(state.progress));
+  say(rnd(objFor(state.progress)));
+}
+
+function next(){
+  if(state.progress>=100){win();return}
+  if(!state.queue.length){state.queue=shuffle(HANZI)}
+  showQuestion();
+}
+
+function onAnswer(btn){
+  if(state.locked)return;
+  state.locked=true;
+  var isGood=btn.textContent===state.current.ru;
+  ansBtns.forEach(function(b){b.disabled=true;if(b!==btn)b.classList.add('dim')});
+
+  if(isGood){
+    btn.classList.add('good');
+    state.solved[state.current.ch]=true;
+    state.progress+=12;
+    updateMeter();updateCount();bumpMeter();flyCoin();
+    sndOK();
+    card.classList.remove('pop');void card.offsetWidth;card.classList.add('pop');
+    setMood('wow');
+    say(rnd(REACT));
+    argline.textContent='Аргумент: '+state.current.arg;
+    argline.className='argline show good';
+    setTimeout(next,950);
+  }else{
+    btn.classList.add('bad');
+    state.progress=Math.max(0,state.progress-6);
+    updateMeter();
+    sndNO();
+    stage.classList.remove('shake');void stage.offsetWidth;stage.classList.add('shake');
+    setMood('angry');nod();
+    say(rnd(objFor(state.progress)));
+    argline.textContent='Покупатель не впечатлён: −6%';
+    argline.className='argline show bad';
+    state.queue.push(state.current);
+    setTimeout(function(){
+      ansBtns.forEach(function(b){
+        if(b.textContent===state.current.ru){b.classList.remove('dim');b.classList.add('good')}
+      });
+      setTimeout(next,850);
+    },650);
+  }
+}
+
+function win(){
+  show('win');
+  sndWIN();
+  spawnCoins();
+}
+
+function startGame(){
+  state.queue=shuffle(HANZI);
+  state.current=null;
+  state.progress=0;
+  state.solved={};
+  state.locked=false;
+  updateMeter();updateCount();
+  show('game');
+  showQuestion();
+}
+
+$('#btn-start').addEventListener('click',function(){initAudio();startGame()});
+$('#btn-again').addEventListener('click',function(){initAudio();startGame()});
+ansBtns.forEach(function(btn){btn.addEventListener('click',function(){onAnswer(btn)})});
+document.addEventListener('keydown',function(e){
+  if(screens.game.hidden||state.locked)return;
+  var i=['Digit1','Digit2','Digit3','Digit4'].indexOf(e.code);
+  if(i>-1&&!ansBtns[i].disabled)ansBtns[i].click();
+});
+})();
+</script>
+</body>
+</html>

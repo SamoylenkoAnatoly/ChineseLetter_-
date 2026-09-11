@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a130d">
+  <title>Волшебная кузня ложки</title>
+  <style>
+    :root {
+      --ink: #f0e2c8;
+      --muted: #cdbb97;
+      --gold: #f4b844;
+      --gold-soft: #ffe3a3;
+      --cjk: "MS Gothic", "Noto Sans CJK SC", "SimSun", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-width: 280px; min-height: 100%; margin: 0; }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(10px, 2vw, 18px);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at 50% 118%, rgba(255, 150, 60, 0.30), transparent 55%),
+        radial-gradient(circle at 50% 105%, rgba(255, 100, 30, 0.16), transparent 42%),
+        linear-gradient(180deg, #120d0b, #1d130d 58%, #150e0a);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 44%, transparent 55%, rgba(0, 0, 0, 0.5));
+    }
+
+    button { font: inherit; }
+
+    .game-shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 440px);
+      padding: clamp(12px, 3vw, 18px);
+      border: 2px solid rgba(122, 90, 44, 0.55);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #241a12, #1b130d 60%, #170f0b);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(240, 220, 170, 0.08), inset 0 0 46px rgba(0, 0, 0, 0.35);
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; animation: screenIn 0.35s ease; }
+
+    @keyframes screenIn { from { opacity: 0; transform: translateY(6px); } }
+
+    #screen-start, #screen-fail, #screen-win { text-align: center; }
+
+    #screen-start .mini-anvil { display: block; margin: 2px auto 6px; }
+
+    h1 {
+      margin: 4px 0 8px;
+      font-size: clamp(21px, 5.4vw, 27px);
+      line-height: 1.2;
+      color: var(--gold-soft);
+      text-shadow: 0 0 16px rgba(244, 184, 68, 0.35);
+    }
+
+    h2 { margin: 6px 0 8px; font-size: clamp(20px, 5vw, 24px); color: var(--gold-soft); text-shadow: 0 0 14px rgba(244, 184, 68, 0.3); }
+
+    .lead { margin: 0 auto 10px; max-width: 34ch; font-size: 14.5px; line-height: 1.5; color: var(--muted); }
+
+    .hint { margin: 2px 0 4px; font-size: 12.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(200, 160, 90, 0.85); }
+
+    .cta {
+      margin-top: 14px;
+      padding: 13px 30px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #241608;
+      background: linear-gradient(180deg, #ffd98a, #e9a83c);
+      border: 1px solid #8a5c1d;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .cta:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(233, 168, 60, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+    .cta:active { transform: translateY(1px); }
+
+    .hud {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .hud .stage b { color: var(--gold-soft); font-size: 15px; }
+
+    .hud .stage-name {
+      flex: 1;
+      text-align: center;
+      font-style: italic;
+      color: var(--gold);
+      font-size: 13.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .embers { margin-left: auto; display: flex; gap: 5px; }
+
+    .ember {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ffe0ae, #ff9a3c 45%, #c1561a 85%);
+      box-shadow: 0 0 10px 2px rgba(255, 150, 60, 0.55);
+      transition: all 0.5s;
+    }
+
+    .ember.out { background: #332a22; box-shadow: none; opacity: 0.55; transform: scale(0.75); }
+
+    .scene-wrap {
+      position: relative;
+      margin-top: 10px;
+      padding: 4px 4px 0;
+      border: 1px solid rgba(200, 160, 90, 0.22);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #1d1410, #241812 55%, #1a100b);
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    #scene { display: block; width: 100%; height: auto; }
+
+    .scene-wrap.shake { animation: sceneShake 0.35s; }
+
+    @keyframes sceneShake {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-3px, 1px); }
+      40% { transform: translate(3px, -2px); }
+      60% { transform: translate(-2px, 2px); }
+      80% { transform: translate(2px, 0); }
+    }
+
+    .rune {
+      position: absolute;
+      top: 4px;
+      left: 46%;
+      margin-left: -37px;
+      width: 74px;
+      height: 74px;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      border: 2px dashed rgba(244, 184, 68, 0.55);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(244, 184, 68, 0.16), rgba(244, 184, 68, 0.02) 70%);
+      box-shadow: 0 0 22px rgba(244, 184, 68, 0.18), inset 0 0 16px rgba(244, 184, 68, 0.12);
+      animation: runeFloat 3.2s ease-in-out infinite;
+    }
+
+    .rune .hanzi {
+      font-family: var(--cjk);
+      font-size: 37px;
+      line-height: 1;
+      color: var(--gold-soft);
+      text-shadow: 0 0 14px rgba(255, 190, 80, 0.65);
+    }
+
+    .rune.pop { animation: runePop 0.35s ease, runeFloat 3.2s ease-in-out 0.35s infinite; }
+    .rune.burst { animation: runeBurst 0.55s ease forwards; }
+
+    @keyframes runeFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+    @keyframes runePop { 0% { transform: scale(0.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes runeBurst {
+      0% { transform: scale(1); opacity: 1; box-shadow: 0 0 26px rgba(244, 184, 68, 0.65); }
+      100% { transform: scale(1.9); opacity: 0; }
+    }
+
+    #hammer {
+      transform: rotate(-30deg);
+      transform-box: fill-box;
+      transform-origin: 50% 86%;
+      transition: transform 0.3s cubic-bezier(0.2, 1.8, 0.4, 1);
+    }
+
+    #hammer.striking {
+      transform: rotate(16deg);
+      transition: transform 0.08s cubic-bezier(0.7, 0, 1, 1);
+    }
+
+    #spoonLayers g[data-from] { transform-box: fill-box; transform-origin: 50% 50%; }
+    #spoonLayers g.appear { animation: layerIn 0.5s ease; }
+
+    @keyframes layerIn { from { opacity: 0; transform: scale(0.92); } }
+
+    .sheen { animation: sheenMove 2.6s linear infinite; }
+
+    @keyframes sheenMove {
+      from { transform: translateX(-50px) skewX(-18deg); }
+      to { transform: translateX(250px) skewX(-18deg); }
+    }
+
+    .runes-pulse { animation: runePulse 2s ease-in-out infinite; }
+
+    @keyframes runePulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+
+    .spark {
+      position: absolute;
+      z-index: 5;
+      pointer-events: none;
+      background: var(--c, #ffd98a);
+      box-shadow: 0 0 6px rgba(255, 190, 80, 0.8);
+      animation: sparkFly var(--t, 0.7s) ease-out forwards;
+    }
+
+    @keyframes sparkFly {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 6px;
+      transform: translateX(-50%);
+      z-index: 6;
+      padding: 6px 16px;
+      border: 1px solid rgba(244, 184, 68, 0.5);
+      border-radius: 999px;
+      background: rgba(18, 12, 8, 0.9);
+      font-size: 15px;
+      color: var(--gold-soft);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .toast .tzi { font-family: var(--cjk); font-size: 18px; }
+
+    .toast.show { opacity: 1; }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .opt {
+      padding: 12px 8px;
+      font-size: 19px;
+      letter-spacing: 0.03em;
+      color: var(--ink);
+      background: linear-gradient(180deg, #3a2c1b, #2a1e11);
+      border: 1px solid rgba(200, 160, 90, 0.35);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.2s;
+    }
+
+    .opt:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: #c8a05a;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 10px rgba(244, 184, 68, 0.15);
+    }
+
+    .opt:disabled { cursor: default; }
+
+    .opt.ok {
+      background: linear-gradient(180deg, #4e6a2e, #3a5120);
+      border-color: #9fc36a;
+      box-shadow: 0 0 16px rgba(140, 200, 90, 0.35);
+    }
+
+    .opt.bad {
+      background: linear-gradient(180deg, #5f2b22, #4a2019);
+      border-color: #a3402a;
+      opacity: 0.5;
+      animation: optShake 0.3s;
+    }
+
+    .opt.dim { opacity: 0.35; }
+
+    @keyframes optShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      50% { transform: translateX(4px); }
+      75% { transform: translateX(-3px); }
+    }
+
+    #screen-fail h2 { color: #e8a48a; text-shadow: 0 0 14px rgba(200, 90, 50, 0.35); }
+    #screen-fail .fail-spoon { display: block; margin: 6px auto 2px; }
+    #screen-fail p { margin: 4px 0 0; font-size: 14.5px; color: var(--muted); }
+
+    .win-spoon {
+      display: block;
+      margin: 8px auto 4px;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
+      animation: floaty 3.4s ease-in-out infinite;
+    }
+
+    @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+    .perfect { margin: 2px 0 6px; font-size: 14px; color: #b8d98a; }
+
+    .stamp {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin: 4px 0 6px;
+      padding: 10px 26px;
+      border: 3px double rgba(244, 184, 68, 0.7);
+      border-radius: 12px;
+      transform: rotate(-2deg);
+      background: radial-gradient(circle, rgba(244, 184, 68, 0.08), transparent 75%);
+    }
+
+    .stamp-label { font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(226, 186, 116, 0.9); }
+
+    .code {
+      font-size: 46px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      padding-left: 0.32em;
+      line-height: 1.15;
+      color: var(--gold-soft);
+      text-shadow: 0 0 18px rgba(244, 184, 68, 0.5);
+    }
+
+    .code.stamped { animation: stampIn 0.55s cubic-bezier(0.25, 1.5, 0.45, 1) 0.35s backwards; }
+
+    @keyframes stampIn {
+      0% { transform: scale(2.6) rotate(-6deg); opacity: 0; }
+      70% { transform: scale(0.94) rotate(1deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-shell">
+
+    <section id="screen-start" class="screen active">
+      <svg class="mini-anvil" width="132" height="66" viewBox="0 0 140 70" aria-hidden="true">
+        <ellipse cx="70" cy="64" rx="46" ry="5" fill="#000" opacity="0.4"></ellipse>
+        <ellipse cx="70" cy="62" rx="34" ry="6" fill="#ff7a26" opacity="0.14"></ellipse>
+        <path d="M54 44 H86 L82 53 H58 Z" fill="#262a30" stroke="#101215"></path>
+        <rect x="44" y="53" width="52" height="10" rx="2.5" fill="#22252a" stroke="#101215"></rect>
+        <rect x="34" y="38" width="72" height="8" rx="2" fill="#2e3238" stroke="#101215"></rect>
+        <path d="M36 39 C22 39 12 43 6 47 C14 49.5 28 47.5 36 44 Z" fill="#2e3238" stroke="#101215"></path>
+        <rect x="36" y="38" width="70" height="2.6" rx="1.3" fill="#5b636e" opacity="0.9"></rect>
+        <path d="M52 26 l3.4 5.4 6.2 1 -4.5 4.6 1 6.3 -6.1 -3.1 -6.1 3.1 1 -6.3 -4.5 -4.6 6.2 -1 Z" fill="#ffd98a" opacity="0.85"></path>
+        <circle cx="94" cy="20" r="2.6" fill="#ffcf6b" opacity="0.75"></circle>
+        <circle cx="102" cy="12" r="1.7" fill="#ff9a3c" opacity="0.6"></circle>
+        <circle cx="40" cy="14" r="1.9" fill="#fff3d0" opacity="0.55"></circle>
+      </svg>
+      <h1>Волшебная кузня ложки</h1>
+      <p class="lead">Кузнец-волшебник выкует деревянную ложку в фольге — но молот слушается лишь верного пиньиня. Выбирай правильное чтение иероглифа, и заготовка сама станет ложкой.</p>
+      <p class="hint">9 иероглифов · 9 этапов ковки · 3 уголька</p>
+      <button class="cta" id="btnStart" type="button">Начать ковку</button>
+    </section>
+
+    <section id="screen-game" class="screen">
+      <div class="hud">
+        <span class="stage">Этап <b id="stageNum">1</b>/9</span>
+        <span class="stage-name" id="stageName">Чурбан</span>
+        <span class="embers" title="Угольки"><i class="ember"></i><i class="ember"></i><i class="ember"></i></span>
+      </div>
+      <div class="scene-wrap" id="sceneWrap">
+        <div class="rune" id="rune"><span class="hanzi" id="runeChar">术</span></div>
+        <svg id="scene" viewBox="0 0 320 140" aria-hidden="true">
+          <defs>
+            <linearGradient id="ironTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#3f464f"></stop>
+              <stop offset="1" stop-color="#22252a"></stop>
+            </linearGradient>
+            <linearGradient id="ironHead" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#565e69"></stop>
+              <stop offset="1" stop-color="#23262b"></stop>
+            </linearGradient>
+            <linearGradient id="woodHandle" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#a9743f"></stop>
+              <stop offset="1" stop-color="#6b431f"></stop>
+            </linearGradient>
+            <linearGradient id="woodGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#b07c44"></stop>
+              <stop offset="0.55" stop-color="#8a5a2e"></stop>
+              <stop offset="1" stop-color="#6e451f"></stop>
+            </linearGradient>
+            <linearGradient id="logGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#8a5a2e"></stop>
+              <stop offset="1" stop-color="#5d3a1c"></stop>
+            </linearGradient>
+            <linearGradient id="foilGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f2f3f7"></stop>
+              <stop offset="0.25" stop-color="#c3c7d2"></stop>
+              <stop offset="0.45" stop-color="#eceef4"></stop>
+              <stop offset="0.62" stop-color="#9aa0ad"></stop>
+              <stop offset="0.8" stop-color="#dfe2e9"></stop>
+              <stop offset="1" stop-color="#aab0bd"></stop>
+            </linearGradient>
+            <linearGradient id="sheenGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#fff" stop-opacity="0"></stop>
+              <stop offset="0.5" stop-color="#fff" stop-opacity="0.75"></stop>
+              <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+            </linearGradient>
+            <path id="spShape" d="M12 40 C12 25 23 15 40 15 C57 15 66 25 67 33 C73 31 81 30 91 30 L170 30 C183 30 190 34 190 40 C190 46 183 50 170 50 L91 50 C81 50 73 49 67 47 C66 55 57 65 40 65 C23 65 12 55 12 40 Z"></path>
+            <clipPath id="clipSpoon"><use href="#spShape"></use></clipPath>
+            <clipPath id="clipBowl"><rect x="0" y="0" width="70" height="80"></rect></clipPath>
+            <clipPath id="clipHandle"><rect x="66" y="0" width="140" height="80"></rect></clipPath>
+          </defs>
+          <ellipse cx="160" cy="138" rx="118" ry="6.5" fill="#000" opacity="0.4"></ellipse>
+          <ellipse cx="160" cy="135" rx="92" ry="10" fill="#ff7a26" opacity="0.1"></ellipse>
+          <rect x="108" y="126" width="104" height="13" rx="3" fill="#22252a" stroke="#101215"></rect>
+          <path d="M126 108 L194 108 L186 126 L134 126 Z" fill="#262a30" stroke="#101215"></path>
+          <rect x="56" y="94" width="200" height="14" rx="3" fill="url(#ironTop)" stroke="#101215"></rect>
+          <path d="M58 96 C36 96 20 102 12 108 C24 112 46 109 58 105 Z" fill="url(#ironTop)" stroke="#101215"></path>
+          <rect x="58" y="94" width="196" height="4" rx="2" fill="#5b636e" opacity="0.85"></rect>
+          <g transform="translate(80,44) scale(0.8)">
+            <g id="spoonLayers">
+              <g data-from="1" data-to="1">
+                <rect x="16" y="18" width="164" height="44" rx="14" fill="url(#logGrad)" stroke="#4a3118" stroke-width="2"></rect>
+                <path d="M52 27 C100 24 140 27 172 25 M48 41 H174 M52 54 C100 57 140 54 170 56" stroke="#6b4a28" stroke-width="1.5" fill="none" opacity="0.5"></path>
+                <ellipse cx="30" cy="40" rx="13" ry="19" fill="#c9a06b" stroke="#8a5a2e" stroke-width="1.5"></ellipse>
+                <ellipse cx="30" cy="40" rx="8.5" ry="12.5" fill="none" stroke="#8a5a2e" stroke-width="1"></ellipse>
+                <ellipse cx="30" cy="40" rx="4" ry="6" fill="none" stroke="#8a5a2e" stroke-width="1"></ellipse>
+              </g>
+              <g data-from="2" data-to="3">
+                <use href="#spShape" fill="#7c5a36" stroke="#5d3f22" stroke-width="2" stroke-dasharray="6 4"></use>
+              </g>
+              <g data-from="3" data-to="0">
+                <ellipse cx="40" cy="41" rx="19" ry="13" fill="#5f3a1c"></ellipse>
+                <ellipse cx="40" cy="41" rx="13" ry="8" fill="#47290f"></ellipse>
+                <path d="M28 34 C33 30 47 30 52 34" stroke="#caa06b" stroke-width="1.2" fill="none" opacity="0.5"></path>
+              </g>
+              <g data-from="4" data-to="0">
+                <use href="#spShape" fill="url(#woodGrad)" stroke="#5d3f22" stroke-width="1.5"></use>
+              </g>
+              <g data-from="4" data-to="4">
+                <g clip-path="url(#clipSpoon)">
+                  <path d="M20 22 l12 12 M44 20 l12 12 M70 18 l10 10 M100 24 l10 10 M130 26 l10 10 M160 30 l10 10 M30 46 l12 12 M60 46 l12 10 M96 40 l10 10 M126 42 l10 8 M156 44 l10 6 M80 20 l8 8 M110 18 l8 8" stroke="#6b4a28" stroke-width="1.5" fill="none" opacity="0.55"></path>
+                </g>
+              </g>
+              <g data-from="6" data-to="0">
+                <ellipse cx="30" cy="26" rx="13" ry="6" fill="#fff" opacity="0.16"></ellipse>
+                <ellipse cx="34" cy="52" rx="10" ry="4" fill="#fff" opacity="0.08"></ellipse>
+                <rect x="96" y="32" width="86" height="4" rx="2" fill="#fff" opacity="0.1"></rect>
+              </g>
+              <g data-from="7" data-to="0">
+                <g clip-path="url(#clipBowl)">
+                  <use href="#spShape" fill="url(#foilGrad)" opacity="0.97"></use>
+                  <rect class="sheen" x="0" y="8" width="22" height="64" fill="url(#sheenGrad)"></rect>
+                </g>
+              </g>
+              <g data-from="8" data-to="0">
+                <g clip-path="url(#clipHandle)">
+                  <use href="#spShape" fill="url(#foilGrad)" opacity="0.97"></use>
+                  <rect class="sheen" x="70" y="8" width="22" height="64" fill="url(#sheenGrad)"></rect>
+                </g>
+                <path d="M68 18 V64" stroke="#8f93a1" stroke-width="1" opacity="0.6"></path>
+              </g>
+              <g data-from="9" data-to="0" class="runes-pulse">
+                <text x="76" y="44.5" font-family='"MS Gothic","Noto Sans CJK SC",serif' font-size="11" letter-spacing="1" fill="#ffb84d" opacity="0.7" style="filter:blur(1.2px)">术中右心必想白勺的</text>
+                <text x="76" y="44.5" font-family='"MS Gothic","Noto Sans CJK SC",serif' font-size="11" letter-spacing="1" fill="#ffd98a">术中右心必想白勺的</text>
+              </g>
+            </g>
+          </g>
+          <g transform="translate(198,58)">
+            <g id="hammer">
+              <path d="M-3.5 -10 L3.5 -10 L4.5 -58 Q0 -62 -4.5 -58 Z" fill="url(#woodHandle)" stroke="#3a2713"></path>
+              <rect x="-5" y="-38" width="10" height="5" fill="#2b2012"></rect>
+              <rect x="-5" y="-26" width="10" height="5" fill="#2b2012"></rect>
+              <rect x="-15" y="-10" width="30" height="20" rx="3" fill="url(#ironHead)" stroke="#14161a"></rect>
+              <rect x="-15" y="-6" width="4" height="12" rx="2" fill="#6a707a" opacity="0.8"></rect>
+            </g>
+          </g>
+        </svg>
+        <div class="toast" id="toast"></div>
+      </div>
+      <div class="options" id="options"></div>
+    </section>
+
+    <section id="screen-fail" class="screen">
+      <h2>Заготовка треснула…</h2>
+      <svg class="fail-spoon" width="230" height="92" viewBox="0 0 200 80" aria-hidden="true">
+        <g transform="rotate(-4 100 40)">
+          <path d="M12 40 C12 25 23 15 40 15 C57 15 66 25 67 33 C73 31 81 30 91 30 L170 30 C183 30 190 34 190 40 C190 46 183 50 170 50 L91 50 C81 50 73 49 67 47 C66 55 57 65 40 65 C23 65 12 55 12 40 Z" fill="#7c5a36" stroke="#4a3118" stroke-width="2" opacity="0.9"></path>
+          <path d="M58 16 L52 34 L64 44 L54 62" stroke="#e8d9b8" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+        </g>
+      </svg>
+      <p>Все угольки погасли — дерево не приняло чары.</p>
+      <button class="cta" id="btnRetry" type="button">Начать заново</button>
+    </section>
+
+    <section id="screen-win" class="screen">
+      <h2>Ложка выкована!</h2>
+      <svg class="win-spoon" width="300" height="120" viewBox="0 0 200 80" aria-hidden="true">
+        <defs>
+          <linearGradient id="wFoil" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f4f5f8"></stop>
+            <stop offset="0.25" stop-color="#b9bec9"></stop>
+            <stop offset="0.45" stop-color="#eef0f4"></stop>
+            <stop offset="0.62" stop-color="#8f95a3"></stop>
+            <stop offset="0.8" stop-color="#dcdfe6"></stop>
+            <stop offset="1" stop-color="#a7adba"></stop>
+          </linearGradient>
+          <linearGradient id="wSheen" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity="0"></stop>
+            <stop offset="0.5" stop-color="#fff" stop-opacity="0.8"></stop>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+          </linearGradient>
+          <clipPath id="wClip">
+            <path d="M12 40 C12 25 23 15 40 15 C57 15 66 25 67 33 C73 31 81 30 91 30 L170 30 C183 30 190 34 190 40 C190 46 183 50 170 50 L91 50 C81 50 73 49 67 47 C66 55 57 65 40 65 C23 65 12 55 12 40 Z"></path>
+          </clipPath>
+        </defs>
+        <path d="M12 40 C12 25 23 15 40 15 C57 15 66 25 67 33 C73 31 81 30 91 30 L170 30 C183 30 190 34 190 40 C190 46 183 50 170 50 L91 50 C81 50 73 49 67 47 C66 55 57 65 40 65 C23 65 12 55 12 40 Z" fill="url(#wFoil)" stroke="#f8f9fb" stroke-opacity="0.55" stroke-width="1.5"></path>
+        <g clip-path="url(#wClip)">
+          <rect class="sheen" x="0" y="0" width="24" height="80" fill="url(#wSheen)"></rect>
+        </g>
+        <ellipse cx="30" cy="26" rx="14" ry="6.5" fill="#fff" opacity="0.28"></ellipse>
+        <rect x="96" y="31" width="88" height="4.5" rx="2" fill="#fff" opacity="0.22"></rect>
+        <g class="runes-pulse">
+          <text x="74" y="45" font-family='"MS Gothic","Noto Sans CJK SC",serif' font-size="12" letter-spacing="0.5" fill="#e8a63c" opacity="0.75" style="filter:blur(1.4px)">术中右心必想白勺的</text>
+          <text x="74" y="45" font-family='"MS Gothic","Noto Sans CJK SC",serif' font-size="12" letter-spacing="0.5" fill="#ffd98a">术中右心必想白勺的</text>
+        </g>
+      </svg>
+      <p class="perfect" id="perfect" style="display:none">Безупречная ковка — ни одной ошибки!</p>
+      <div class="stamp" id="codeWrap">
+        <span class="stamp-label">Клеймо мастера</span>
+        <span class="code" id="code" aria-label="Код победы">4555</span>
+      </div>
+      <div>
+        <button class="cta" id="btnAgain" type="button">Ковать ещё раз</button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    var STAGES = [
+      { zi: "术", py: "shù", mean: "техника", name: "Чурбан", wr: ["sù", "shú", "zhù"] },
+      { zi: "中", py: "zhōng", mean: "середина", name: "Заготовка", wr: ["zhòng", "chōng", "zōng"] },
+      { zi: "右", py: "yòu", mean: "право, справа", name: "Выемка чаши", wr: ["yǒu", "zuǒ", "ōu"] },
+      { zi: "心", py: "xīn", mean: "сердце", name: "Обтёс ручки", wr: ["xīng", "shēn", "xìn"] },
+      { zi: "必", py: "bì", mean: "необходимо", name: "Шлифовка", wr: ["bǐ", "mì", "pì"] },
+      { zi: "想", py: "xiǎng", mean: "думать", name: "Полировка", wr: ["xiāng", "xiàng", "shǎng"] },
+      { zi: "白", py: "bái", mean: "белый", name: "Фольга на чашу", wr: ["bǎi", "bó", "bài"] },
+      { zi: "勺", py: "sháo", mean: "ложка", name: "Фольга на ручку", wr: ["shào", "shuō", "sāo"] },
+      { zi: "的", py: "de", mean: "частица de", name: "Магические руны", wr: ["dé", "dī", "ne"] }
+    ];
+    var VICTORY_CODE = "4555";
+
+    var els = {
+      stageNum: document.getElementById("stageNum"),
+      stageName: document.getElementById("stageName"),
+      rune: document.getElementById("rune"),
+      runeChar: document.getElementById("runeChar"),
+      sceneWrap: document.getElementById("sceneWrap"),
+      hammer: document.getElementById("hammer"),
+      toast: document.getElementById("toast"),
+      options: document.getElementById("options"),
+      perfect: document.getElementById("perfect"),
+      code: document.getElementById("code"),
+      codeWrap: document.getElementById("codeWrap"),
+      embers: Array.prototype.slice.call(document.querySelectorAll(".ember"))
+    };
+
+    var idx = 0, mistakes = 0, locked = false, dead = false, toastTimer = null, ac = null;
+
+    function showScreen(id) {
+      var screens = document.querySelectorAll(".screen");
+      for (var i = 0; i < screens.length; i++) screens[i].classList.toggle("active", screens[i].id === id);
+    }
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function setSpoonStage(n) {
+      var layers = document.querySelectorAll("#spoonLayers g[data-from]");
+      for (var i = 0; i < layers.length; i++) {
+        var g = layers[i];
+        var from = parseInt(g.getAttribute("data-from"), 10);
+        var to = parseInt(g.getAttribute("data-to") || "0", 10);
+        var show = n >= from && (!to || n <= to);
+        if (show) {
+          if (g.getAttribute("data-shown") !== "1") {
+            g.setAttribute("data-shown", "1");
+            g.style.display = "";
+            if (n > 1) {
+              g.classList.remove("appear");
+              void g.getBoundingClientRect();
+              g.classList.add("appear");
+            }
+          }
+        } else {
+          g.setAttribute("data-shown", "0");
+          g.style.display = "none";
+        }
+      }
+    }
+
+    function resetSpoon() {
+      var layers = document.querySelectorAll("#spoonLayers g[data-from]");
+      for (var i = 0; i < layers.length; i++) {
+        layers[i].removeAttribute("data-shown");
+        layers[i].classList.remove("appear");
+        layers[i].style.display = "none";
+      }
+    }
+
+    function playSound(kind) {
+      try {
+        if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+        if (ac.state === "suspended") ac.resume();
+        var t = ac.currentTime;
+        if (kind === "clink" || kind === "win") {
+          var freqs = kind === "win" ? [1300, 1750, 2350] : [1850, 2700];
+          var step = kind === "win" ? 0.13 : 0;
+          for (var i = 0; i < freqs.length; i++) {
+            var o = ac.createOscillator(), og = ac.createGain();
+            o.type = "triangle";
+            o.frequency.value = freqs[i];
+            og.gain.setValueAtTime(0.001, t + step * i);
+            og.gain.exponentialRampToValueAtTime(0.13, t + step * i + 0.012);
+            og.gain.exponentialRampToValueAtTime(0.0001, t + step * i + 0.26);
+            o.connect(og); og.connect(ac.destination);
+            o.start(t + step * i); o.stop(t + step * i + 0.3);
+          }
+        } else if (kind === "thud") {
+          var o2 = ac.createOscillator(), g2 = ac.createGain();
+          o2.type = "sine";
+          o2.frequency.setValueAtTime(160, t);
+          o2.frequency.exponentialRampToValueAtTime(55, t + 0.22);
+          g2.gain.setValueAtTime(0.22, t);
+          g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
+          o2.connect(g2); g2.connect(ac.destination);
+          o2.start(t); o2.stop(t + 0.3);
+        } else if (kind === "fail") {
+          var o3 = ac.createOscillator(), g3 = ac.createGain();
+          o3.type = "sawtooth";
+          o3.frequency.setValueAtTime(200, t);
+          o3.frequency.exponentialRampToValueAtTime(60, t + 0.6);
+          g3.gain.setValueAtTime(0.11, t);
+          g3.gain.exponentialRampToValueAtTime(0.0001, t + 0.65);
+          o3.connect(g3); g3.connect(ac.destination);
+          o3.start(t); o3.stop(t + 0.7);
+        }
+      } catch (e) {}
+    }
+
+    function burstSparks(host, fx, fy, count) {
+      var r = host.getBoundingClientRect();
+      var colors = ["#ffd98a", "#ff9a3c", "#ffcf6b", "#fff3d0"];
+      for (var i = 0; i < count; i++) {
+        var s = document.createElement("span");
+        s.className = "spark";
+        var size = 3 + Math.random() * 4;
+        var dx = (Math.random() * 2 - 1) * 95;
+        var dy = -(20 + Math.random() * 105);
+        s.style.left = (fx * r.width - size / 2) + "px";
+        s.style.top = (fy * r.height - size / 2) + "px";
+        s.style.width = size + "px";
+        s.style.height = size + "px";
+        s.style.setProperty("--dx", dx + "px");
+        s.style.setProperty("--dy", dy + "px");
+        s.style.setProperty("--t", (0.5 + Math.random() * 0.35) + "s");
+        s.style.setProperty("--c", colors[Math.floor(Math.random() * colors.length)]);
+        if (Math.random() < 0.35) s.style.borderRadius = "2px";
+        host.appendChild(s);
+        (function (el) { setTimeout(function () { el.remove(); }, 950); })(s);
+      }
+    }
+
+    function strike() {
+      els.hammer.classList.add("striking");
+      setTimeout(function () { els.hammer.classList.remove("striking"); }, 130);
+      els.sceneWrap.classList.add("shake");
+      setTimeout(function () { els.sceneWrap.classList.remove("shake"); }, 380);
+    }
+
+    function showToast(s) {
+      els.toast.textContent = "";
+      var zi = document.createElement("span");
+      zi.className = "tzi";
+      zi.textContent = s.zi + " ";
+      els.toast.appendChild(zi);
+      els.toast.appendChild(document.createTextNode(s.py + " — «" + s.mean + "»"));
+      els.toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { els.toast.classList.remove("show"); }, 1150);
+    }
+
+    function renderRound() {
+      var s = STAGES[idx];
+      els.stageNum.textContent = idx + 1;
+      els.stageName.textContent = s.name;
+      els.runeChar.textContent = s.zi;
+      els.rune.classList.remove("burst");
+      void els.rune.offsetWidth;
+      els.rune.classList.add("pop");
+      els.toast.classList.remove("show");
+      els.options.textContent = "";
+      var opts = shuffle([s.py].concat(s.wr));
+      for (var i = 0; i < opts.length; i++) {
+        (function (val) {
+          var b = document.createElement("button");
+          b.className = "opt";
+          b.type = "button";
+          b.textContent = val;
+          b.addEventListener("click", function () { answer(b, val); });
+          els.options.appendChild(b);
+        })(opts[i]);
+      }
+      locked = false;
+    }
+
+    function answer(btn, val) {
+      if (locked || dead) return;
+      var s = STAGES[idx];
+      if (val === s.py) {
+        locked = true;
+        var kids = els.options.children;
+        for (var i = 0; i < kids.length; i++) {
+          kids[i].disabled = true;
+          if (kids[i] !== btn) kids[i].classList.add("dim");
+        }
+        btn.classList.add("ok");
+        strike();
+        playSound("clink");
+        burstSparks(els.sceneWrap, 0.5, 0.62, 13);
+        els.rune.classList.remove("pop");
+        els.rune.classList.add("burst");
+        showToast(s);
+        setTimeout(function () {
+          idx++;
+          if (idx >= STAGES.length) {
+            win();
+          } else {
+            setSpoonStage(idx + 1);
+            renderRound();
+          }
+        }, 1250);
+      } else {
+        btn.disabled = true;
+        btn.classList.add("bad");
+        playSound("thud");
+        els.sceneWrap.classList.add("shake");
+        setTimeout(function () { els.sceneWrap.classList.remove("shake"); }, 380);
+        mistakes++;
+        var ember = els.embers[3 - mistakes];
+        if (ember) ember.classList.add("out");
+        if (mistakes >= 3) {
+          dead = true;
+          locked = true;
+          setTimeout(function () {
+            playSound("fail");
+            showScreen("screen-fail");
+          }, 650);
+        }
+      }
+    }
+
+    function win() {
+      showScreen("screen-win");
+      els.perfect.style.display = mistakes === 0 ? "" : "none";
+      els.code.textContent = VICTORY_CODE;
+      els.code.classList.remove("stamped");
+      void els.code.offsetWidth;
+      els.code.classList.add("stamped");
+      setTimeout(function () {
+        playSound("win");
+        burstSparks(els.codeWrap, 0.5, 0.4, 16);
+      }, 480);
+    }
+
+    function startGame() {
+      idx = 0;
+      mistakes = 0;
+      locked = false;
+      dead = false;
+      clearTimeout(toastTimer);
+      els.toast.classList.remove("show");
+      for (var i = 0; i < els.embers.length; i++) els.embers[i].classList.remove("out");
+      resetSpoon();
+      showScreen("screen-game");
+      setSpoonStage(1);
+      renderRound();
+    }
+
+    document.getElementById("btnStart").addEventListener("click", startGame);
+    document.getElementById("btnRetry").addEventListener("click", startGame);
+    document.getElementById("btnAgain").addEventListener("click", startGame);
+  </script>
+</body>
+</html>
