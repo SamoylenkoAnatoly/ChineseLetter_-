@@ -477,7 +477,16 @@
       animation: gem-float 3.4s ease-in-out infinite alternate;
     }
 
-    .victory-stats { margin: 0 0 14px; color: var(--muted); font-size: 0.95rem; }
+    .victory-stats { margin: 0 0 8px; color: var(--muted); font-size: 0.95rem; }
+
+    .victory-tale {
+      max-width: 420px;
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-style: italic;
+      line-height: 1.5;
+    }
 
     .victory-code {
       margin: 0 0 24px;
@@ -520,7 +529,7 @@
         </div>
         <p class="eyebrow">Волшебная роща · дрейфующие руны</p>
         <h1>Роща древних рун</h1>
-        <p class="start-copy">В лесной чаще медленно дрейфуют руны-иероглифы. Роща называет слово — отыщите среди мерцающих рун знак с этим значением. Соберите все девять и получите дар рощи.</p>
+        <p class="start-copy">Хитрый мальчик положил перед тобой волшебный лист с летающими иероглифами. Отыщи все 9 иероглифов по их переводу. Проверь свою внимательность!</p>
         <button class="btn" id="start-button" type="button">Начать</button>
       </div>
     </section>
@@ -603,6 +612,7 @@
         <p class="eyebrow">Туман рассеялся</p>
         <h2>Победа!</h2>
         <p class="victory-stats" id="victory-stats">Все девять рун собраны.</p>
+        <p class="victory-tale">Ты победил, внимательность у тебя на высоком уровне! Ты решаешь все-равно отдать мальчику монету и отправляешься в сторону леса</p>
         <p class="victory-code" id="victory-code" aria-label="Код победы"></p>
         <button class="btn" id="restart-button" type="button">Играть снова</button>
       </div>
