@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#1a0c05">
+<title>Таверна «Тлеющий Бочонок» — отряд для пса</title>
+<style>
+:root{
+  --wood-0:#120703; --wood-1:#241207; --wood-2:#381c0c; --wood-3:#5a3016;
+  --edge:#6b3c1a; --cream:#f3e3c3; --muted:#c9a273; --amber:#ffb347; --amber-2:#ffd9a0;
+  --ember:#ff7a2e; --good:#9fe08a; --bad:#ff6a5e;
+  --cjk:"KaiTi","STKaiti","Kaiti SC","DFKai-SB","AR PL UKai CN","Noto Serif CJK SC","MS Mincho","MS Gothic",serif;
+  --ui:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html,body{min-width:280px;min-height:100%;margin:0}
+body{
+  min-height:100svh;display:grid;place-items:center;padding:clamp(6px,1.6vw,12px);
+  color:var(--cream);font-family:var(--ui);
+  background:
+    radial-gradient(620px 420px at 50% -6%,rgba(255,140,60,.15),transparent 62%),
+    repeating-linear-gradient(90deg,#1e0e06 0 58px,#26130a 58px 61px,#180b04 61px 122px);
+}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+[hidden]{display:none!important}
+.cjk{font-family:var(--cjk)}
+
+.shell{
+  position:relative;width:min(100%,450px);height:min(calc(100svh - 12px),700px);min-height:540px;
+  display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid rgba(255,179,71,.22);border-radius:16px;
+  background:linear-gradient(180deg,#2b160a,#1a0c05 55%,#120703);
+  box-shadow:0 18px 50px rgba(0,0,0,.6),inset 0 0 70px rgba(120,50,10,.14);
+}
+
+.scene{position:absolute;top:0;left:0;right:0;height:130px;z-index:0;pointer-events:none}
+.glow{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:340px;height:230px;
+  background:radial-gradient(closest-side,rgba(255,150,50,.26),transparent 70%);animation:pulse 2.6s ease-in-out infinite}
+.mantel{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:186px;height:13px;border-radius:7px;
+  background:linear-gradient(180deg,#6b4a2e,#3f2a16);
+  box-shadow:0 4px 10px rgba(0,0,0,.55),inset 0 2px 0 rgba(255,210,150,.25)}
+.mantel::before,.mantel::after{content:"";position:absolute;top:9px;width:14px;height:20px;border-radius:4px;
+  background:linear-gradient(180deg,#5a3d24,#33220f)}
+.mantel::before{left:6px}.mantel::after{right:6px}
+.hearth{position:absolute;top:29px;left:50%;transform:translateX(-50%);width:148px;height:84px;
+  background:#0b0301;border-radius:16px 16px 10px 10px;
+  box-shadow:inset 0 0 26px #000,0 0 0 5px #452f1c,0 0 0 7px #24150a}
+.log{position:absolute;bottom:12px;left:50%;width:54px;height:11px;border-radius:6px;
+  background:linear-gradient(90deg,#5a3016,#2c1408)}
+.log1{transform:translateX(-50%) rotate(-8deg)}
+.log2{transform:translateX(-50%) rotate(9deg) translateY(6px)}
+.flame{position:absolute;bottom:17px;left:50%;transform:translateX(-50%);transform-origin:50% 100%;
+  border-radius:50% 50% 24% 24%/64% 64% 36% 36%;animation:flick .85s ease-in-out infinite alternate}
+.f1{width:42px;height:56px;margin-left:-21px;background:linear-gradient(180deg,#ffd76a,#ff9d2e 48%,#e2471b)}
+.f2{width:25px;height:36px;margin-left:-13px;background:linear-gradient(180deg,#ffedb0,#ffc14d 60%,#ff9d2e);animation-duration:.62s}
+.spark{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffd76a;bottom:86px;animation:rise 2.4s linear infinite}
+.sp1{left:calc(50% - 24px)}.sp2{left:calc(50% + 20px);animation-delay:1.2s}
+@keyframes flick{from{transform:translateX(-50%) scale(1,1) skewX(0)}to{transform:translateX(-50%) scale(1.08,1.14) skewX(3deg)}}
+@keyframes pulse{0%,100%{opacity:.75}50%{opacity:1}}
+@keyframes rise{from{transform:translateY(0);opacity:1}to{transform:translateY(-52px);opacity:0}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.18)}100%{transform:scale(1);opacity:1}}
+
+.screen{position:relative;z-index:2;flex:1;display:none;flex-direction:column;min-height:0;
+  padding:116px 12px 12px;overflow-y:auto}
+.screen.active{display:flex}
+
+.eyebrow{margin:0;font-size:.68rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+h1{margin:2px 0 0;font-size:clamp(1.4rem,6vw,1.9rem);line-height:1.08;color:var(--amber-2);
+  text-shadow:0 0 10px rgba(255,179,71,.5),0 0 30px rgba(255,120,40,.3)}
+
+#scr-start{align-items:center;text-align:center;gap:11px}
+.poster{transform:rotate(-2deg);max-width:272px;padding:11px 15px 12px;border-radius:6px;
+  border:1px solid #c9a273;background:linear-gradient(180deg,#efd9a7,#e2c288);color:#4a2a10;
+  box-shadow:0 10px 22px rgba(0,0,0,.5)}
+.poster h2{margin:0;font-size:1rem;letter-spacing:.14em}
+.poster p{margin:5px 0 0;font-size:.73rem;line-height:1.45;color:#6b4520}
+.poster .rew{margin-top:5px;font-weight:700;letter-spacing:.05em}
+.paw{width:42px;height:42px;margin:4px auto 0;fill:#8a5a26;opacity:.85}
+.tarv{margin:0;max-width:310px;font-size:.85rem;line-height:1.5}
+.tarv b{color:var(--amber)}
+.rules{list-style:none;margin:0;padding:9px 12px;max-width:310px;text-align:left;font-size:.75rem;
+  line-height:1.65;color:var(--muted);border:1px dashed var(--wood-3);border-radius:10px;background:rgba(0,0,0,.22)}
+.rules li::before{content:"◆ ";color:var(--amber)}
+.btn-main{margin-top:2px;padding:11px 34px;font-size:1rem;font-weight:700;letter-spacing:.06em;color:#3a1c0c;
+  border:1px solid #ffcf7e;border-radius:12px;background:linear-gradient(180deg,#ffd98f,#ff9d2e);
+  box-shadow:0 5px 0 #7a3d10,0 10px 24px rgba(255,140,50,.28);transition:.15s}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 6px 0 #7a3d10,0 12px 28px rgba(255,140,50,.4)}
+.btn-main:active{transform:translateY(2px);box-shadow:0 2px 0 #7a3d10}
+
+.party{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.party-l{display:flex;align-items:center;gap:5px;min-width:0}
+.pt-label{font-size:.64rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:2px}
+.pm{width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;
+  border:1px solid #4a2210;background:rgba(0,0,0,.32);overflow:hidden}
+.pm svg{width:23px;height:23px}
+.pm.slot{border-style:dashed;opacity:.45}
+.pm.fill{border-style:solid;border-color:var(--good);opacity:1;animation:pop .5s;box-shadow:0 0 10px rgba(159,224,138,.4)}
+.party-r{display:flex;align-items:center;gap:6px;flex:none}
+.obar{width:84px;height:8px;border-radius:99px;background:var(--wood-0);border:1px solid #4a2210;overflow:hidden}
+.obar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ember),var(--amber));transition:width .5s}
+#obar-txt{font-size:.7rem;color:var(--amber-2);min-width:33px;text-align:right}
+
+.heroes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.hero{position:relative;display:flex;gap:8px;align-items:center;padding:7px 8px;border-radius:12px;
+  border:1px solid #4a2210;background:linear-gradient(180deg,rgba(90,48,22,.32),rgba(20,10,5,.5));transition:.25s}
+.hero.on{border-color:var(--amber);box-shadow:0 0 16px rgba(255,179,71,.26);transform:translateY(-1px)}
+.hero.joined{border-color:var(--good);box-shadow:0 0 14px rgba(159,224,138,.25)}
+.h-ava{width:44px;height:44px;flex:none}
+.h-name{display:block;font-size:.85rem;line-height:1.1}
+.h-title{display:block;font-size:.62rem;color:var(--muted);margin-top:1px}
+.h-slots{display:flex;gap:3px;margin-top:4px}
+.slot-r{width:17px;height:17px;border-radius:5px;border:1px dashed var(--edge);display:grid;place-items:center;
+  font-family:var(--cjk);font-size:11px;line-height:1;color:#5a3016}
+.slot-r.f{border-style:solid;border-color:var(--amber);color:var(--amber-2);background:rgba(255,179,71,.13);
+  text-shadow:0 0 8px rgba(255,179,71,.6);animation:pop .4s}
+.badge{position:absolute;top:-8px;right:8px;font-size:.6rem;padding:2px 7px;border-radius:999px;
+  background:#23421f;color:#dff3d3;border:1px solid var(--good);animation:pop .5s}
+
+.bubble{display:flex;gap:8px;align-items:center;padding:6px 10px;border-radius:12px;
+  border:1px solid #4a2210;background:rgba(0,0,0,.3)}
+.b-ava{width:34px;height:34px;flex:none;border-radius:50%;overflow:hidden;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,#3a1c0c,#160a04)}
+.b-ava svg{width:27px;height:27px}
+.b-txt{font-size:.78rem;line-height:1.32}
+.b-txt b{color:var(--amber);margin-right:4px}
+
+.rune-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;margin-top:9px}
+.rune{width:112px;height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:14px;border:2px solid var(--edge);
+  background:linear-gradient(160deg,#5a3016,#381c0c 72%);
+  box-shadow:inset 0 2px 0 rgba(255,210,150,.2),0 8px 18px rgba(0,0,0,.45),0 0 34px rgba(255,150,60,.13)}
+.rune-ch{font-family:var(--cjk);font-size:58px;line-height:1;color:var(--cream);text-shadow:0 0 18px rgba(255,179,71,.55)}
+.rune-py{min-height:19px;font-size:.88rem;font-weight:700;letter-spacing:.06em;color:var(--amber-2)}
+.rune-py.show{animation:pop .35s}
+.candle{position:absolute;top:4px;left:calc(50% + 64px);width:12px;height:44px;z-index:3}
+.candle::before{content:"";position:absolute;bottom:0;left:0;width:12px;height:26px;border-radius:4px 4px 5px 5px;
+  background:linear-gradient(180deg,#f7ecd7,#d9c39a)}
+.candle::after{content:"";position:absolute;bottom:25px;left:5px;width:2px;height:5px;background:#5a3016}
+.cflame{position:absolute;bottom:29px;left:50%;width:8px;height:13px;border-radius:50% 50% 40% 40%/65% 65% 35% 35%;
+  background:linear-gradient(180deg,#ffe9a0,#ff9d2e);box-shadow:0 0 14px 4px rgba(255,170,70,.45);
+  animation:cflick .7s ease-in-out infinite alternate}
+@keyframes cflick{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(.88,1.16) rotate(2deg)}}
+
+.steps{display:flex;gap:5px}
+.chip{font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--wood-3);color:var(--muted);background:rgba(0,0,0,.25);transition:.2s}
+.chip.on{border-color:var(--amber);color:var(--amber);box-shadow:0 0 10px rgba(255,179,71,.3)}
+.chip.done{border-color:var(--good);color:var(--good)}
+.chip.done::after{content:" ✓"}
+
+.prompt{margin:9px 0 0;text-align:center;font-size:.82rem;color:var(--cream)}
+
+.answers{margin-top:8px;min-height:96px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tones{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.btn{padding:10px 8px;border-radius:10px;border:1px solid var(--edge);color:var(--cream);
+  background:linear-gradient(180deg,#4a2210,#33150a);box-shadow:0 3px 0 #1c0c04;transition:.15s;font-size:.92rem}
+.btn:hover:not(:disabled){transform:translateY(-1px);border-color:var(--amber);
+  box-shadow:0 4px 0 #1c0c04,0 0 12px rgba(255,179,71,.25)}
+.btn.good{border-color:var(--good);background:linear-gradient(180deg,#2e5a2a,#1d3a1a);
+  box-shadow:0 0 14px rgba(159,224,138,.4)}
+.btn.bad{border-color:#7a2a22;background:#3a120d;color:#d9968e;text-decoration:line-through;opacity:.55}
+.btn:disabled{cursor:default}
+.tone-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px}
+.tone-btn svg{width:26px;height:16px}
+.tone-btn span{font-size:.66rem;color:var(--muted)}
+.tone-btn.good span{color:var(--good)}
+
+.fbrow{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:22px;margin-top:9px}
+.fb{font-size:.79rem;font-style:italic;color:var(--muted);transition:.2s}
+.fb.good{color:var(--good)}
+.fb.bad{color:var(--bad)}
+.errs{font-size:.68rem;color:var(--muted);opacity:.8;flex:none}
+
+#scr-win{align-items:center;justify-content:center;text-align:center;gap:13px}
+.win-avas{display:flex;gap:10px}
+.wa{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;overflow:hidden;
+  border:1px solid var(--good);background:radial-gradient(circle at 35% 30%,#3a2c14,#160a04);
+  box-shadow:0 0 16px rgba(159,224,138,.35);animation:pop .5s backwards}
+.wa:nth-child(2){animation-delay:.15s}.wa:nth-child(3){animation-delay:.3s}
+.wa svg{width:44px;height:44px}
+#scr-win h2{margin:0;font-size:clamp(1.5rem,7vw,2rem);color:var(--amber-2);
+  text-shadow:0 0 12px rgba(255,179,71,.55),0 0 34px rgba(255,120,40,.3)}
+.win-p{margin:0;max-width:320px;font-size:.84rem;line-height:1.5;color:var(--cream)}
+.code-label{margin:2px 0 0;font-size:.78rem;color:var(--muted);font-style:italic}
+.code{display:flex;gap:8px;margin-top:8px}
+.coin{width:54px;height:62px;display:grid;place-items:center;border-radius:12px;border:2px solid var(--edge);
+  background:linear-gradient(180deg,#5a3016,#381c0c);font-size:1.7rem;font-weight:700;color:var(--amber-2);
+  text-shadow:0 0 14px rgba(255,179,71,.75);box-shadow:inset 0 2px 0 rgba(255,210,150,.2),0 8px 18px rgba(0,0,0,.45);
+  animation:pop .45s backwards}
+.coin:nth-child(2){animation-delay:.15s}.coin:nth-child(3){animation-delay:.3s}.coin:nth-child(4){animation-delay:.45s}
+.paw-win{width:34px;height:34px;fill:var(--amber);opacity:.8}
+
+@media (max-height:620px){
+  .rune{width:94px;height:94px}.rune-ch{font-size:46px}
+  .h-ava{width:38px;height:38px}
+  .screen{padding-top:110px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="scene">
+    <div class="glow"></div>
+    <div class="mantel"></div>
+    <div class="hearth">
+      <div class="log log1"></div><div class="log log2"></div>
+      <div class="flame f1"></div><div class="flame f2"></div>
+    </div>
+    <div class="spark sp1"></div><div class="spark sp2"></div>
+  </div>
+
+  <section id="scr-start" class="screen active">
+    <p class="eyebrow">бонус · древний код</p>
+    <h1>Отряд для пса</h1>
+    <div class="poster">
+      <h2>ПРОПАЛА СОБАКА!</h2>
+      <svg class="paw" viewBox="0 0 48 48"><path d="M24 20c-7 0-12 5-12 11 0 5 5 8 12 8s12-3 12-8c0-6-5-11-12-11z"/><circle cx="11" cy="18" r="4.5"/><circle cx="19" cy="11" r="4.5"/><circle cx="29" cy="11" r="4.5"/><circle cx="37" cy="18" r="4.5"/></svg>
+      <p>Гоблины из Чиркающего Болота утащили пса в свой лагерь.</p>
+      <p class="rew">ВОЗНАГРАЖДЕНИЕ — благодарность таверны!</p>
+    </div>
+    <p class="tarv">— Я воин Синнабон. Мне нужно собрать двоих смельчаков в вылазку… но они идут лишь за тем, кто прочитает их древние руны. Помоги мне их прочесть!</p>
+    <ul class="rules">
+      <li>9 рун: выбери слог, тон и перевод</li>
+      <li>Ошибка не страшна — пробуй снова</li>
+      <li>Заполни доверие обоих героев и получи код</li>
+    </ul>
+    <button class="btn-main" id="btn-start">Начать</button>
+  </section>
+
+  <section id="scr-game" class="screen" hidden>
+    <div class="party">
+      <div class="party-l">
+        <span class="pt-label">Отряд</span>
+        <span class="pm" id="pm-war" data-ava="war"></span>
+        <span class="pm slot" id="pm-0"></span>
+        <span class="pm slot" id="pm-1"></span>
+      </div>
+      <div class="party-r">
+        <div class="obar"><i id="obar-fill"></i></div>
+        <span id="obar-txt">0%</span>
+      </div>
+    </div>
+    <div class="heroes">
+      <article class="hero" id="hero-0">
+        <div class="h-ava" data-ava="borin"></div>
+        <div>
+          <b class="h-name">Борин</b>
+          <span class="h-title">гном-кузнец · 5 рун</span>
+          <div class="h-slots" id="slots-0"></div>
+        </div>
+      </article>
+      <article class="hero" id="hero-1">
+        <div class="h-ava" data-ava="lielle"></div>
+        <div>
+          <b class="h-name">Лиэль</b>
+          <span class="h-title">эльфийка-следопыт · 4 руны</span>
+          <div class="h-slots" id="slots-1"></div>
+        </div>
+      </article>
+    </div>
+    <div class="bubble">
+      <span class="b-ava" id="b-ava"></span>
+      <div class="b-txt"><b id="b-name"></b><span id="b-line"></span></div>
+    </div>
+    <div class="rune-wrap">
+      <div class="candle"><i class="cflame"></i></div>
+      <div class="rune">
+        <span class="rune-ch" id="rune-ch"></span>
+        <span class="rune-py" id="rune-py"></span>
+      </div>
+      <div class="steps">
+        <span class="chip" id="chip-0">Слог</span>
+        <span class="chip" id="chip-1">Тон</span>
+        <span class="chip" id="chip-2">Перевод</span>
+      </div>
+    </div>
+    <p class="prompt" id="prompt"></p>
+    <div class="answers" id="answers"></div>
+    <div class="fbrow">
+      <span class="fb" id="fb"></span>
+      <span class="errs" id="errs">Ошибок: 0</span>
+    </div>
+  </section>
+
+  <section id="scr-win" class="screen" hidden>
+    <div class="win-avas">
+      <span class="wa" data-ava="war"></span>
+      <span class="wa" data-ava="borin"></span>
+      <span class="wa" data-ava="lielle"></span>
+    </div>
+    <h2>Отряд готов!</h2>
+    <svg class="paw-win" viewBox="0 0 48 48"><path d="M24 20c-7 0-12 5-12 11 0 5 5 8 12 8s12-3 12-8c0-6-5-11-12-11z"/><circle cx="11" cy="18" r="4.5"/><circle cx="19" cy="11" r="4.5"/><circle cx="29" cy="11" r="4.5"/><circle cx="37" cy="18" r="4.5"/></svg>
+    <p class="win-p">Борин точит топор, Лиэль натягивает тетиву — лагерю гоблинов несдобровать. Пёс к утру будет дома!</p>
+    <p class="code-label">Благодарные хозяева дают вам код:</p>
+    <div class="code"><span class="coin">2</span><span class="coin">8</span><span class="coin">4</span><span class="coin">6</span></div>
+    <button class="btn-main" id="btn-again">Играть снова</button>
+  </section>
+</div>
+
+<script>
+const CHARS={
+  "月":{py:"yuè",syl:"yue",tone:4,tr:"луна, месяц"},
+  "明":{py:"míng",syl:"ming",tone:2,tr:"яркий, светлый"},
+  "有":{py:"yǒu",syl:"you",tone:3,tr:"иметь"},
+  "朋":{py:"péng",syl:"peng",tone:2,tr:"друг"},
+  "用":{py:"yòng",syl:"yong",tone:4,tr:"использовать"},
+  "夕":{py:"xī",syl:"xi",tone:1,tr:"вечер, закат"},
+  "名":{py:"míng",syl:"ming",tone:2,tr:"имя"},
+  "自":{py:"zì",syl:"zi",tone:4,tr:"сам, себя"},
+  "息":{py:"xī",syl:"xi",tone:1,tr:"дыхание, отдых"}
+};
+const HEROES=[
+  {name:"Борин",ava:"borin",chars:["月","朋","用","夕","自"],
+   ask:["Хмф! Пёс в лапах гоблинов — дело дрянь… Но сперва прочти мою руну. Гляди:","Мой дедуля резал такие на топорах. Покажи, что читаешь:","Гоблины ждать не станут. Но уговор есть уговор — руна:","Топор мой чешется в бой… Убеди меня. Вот знак:","Последняя руна, воин! Прочти её — и я твой:"],
+   grum:["Даже гоблин-повар читает лучше!","Ха! Моя борода знает поболее.","Нет! Совсем не то.","Криво резешь знак, воин…"],
+   praise:["Ха! В точку!","Метко, человек!","Руна тебе подчиняется!","Вот это дело!"],
+   join:"Вот это уговор! Борин и его молот — в отряде. Гоблины запомнят эту ночь!"},
+  {name:"Лиэль",ava:"lielle",chars:["明","有","名","息"],
+   ask:["Лес шепчет: в лагере скулит пёс… Прочти мою сложную руну:","Гному хватило простых знаков. Проверим тебя на моём:","Тропу к лагерю я знаю. А вот знаешь ли ты руну?","Последняя руна, воин. Прочтёшь — и мой лук запоёт ради пса:"],
+   grum:["Листья не согласны…","Нет. Даже ветер читает лучше.","Лес вздыхает: неверно.","Не так! Слушай руну."],
+   praise:["Лес одобряет!","Истинно так.","Вижу в тебе свет.","Точно!"],
+   join:"Мой лук с тобой, воин. Пёс будет дома к утру — лес обещал."}
+];
+const AVA={
+  war:'<svg viewBox="0 0 64 64"><path d="M10 62 Q10 44 32 44 Q54 44 54 62 Z" fill="#160a04"/><path d="M32 4 Q41 9 35 18 L29 18 Q24 8 32 4 Z" fill="#b23a2c"/><circle cx="32" cy="30" r="13" fill="#24110a"/><path d="M19 24 A13 13 0 0 1 45 24 L45 28 L19 28 Z" fill="#3a2a18"/><rect x="22" y="27" width="20" height="4.5" rx="2.25" fill="#ffb347"/></svg>',
+  borin:'<svg viewBox="0 0 64 64"><path d="M7 62 Q7 44 32 44 Q57 44 57 62 Z" fill="#160a04"/><path d="M18 35 L46 35 L41 60 Q32 64 23 60 Z" fill="#2a1508"/><circle cx="32" cy="31" r="14" fill="#24110a"/><path d="M18 25 A14 14 0 0 1 46 25 L46 29 L18 29 Z" fill="#4a5a68"/><path d="M18 28 Q9 26 7 19 Q16 21 19 25 Z" fill="#c9a273"/><path d="M46 28 Q55 26 57 19 Q48 21 45 25 Z" fill="#c9a273"/><circle cx="26" cy="33" r="2" fill="#ffb347"/><circle cx="38" cy="33" r="2" fill="#ffb347"/></svg>',
+  lielle:'<svg viewBox="0 0 64 64"><path d="M13 62 Q13 46 32 46 Q51 46 51 62 Z" fill="#160a04"/><path d="M50 16 Q62 32 50 48" stroke="#3a5a3a" stroke-width="3.5" fill="none"/><path d="M50 16 L50 48" stroke="#c9a273" stroke-width="1.5"/><circle cx="31" cy="37" r="11" fill="#24110a"/><path d="M31 6 L45 30 Q46 36 38 36 L24 36 Q16 36 17 30 Z" fill="#1d3a2a"/><circle cx="27" cy="39" r="1.8" fill="#ffb347"/><circle cx="36" cy="39" r="1.8" fill="#ffb347"/></svg>'
+};
+const TONE_PATHS=["M3 8 H21","M3 12 Q13 16 21 4","M3 12 Q7 3 11 9 Q14 14 21 6","M3 4 L21 12"];
+const TONE_DIA=["¯","ˊ","ˇ","ˋ"];
+
+const $=id=>document.getElementById(id);
+const answersEl=$("answers"),promptEl=$("prompt"),fbEl=$("fb"),errsEl=$("errs");
+let AC=null,queue=[],qi=0,step=0,errors=0,done=0;
+const doneCount=[0,0];
+
+function ac(){if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();return AC}
+function beep(f,dur,type,g,delay){
+  try{
+    const a=ac(),t=a.currentTime+(delay||0),o=a.createOscillator(),v=a.createGain();
+    o.type=type||"sine";o.frequency.value=f;
+    v.gain.setValueAtTime(g||.07,t);v.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(v);v.connect(a.destination);o.start(t);o.stop(t+dur);
+  }catch(e){}
+}
+const sfxStep=()=>beep(680,.1,"sine",.06);
+const sfxBad=()=>beep(150,.22,"square",.045);
+const sfxDone=()=>{beep(523,.12,"sine",.07);beep(784,.18,"sine",.07,.09)};
+const sfxJoin=()=>{[523,659,784].forEach((f,i)=>beep(f,.16,"sine",.07,i*.1))};
+const sfxWin=()=>{[523,659,784,1046].forEach((f,i)=>beep(f,.2,"sine",.08,i*.13))};
+
+function sh(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const pick=(a,n)=>sh(a).slice(0,n);
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+
+function fillAvas(){document.querySelectorAll("[data-ava]").forEach(el=>{el.innerHTML=AVA[el.dataset.ava]})}
+function buildSlots(){
+  HEROES.forEach((h,i)=>{
+    $("slots-"+i).innerHTML=h.chars.map(c=>`<span class="slot-r" data-c="${c}">${c}</span>`).join("");
+  });
+}
+function buildQueue(){
+  queue=[];
+  HEROES.forEach((h,i)=>{
+    sh(h.chars).forEach((c,k)=>queue.push({h:i,c,i:k}));
+  });
+  qi=0;
+}
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>{s.hidden=true;s.classList.remove("active")});
+  const el=$(id);el.hidden=false;el.classList.add("active");
+}
+function setChips(){
+  for(let i=0;i<3;i++){
+    const ch=$("chip-"+i);
+    ch.classList.toggle("done",i<step);
+    ch.classList.toggle("on",i===step);
+  }
+}
+function setBubble(name,avaKey,line){
+  $("b-name").textContent=name+":";
+  $("b-ava").innerHTML=AVA[avaKey];
+  $("b-line").textContent=" "+line;
+}
+function fb(text,cls){fbEl.textContent=text;fbEl.className="fb"+(cls?" "+cls:"")}
+
+function loadRune(){
+  const item=queue[qi],h=HEROES[item.h],r=CHARS[item.c];
+  HEROES.forEach((_,i)=>$("hero-"+i).classList.toggle("on",i===item.h));
+  setBubble(h.name,h.ava,h.ask[item.i]);
+  $("rune-ch").textContent=item.c;
+  const py=$("rune-py");py.textContent="";py.classList.remove("show");
+  step=0;setChips();
+  promptEl.textContent="Слог (без тона)?";
+  fb("","");
+  const sylPool=[...new Set(Object.values(CHARS).map(x=>x.syl))].filter(s=>s!==r.syl);
+  const opts=sh([r.syl,...pick(sylPool,3)]);
+  answersEl.innerHTML='<div class="grid2">'+opts.map(s=>`<button class="btn" data-k="syl" data-v="${s}">${s}</button>`).join("")+"</div>";
+}
+function renderTones(){
+  const r=CHARS[queue[qi].c];
+  answersEl.innerHTML='<div class="tones">'+TONE_PATHS.map((d,i)=>
+    `<button class="btn tone-btn" data-k="tone" data-v="${i+1}"><svg viewBox="0 0 24 16"><path d="${d}" stroke="#ffb347" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg><span>${TONE_DIA[i]} тон ${i+1}</span></button>`).join("")+"</div>";
+}
+function renderTrans(){
+  const r=CHARS[queue[qi].c];
+  const trPool=Object.values(CHARS).map(x=>x.tr).filter(t=>t!==r.tr);
+  const opts=sh([r.tr,...pick(trPool,3)]);
+  answersEl.innerHTML='<div class="grid2">'+opts.map(t=>`<button class="btn" data-k="tr" data-v="${t}">${t}</button>`).join("")+"</div>";
+}
+
+answersEl.addEventListener("click",e=>{
+  const btn=e.target.closest("button");
+  if(!btn||btn.disabled)return;
+  const item=queue[qi],h=HEROES[item.h],r=CHARS[item.c];
+  const v=btn.dataset.v;
+  const ok=step===0?v===r.syl:step===1?+v===r.tone:v===r.tr;
+  if(!ok){
+    btn.classList.add("bad");btn.disabled=true;
+    errors++;errsEl.textContent="Ошибок: "+errors;
+    fb(rnd(h.grum),"bad");sfxBad();
+    return;
+  }
+  answersEl.querySelectorAll("button").forEach(b=>b.disabled=true);
+  btn.classList.add("good");
+  if(step===0){
+    step=1;setChips();sfxStep();
+    promptEl.textContent=`Тон слога «${r.syl}»?`;
+    setTimeout(renderTones,380);
+  }else if(step===1){
+    step=2;setChips();sfxStep();
+    const py=$("rune-py");py.textContent=r.py;py.classList.add("show");
+    promptEl.textContent="Что означает руна?";
+    setTimeout(renderTrans,380);
+  }else{
+    runeDone();
+  }
+});
+
+function runeDone(){
+  const item=queue[qi],h=HEROES[item.h];
+  const slot=document.querySelector(`#slots-${item.h} .slot-r[data-c="${item.c}"]`);
+  if(slot)slot.classList.add("f");
+  doneCount[item.h]++;done++;
+  $("obar-fill").style.width=Math.round(done/9*100)+"%";
+  $("obar-txt").textContent=Math.round(done/9*100)+"%";
+  if(doneCount[item.h]===h.chars.length){
+    const he=$("hero-"+item.h);
+    he.classList.remove("on");he.classList.add("joined");
+    const b=document.createElement("span");b.className="badge";b.textContent="в отряде";
+    he.appendChild(b);
+    const pm=$("pm-"+item.h);pm.innerHTML=AVA[h.ava];pm.classList.remove("slot");pm.classList.add("fill");
+    setBubble(h.name,h.ava,h.join);
+    fb("","");sfxJoin();
+    if(done===9){setTimeout(showWin,1700);return}
+    setTimeout(()=>{qi++;loadRune()},1750);
+  }else{
+    fb(rnd(h.praise),"good");sfxDone();
+    setTimeout(()=>{qi++;loadRune()},950);
+  }
+}
+function showWin(){showScreen("scr-win");sfxWin()}
+
+$("btn-start").addEventListener("click",()=>{
+  ac();
+  errors=0;done=0;doneCount[0]=0;doneCount[1]=0;
+  errsEl.textContent="Ошибок: 0";
+  $("obar-fill").style.width="0%";$("obar-txt").textContent="0%";
+  [0,1].forEach(i=>{const pm=$("pm-"+i);pm.innerHTML="";pm.classList.add("slot");pm.classList.remove("fill")});
+  HEROES.forEach((_,i)=>{const he=$("hero-"+i);he.classList.remove("joined","on");const b=he.querySelector(".badge");if(b)b.remove()});
+  buildSlots();buildQueue();showScreen("scr-game");loadRune();
+});
+$("btn-again").addEventListener("click",()=>{showScreen("scr-start")});
+
+fillAvas();buildSlots();
+</script>
+</body>
+</html>
