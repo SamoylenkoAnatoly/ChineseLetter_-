@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#050b1e">
+<title>Мыслительный процесс — 18 связей</title>
+<style>
+:root{
+  --space:#050b1e;
+  --space-2:#0a1430;
+  --panel:#0c1834;
+  --text:#e8f1ff;
+  --muted:#93a7c8;
+  --faint:#5f7396;
+  --cyan:#5fe8ff;
+  --cyan-soft:#9fe8ff;
+  --cyan-deep:#38c6f5;
+  --violet:#8b7bff;
+  --red:#ff5d7a;
+  --line:rgba(95,232,255,.22);
+  --cjk:"KaiTi","STKaiti","Kaiti SC","DFKai-SB","AR PL UKai CN","Noto Serif CJK SC","MS Gothic",serif;
+  --ui:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  --mono:Consolas,"Cascadia Mono",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{min-width:280px;min-height:100%;margin:0}
+body{
+  min-height:100vh;
+  display:grid;place-items:center;
+  padding:clamp(8px,2vw,16px);
+  color:var(--text);
+  font-family:var(--ui);
+  background:
+    radial-gradient(900px 620px at 15% -10%,rgba(64,60,160,.28),transparent 60%),
+    radial-gradient(820px 620px at 110% 112%,rgba(30,90,160,.2),transparent 55%),
+    radial-gradient(640px 420px at 82% 18%,rgba(120,70,200,.14),transparent 62%),
+    var(--space);
+}
+@supports (height:100svh){body{min-height:100svh}}
+body::before,body::after{
+  content:"";position:fixed;top:0;left:0;z-index:0;pointer-events:none;
+  width:1px;height:1px;border-radius:50%;background:transparent;
+}
+body::before{
+  box-shadow:
+    40px 60px rgba(220,240,255,.7),120px 300px rgba(220,240,255,.4),200px 140px rgba(220,240,255,.9),
+    260px 520px rgba(200,225,255,.5),330px 80px rgba(220,240,255,.6),420px 260px rgba(220,240,255,.35),
+    480px 610px rgba(200,225,255,.8),560px 120px rgba(220,240,255,.45),640px 420px rgba(220,240,255,.7),
+    700px 220px rgba(200,225,255,.5),760px 560px rgba(220,240,255,.85),820px 60px rgba(220,240,255,.4),
+    900px 340px rgba(200,225,255,.65),960px 160px rgba(220,240,255,.5),1020px 480px rgba(220,240,255,.75),
+    1080px 90px rgba(200,225,255,.45),1140px 300px rgba(220,240,255,.6),1200px 600px rgba(220,240,255,.8),
+    1260px 180px rgba(200,225,255,.4),1320px 440px rgba(220,240,255,.55),90px 700px rgba(220,240,255,.6),
+    180px 820px rgba(200,225,255,.45),300px 660px rgba(220,240,255,.7),380px 900px rgba(200,225,255,.5),
+    520px 760px rgba(220,240,255,.65),610px 880px rgba(200,225,255,.4),720px 700px rgba(220,240,255,.75),
+    810px 840px rgba(200,225,255,.5),880px 660px rgba(220,240,255,.6),1000px 760px rgba(200,225,255,.45),
+    1100px 880px rgba(220,240,255,.7),1180px 720px rgba(200,225,255,.5),1240px 940px rgba(220,240,255,.6),
+    60px 420px rgba(220,240,255,.5),240px 380px rgba(200,225,255,.35),540px 340px rgba(220,240,255,.55),
+    680px 560px rgba(200,225,255,.4),940px 580px rgba(220,240,255,.6),1060px 640px rgba(200,225,255,.45),
+    1160px 420px rgba(220,240,255,.55),1280px 760px rgba(200,225,255,.4),160px 640px rgba(220,240,255,.5),
+    400px 500px rgba(200,225,255,.35),600px 720px rgba(220,240,255,.45);
+  animation:twinkle-a 5s ease-in-out infinite alternate;
+}
+body::after{
+  box-shadow:
+    150px 200px #bfefff,350px 150px #cabfff,550px 450px #bfefff,750px 320px #e6f4ff,
+    950px 120px #cabfff,1150px 520px #bfefff,250px 750px #e6f4ff,650px 830px #bfefff,
+    1050px 800px #cabfff,450px 50px #e6f4ff,850px 600px #bfefff,1250px 100px #e6f4ff,
+    80px 550px #cabfff,980px 420px #e6f4ff,520px 680px #cabfff,1180px 260px #bfefff;
+  animation:twinkle-b 7s ease-in-out infinite alternate;
+}
+@keyframes twinkle-a{from{opacity:.55}to{opacity:1}}
+@keyframes twinkle-b{from{opacity:1}to{opacity:.5}}
+button{font:inherit}
+[hidden]{display:none !important}
+
+.stage{
+  position:relative;z-index:1;
+  width:min(100%,620px);
+  height:min(calc(100vh - 16px),780px);
+  min-height:480px;
+  display:flex;flex-direction:column;
+  padding:clamp(12px,2.4vw,22px);
+  border:1px solid rgba(95,232,255,.14);
+  border-radius:12px;
+  background:linear-gradient(170deg,rgba(10,20,48,.78),rgba(5,11,30,.85));
+  box-shadow:0 18px 50px rgba(0,0,12,.55),inset 0 0 60px rgba(30,70,150,.12);
+  overflow:hidden;
+}
+@supports (height:100svh){.stage{height:min(calc(100svh - 16px),780px)}}
+
+.seal{
+  position:absolute;top:12px;right:14px;z-index:3;
+  width:44px;height:44px;
+  display:grid;place-items:center;
+  border:1.5px solid rgba(95,232,255,.6);
+  border-radius:8px;
+  color:#bff2ff;
+  background:rgba(95,232,255,.07);
+  box-shadow:0 0 14px rgba(95,232,255,.25),inset 0 0 8px rgba(95,232,255,.12);
+  font-family:var(--cjk);
+  font-size:26px;line-height:1;
+  animation:holo-float 5s ease-in-out infinite alternate;
+  user-select:none;
+}
+@keyframes holo-float{from{transform:translateY(-2px) rotate(-2deg)}to{transform:translateY(2px) rotate(2deg)}}
+
+.screen{flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto}
+
+#screen-start{align-items:center;justify-content:center;text-align:center;gap:14px;padding:10px}
+#screen-start h1{
+  margin:6px 0 0;
+  font-size:clamp(26px,5.4vw,38px);
+  font-weight:400;
+  letter-spacing:.02em;
+  text-shadow:0 0 22px rgba(95,232,255,.25);
+}
+.lead{max-width:46ch;margin:0;color:var(--muted);font-size:clamp(14px,2vh,16px);line-height:1.55}
+.preview{
+  font-family:var(--cjk);
+  font-size:clamp(19px,3.2vw,24px);
+  letter-spacing:.32em;
+  color:#cfe3ff;
+  margin:2px 0 4px;
+  white-space:nowrap;
+}
+.preview span{display:inline-block}
+.preview span:nth-child(even){transform:rotate(2deg) translateY(1px)}
+.preview .key{color:var(--cyan-soft);text-shadow:0 0 12px rgba(95,232,255,.65)}
+.btn{
+  padding:12px 28px;
+  border:1.5px solid var(--cyan);
+  border-radius:10px;
+  background:rgba(95,232,255,.12);
+  color:#d9f7ff;
+  cursor:pointer;
+  letter-spacing:.08em;
+  text-shadow:0 0 8px rgba(95,232,255,.4);
+  box-shadow:0 0 16px rgba(95,232,255,.2),inset 0 0 10px rgba(95,232,255,.06);
+  transition:transform .12s ease,background .15s ease,box-shadow .15s ease;
+}
+.btn:hover{background:rgba(95,232,255,.26);transform:translateY(-1px);box-shadow:0 0 24px rgba(95,232,255,.4),inset 0 0 12px rgba(95,232,255,.1)}
+.btn:active{transform:translate(1px,1px);box-shadow:0 0 8px rgba(95,232,255,.2)}
+.hint{margin:0;font-size:13px;font-style:italic;color:var(--faint);max-width:40ch}
+
+.game-head{
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:2px 54px 8px 2px;
+}
+.phase-chip{
+  margin:0;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.stroke-count{
+  margin:0;font-size:13px;color:var(--cyan-soft);white-space:nowrap;
+  font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(95,232,255,.35);
+}
+
+.duo{display:flex;gap:14px;align-items:stretch;margin-bottom:8px}
+@media (max-width:520px){.duo{flex-direction:column}}
+.sheet{
+  position:relative;flex:1.5;min-height:150px;
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:
+    radial-gradient(1px 1px at 18% 26%,rgba(190,220,255,.3),transparent 100%),
+    radial-gradient(1px 1px at 72% 18%,rgba(190,220,255,.22),transparent 100%),
+    radial-gradient(1.5px 1.5px at 86% 64%,rgba(202,191,255,.3),transparent 100%),
+    radial-gradient(1px 1px at 34% 78%,rgba(190,220,255,.24),transparent 100%),
+    radial-gradient(1px 1px at 56% 48%,rgba(190,220,255,.18),transparent 100%),
+    linear-gradient(rgba(95,232,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(95,232,255,.035) 1px,transparent 1px),
+    linear-gradient(165deg,rgba(16,30,64,.92),rgba(7,13,32,.94));
+  background-size:auto,auto,auto,auto,auto,28px 28px,28px 28px,auto;
+  box-shadow:0 0 20px rgba(38,120,200,.12),inset 0 0 30px rgba(38,80,160,.14);
+}
+.sheet::before,.sheet::after{
+  content:"";position:absolute;width:14px;height:14px;pointer-events:none;
+}
+.sheet::before{top:6px;left:6px;border-top:2px solid rgba(95,232,255,.5);border-left:2px solid rgba(95,232,255,.5)}
+.sheet::after{bottom:6px;right:6px;border-bottom:2px solid rgba(95,232,255,.5);border-right:2px solid rgba(95,232,255,.5)}
+.sheet.flash{animation:flash .85s ease}
+@keyframes flash{30%{box-shadow:0 0 0 7px rgba(95,232,255,.22),0 0 34px rgba(95,232,255,.4)}}
+.sheet-host{position:relative;width:100%;height:100%;min-height:130px}
+.sheet svg{display:block;width:100%;height:100%;max-height:clamp(140px,22vh,205px);margin:auto}
+.sheet svg.complete{animation:settle .8s ease}
+@keyframes settle{40%{transform:scale(1.04);filter:brightness(1.35)}}
+.sheet-note{
+  position:absolute;bottom:6px;right:14px;margin:0;
+  font-size:11px;font-style:italic;color:rgba(147,167,200,.55);
+}
+
+.hanzi-side{flex:1;display:grid;place-items:center;min-height:130px}
+.neuro{position:relative;width:clamp(108px,15vh,132px);aspect-ratio:1}
+.neuro-ring{position:absolute;inset:0;width:100%;height:100%}
+.neuro-ring circle{
+  fill:none;stroke:var(--cyan);stroke-width:2;stroke-linecap:round;
+  stroke-dasharray:80 20;transform:rotate(-64deg);transform-origin:center;opacity:.7;
+  filter:drop-shadow(0 0 4px rgba(95,232,255,.7));
+}
+.neuro-ring .ring-dash{
+  stroke:rgba(95,232,255,.35);stroke-width:1;stroke-dasharray:3 9;
+  transform:none;transform-box:fill-box;transform-origin:center;
+  animation:ring-spin 24s linear infinite;
+}
+@keyframes ring-spin{to{transform:rotate(360deg)}}
+.orb{position:absolute;inset:9%;animation:orbit 7s linear infinite}
+.orb::before{
+  content:"";position:absolute;top:-3px;left:50%;width:6px;height:6px;margin-left:-3px;
+  border-radius:50%;background:#c8f4ff;
+  box-shadow:0 0 8px var(--cyan),0 0 16px rgba(95,232,255,.55);
+}
+.orb.o2{inset:16%;animation-duration:11s;animation-direction:reverse}
+.orb.o2::before{width:4px;height:4px;margin-left:-2px;top:-2px}
+@keyframes orbit{to{transform:rotate(360deg)}}
+#hanzi-char{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--cjk);font-size:clamp(54px,10vh,72px);line-height:1;
+  color:#eef9ff;
+  text-shadow:0 0 12px rgba(95,232,255,.55),0 0 30px rgba(95,232,255,.3);
+}
+#hanzi-char.pop{animation:neuro-in .5s cubic-bezier(.2,.7,.3,1.15) both}
+@keyframes neuro-in{from{opacity:0;transform:scale(.5);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+
+.question{
+  margin:0 0 10px;text-align:center;
+  font-size:clamp(17px,2.4vh,20px);font-weight:400;
+}
+.options{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+}
+@media (max-width:340px){.options{grid-template-columns:1fr}}
+.opt{
+  min-height:48px;padding:10px 12px;
+  border:1px solid var(--line);border-radius:10px;
+  background:rgba(20,34,66,.55);
+  color:#dceaff;cursor:pointer;
+  transition:transform .08s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease;
+}
+.opt:hover{background:rgba(30,50,96,.75);border-color:var(--cyan);box-shadow:0 0 14px rgba(95,232,255,.18);transform:translateY(-1px)}
+.opt:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.opt.good{
+  background:rgba(95,232,255,.22);border-color:var(--cyan);color:#e9fcff;
+  box-shadow:0 0 16px rgba(95,232,255,.4),inset 0 0 12px rgba(95,232,255,.14);
+  animation:stamp .45s ease;pointer-events:none;
+}
+@keyframes stamp{0%{transform:scale(1)}40%{transform:scale(.94)}100%{transform:scale(1)}}
+.opt.bad{
+  background:rgba(255,93,122,.14);color:#ff9db1;border-color:rgba(255,93,122,.5);
+  text-decoration:line-through;pointer-events:none;
+  box-shadow:0 0 12px rgba(255,93,122,.2);
+  animation:glitch .4s ease;
+}
+@keyframes glitch{
+  0%,100%{transform:none;clip-path:none}
+  20%{transform:translateX(-4px);clip-path:inset(18% 0 42% 0)}
+  40%{transform:translateX(3px);clip-path:inset(58% 0 12% 0)}
+  60%{transform:translateX(-2px);clip-path:inset(35% 0 35% 0)}
+  80%{clip-path:none}
+}
+
+.blot-row{
+  min-height:20px;margin-top:12px;
+  display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;
+}
+.spark{
+  width:11px;height:11px;flex:none;
+  background:#ff8ba0;
+  clip-path:polygon(50% 0,60% 38%,100% 50%,60% 62%,50% 100%,40% 62%,0 50%,40% 38%);
+  filter:drop-shadow(0 0 5px rgba(255,93,122,.9));
+}
+.blot-count{font-size:13px;font-style:italic;color:var(--faint)}
+
+#screen-win{align-items:center;justify-content:center;text-align:center;gap:10px;padding:10px}
+.win-kicker{
+  margin:0;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);
+  text-shadow:0 0 12px rgba(95,232,255,.5);
+}
+.win-title{margin:0;font-size:clamp(24px,4.6vw,32px);font-weight:400}
+.win-sheet{flex:none;width:min(78%,300px);min-height:0}
+.win-sheet svg{max-height:clamp(120px,18vh,165px)}
+.code-label{margin:2px 0 0;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.victory-code{
+  margin:0;padding:8px 26px;
+  border:1px solid rgba(95,232,255,.5);border-radius:8px;
+  background:rgba(10,22,48,.88);
+  box-shadow:0 0 24px rgba(95,232,255,.2),inset 0 0 18px rgba(95,232,255,.08);
+  font-family:var(--mono);
+  font-size:clamp(42px,12vw,60px);
+  letter-spacing:.16em;
+  color:#eafcff;
+  text-shadow:0 0 14px rgba(95,232,255,.6);
+}
+.victory-code .digit{opacity:0;display:inline-block}
+.victory-code.play .digit{animation:digit-in .6s steps(1,end) both}
+.victory-code.play .digit:nth-child(2){animation-delay:.3s}
+.victory-code.play .digit:nth-child(3){animation-delay:.6s}
+.victory-code.play .digit:nth-child(4){animation-delay:.9s}
+@keyframes digit-in{
+  0%{opacity:0;transform:translateY(5px) scale(1.25);filter:blur(6px) brightness(2.2)}
+  25%{opacity:.6;filter:blur(2px) brightness(1.8)}
+  40%{opacity:.15}
+  55%{opacity:1;filter:blur(0) brightness(1.3)}
+  70%{transform:translate(-1px,0)}
+  85%{transform:translate(1px,0)}
+  100%{opacity:1;transform:none;filter:none}
+}
+.win-stats{margin:2px 0 0;font-size:15px;color:var(--muted)}
+.win-legend{margin:0;max-width:46ch;font-size:13.5px;font-style:italic;line-height:1.5;color:var(--faint)}
+.win-legend b{font-family:var(--cjk);font-weight:400;font-style:normal;color:var(--cyan-soft);font-size:1.15em;text-shadow:0 0 8px rgba(95,232,255,.4)}
+
+.inklayer path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.strokes path{stroke:#c9f3ff;stroke-dasharray:100 100;stroke-dashoffset:100}
+.glow{filter:url(#neon-glow);opacity:.9}
+.glow path{stroke:var(--cyan-deep);stroke-dasharray:100 100;stroke-dashoffset:100}
+.pulse path{stroke:#eafcff;stroke-width:2;stroke-dasharray:12 88;opacity:0}
+.strokes path.drawn,.glow path.drawn{animation:link-in .8s cubic-bezier(.3,.6,.3,1) forwards}
+@keyframes link-in{to{stroke-dashoffset:0}}
+.pulse path.drawn{opacity:.95;animation:pulse-run 2.8s linear infinite}
+@keyframes pulse-run{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+.ghost path{stroke:rgba(150,200,255,.15);stroke-width:1;stroke-dasharray:2 6}
+.node{fill:var(--cyan-soft);opacity:.12;transform-box:fill-box;transform-origin:center}
+.node.on{opacity:1;animation:node-pop .7s ease;filter:drop-shadow(0 0 5px var(--cyan))}
+@keyframes node-pop{0%{transform:scale(0)}55%{transform:scale(1.9)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<main class="stage">
+  <div class="seal" aria-hidden="true">想</div>
+
+  <section class="screen" id="screen-start">
+    <h1>Мыслительный процесс</h1>
+    <p class="lead">Девять иероглифов, по два вопроса к каждому — пиньинь и перевод. Каждый верный ответ замыкает нейронную связь на карте сознания: восемнадцать связей сложатся в одно созвездие.</p>
+    <p class="preview" aria-label="术 中 右 心 必 想 白 勺 的"><span>术</span><span>中</span><span>右</span><span>心</span><span>必</span><span>想</span><span>白</span><span class="key">勺</span><span>的</span></p>
+    <button class="btn" id="start-btn" type="button">Начать</button>
+    <p class="hint">Сбой — это разрыв связи: вопрос останется, пока не ответишь верно.</p>
+  </section>
+
+  <section class="screen" id="screen-game" hidden>
+    <header class="game-head">
+      <p class="phase-chip" id="phase-chip"></p>
+      <p class="stroke-count" id="stroke-count">связь 0 / 18</p>
+    </header>
+    <div class="duo">
+      <div class="sheet" id="sheet">
+        <div class="sheet-host" id="sheet-host">
+          <svg id="spoon-svg" viewBox="0 0 200 260" role="img" aria-label="Карта сознания: верные ответы замыкают нейронные связи, складывающиеся в созвездие деревянной ложки">
+            <defs>
+              <filter id="neon-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="2.6"/>
+              </filter>
+            </defs>
+            <g class="inklayer strokes">
+              <path d="M 94 238 Q 100 248 106 238" stroke-width="3.2" pathLength="100"/>
+              <path d="M 91 104 C 91 128 92 150 93 172" stroke-width="3.2" pathLength="100"/>
+              <path d="M 109 104 C 109 128 108 150 107 172" stroke-width="3.2" pathLength="100"/>
+              <path d="M 93 172 C 94 196 94 218 94 238" stroke-width="3.2" pathLength="100"/>
+              <path d="M 107 172 C 106 196 106 218 106 238" stroke-width="3.2" pathLength="100"/>
+              <path d="M 91 104 Q 100 114 109 104" stroke-width="2.2" pathLength="100"/>
+              <path d="M 100 118 C 100 136 100 154 100 172" stroke-width="1.6" pathLength="100"/>
+              <path d="M 100 172 C 100 194 100 216 100 234" stroke-width="1.6" pathLength="100"/>
+              <path d="M 100 36 A 50 38 0 0 0 50 74" stroke-width="3.4" pathLength="100"/>
+              <path d="M 50 74 A 50 38 0 0 0 100 112" stroke-width="3.4" pathLength="100"/>
+              <path d="M 100 112 A 50 38 0 0 0 150 74" stroke-width="3.4" pathLength="100"/>
+              <path d="M 150 74 A 50 38 0 0 0 100 36" stroke-width="3.4" pathLength="100"/>
+              <path d="M 58 74 A 42 30 0 0 1 142 74" stroke-width="2" pathLength="100"/>
+              <path d="M 58 74 A 42 30 0 0 0 142 74" stroke-width="2" pathLength="100"/>
+              <path d="M 62 62 C 76 55 124 55 138 62" stroke-width="1.6" pathLength="100"/>
+              <path d="M 62 84 C 78 77 122 77 138 84" stroke-width="1.6" pathLength="100"/>
+              <path d="M 72 99 C 84 94 116 94 128 99" stroke-width="1.6" pathLength="100"/>
+              <path d="M 77 58 a 5 3.5 0 1 0 10 0 a 5 3.5 0 1 0 -10 0" stroke-width="1.8" pathLength="100"/>
+            </g>
+            <g class="nodes" aria-hidden="true">
+              <circle class="node" cx="100" cy="243" r="2.6" data-stroke="0"/>
+              <circle class="node" cx="93" cy="172" r="2.2" data-stroke="1"/>
+              <circle class="node" cx="107" cy="172" r="2.2" data-stroke="2"/>
+              <circle class="node" cx="91" cy="104" r="2" data-stroke="1"/>
+              <circle class="node" cx="109" cy="104" r="2" data-stroke="2"/>
+              <circle class="node" cx="100" cy="36" r="2.8" data-stroke="8"/>
+              <circle class="node" cx="50" cy="74" r="2.6" data-stroke="8"/>
+              <circle class="node" cx="100" cy="112" r="2.6" data-stroke="9"/>
+              <circle class="node" cx="150" cy="74" r="2.6" data-stroke="10"/>
+              <circle class="node" cx="58" cy="74" r="2" data-stroke="12"/>
+              <circle class="node" cx="142" cy="74" r="2" data-stroke="12"/>
+              <circle class="node" cx="82" cy="58" r="3.2" data-stroke="17"/>
+            </g>
+          </svg>
+        </div>
+        <p class="sheet-note">связь за связью…</p>
+      </div>
+      <div class="hanzi-side">
+        <div class="neuro">
+          <svg class="neuro-ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="49" pathLength="100"/>
+            <circle class="ring-dash" cx="60" cy="60" r="49" pathLength="100"/>
+          </svg>
+          <div class="orb" aria-hidden="true"></div>
+          <div class="orb o2" aria-hidden="true"></div>
+          <div id="hanzi-char"></div>
+        </div>
+      </div>
+    </div>
+    <h2 class="question" id="question-text" aria-live="polite"></h2>
+    <div class="options" id="options"></div>
+    <div class="blot-row" id="blot-row" aria-live="polite"></div>
+  </section>
+
+  <section class="screen" id="screen-win" hidden>
+    <p class="win-kicker">Сигнал принят</p>
+    <h2 class="win-title">Деревянная ложка</h2>
+    <div class="sheet win-sheet"><div class="sheet-host" id="win-sheet-host"></div></div>
+    <p class="code-label">Код победы</p>
+    <p class="victory-code" id="victory-code" aria-label="Код победы 7654"><span class="digit">7</span><span class="digit">6</span><span class="digit">5</span><span class="digit">4</span></p>
+    <p class="win-stats" id="win-stats"></p>
+    <p class="win-legend"><b>勺</b> (sháo) — «ложка» — была среди девяти иероглифов и прячется внутри <b>的</b> (白 + 勺). Восемнадцать связей сложились в одно созвездие.</p>
+    <button class="btn" id="restart-btn" type="button">Играть снова</button>
+  </section>
+</main>
+
+<script>
+(function(){
+  var HANZI = [
+    { h:"术", p:"shù", ru:"техника; приём", wrongP:["shú","shū","sù"] },
+    { h:"中", p:"zhōng", ru:"середина; центр", wrongP:["zhòng","chōng","zhǒng"] },
+    { h:"右", p:"yòu", ru:"право; правый", wrongP:["yōu","yǒu","yóu"] },
+    { h:"心", p:"xīn", ru:"сердце", wrongP:["xìn","xǐn","jīn"] },
+    { h:"必", p:"bì", ru:"непременно", wrongP:["bí","bǐ","pí"] },
+    { h:"想", p:"xiǎng", ru:"думать; мысль", wrongP:["xiàng","xiáng","shǎng"] },
+    { h:"白", p:"bái", ru:"белый", wrongP:["bǎi","bài","pái"] },
+    { h:"勺", p:"sháo", ru:"ложка", wrongP:["shāo","shǎo","shóu"] },
+    { h:"的", p:"de", ru:"частица притяжательности", wrongP:["dé","dì","dē"] }
+  ];
+  var TOTAL = 18;
+  var $ = function(id){ return document.getElementById(id); };
+  var screens = { start:$("screen-start"), game:$("screen-game"), win:$("screen-win") };
+  var svgEl = $("spoon-svg");
+  var sheet = $("sheet");
+  var sheetHost = $("sheet-host");
+  var winHost = $("win-sheet-host");
+  var charEl = $("hanzi-char");
+  var chipEl = $("phase-chip");
+  var qEl = $("question-text");
+  var optsEl = $("options");
+  var countEl = $("stroke-count");
+  var blotRow = $("blot-row");
+  var statsEl = $("win-stats");
+  var codeEl = $("victory-code");
+  var questions = [];
+  var qi = 0;
+  var mistakes = 0;
+  var lock = false;
+  var lastHanzi = "";
+
+  function shuffle(arr){
+    for(var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function buildQuestions(){
+    var chars = shuffle(HANZI.slice());
+    var qs = [];
+    chars.forEach(function(c, idx){
+      var pOpts = shuffle([c.p].concat(c.wrongP));
+      var ruOthers = shuffle(HANZI.filter(function(x){ return x.h !== c.h; }).map(function(x){ return x.ru; })).slice(0, 3);
+      var ruOpts = shuffle([c.ru].concat(ruOthers));
+      qs.push({ h:c.h, chip:"Иероглиф " + (idx + 1) + " из 9 · пиньинь", q:"Выбери верный пиньинь", opts:pOpts, correct:c.p });
+      qs.push({ h:c.h, chip:"Иероглиф " + (idx + 1) + " из 9 · перевод", q:"Выбери верный перевод", opts:ruOpts, correct:c.ru });
+    });
+    return qs;
+  }
+
+  function showScreen(name){
+    Object.keys(screens).forEach(function(k){
+      screens[k].hidden = (k !== name);
+    });
+  }
+
+  function retrigger(el, cls){
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+  }
+
+  function renderQuestion(){
+    var q = questions[qi];
+    if(q.h !== lastHanzi){
+      lastHanzi = q.h;
+      charEl.textContent = q.h;
+      retrigger(charEl, "pop");
+    }
+    chipEl.textContent = q.chip;
+    qEl.textContent = q.q;
+    countEl.textContent = "связь " + qi + " / " + TOTAL;
+    optsEl.innerHTML = "";
+    q.opts.forEach(function(o){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt";
+      b.textContent = o;
+      b.addEventListener("click", function(){ onAnswer(b, o); });
+      optsEl.appendChild(b);
+    });
+  }
+
+  function revealStroke(i){
+    svgEl.querySelectorAll(".inklayer").forEach(function(g){
+      var p = g.children[i];
+      if(p){ p.classList.add("drawn"); }
+    });
+    svgEl.querySelectorAll(".node").forEach(function(n){
+      if(Number(n.getAttribute("data-stroke")) <= i){ n.classList.add("on"); }
+    });
+  }
+
+  function addSpark(){
+    if(mistakes <= 10){
+      var s = document.createElement("span");
+      s.className = "spark";
+      s.style.transform = "rotate(" + Math.floor(Math.random() * 90 - 45) + "deg) scale(" + (0.8 + Math.random() * 0.5).toFixed(2) + ")";
+      blotRow.appendChild(s);
+    }
+    var c = blotRow.querySelector(".blot-count");
+    if(!c){
+      c = document.createElement("span");
+      c.className = "blot-count";
+      blotRow.appendChild(c);
+    }
+    c.textContent = "сбои: " + mistakes;
+  }
+
+  function onAnswer(btn, opt){
+    if(lock){ return; }
+    var q = questions[qi];
+    if(opt === q.correct){
+      lock = true;
+      btn.classList.add("good");
+      revealStroke(qi);
+      countEl.textContent = "связь " + (qi + 1) + " / " + TOTAL;
+      setTimeout(function(){
+        qi += 1;
+        if(qi >= TOTAL){
+          victory();
+        } else {
+          lock = false;
+          renderQuestion();
+        }
+      }, 1000);
+    } else {
+      mistakes += 1;
+      btn.classList.add("bad");
+      addSpark();
+      lock = true;
+      setTimeout(function(){ lock = false; }, 650);
+    }
+  }
+
+  function victory(){
+    lock = true;
+    setTimeout(function(){
+      sheet.classList.add("flash");
+      svgEl.classList.add("complete");
+      setTimeout(function(){
+        winHost.appendChild(svgEl);
+        showScreen("win");
+        var acc = Math.round(100 * TOTAL / (TOTAL + mistakes));
+        statsEl.textContent = "Точность нейросети: " + acc + "% · сбоев: " + mistakes;
+        retrigger(codeEl, "play");
+      }, 700);
+    }, 900);
+  }
+
+  function startGame(){
+    questions = buildQuestions();
+    qi = 0;
+    mistakes = 0;
+    lock = false;
+    lastHanzi = "";
+    blotRow.innerHTML = "";
+    svgEl.querySelectorAll(".inklayer path.drawn").forEach(function(p){ p.classList.remove("drawn"); });
+    svgEl.querySelectorAll(".node.on").forEach(function(n){ n.classList.remove("on"); });
+    svgEl.classList.remove("complete");
+    sheet.classList.remove("flash");
+    sheetHost.appendChild(svgEl);
+    renderQuestion();
+    showScreen("game");
+  }
+
+  var strokes = svgEl.querySelector(".strokes");
+  var glow = strokes.cloneNode(true);
+  glow.classList.remove("strokes");
+  glow.classList.add("glow");
+  svgEl.insertBefore(glow, strokes);
+  var pulse = strokes.cloneNode(true);
+  pulse.classList.remove("strokes");
+  pulse.classList.add("pulse");
+  svgEl.insertBefore(pulse, strokes);
+  var ghost = strokes.cloneNode(true);
+  ghost.classList.remove("strokes");
+  ghost.classList.add("ghost");
+  svgEl.insertBefore(ghost, glow);
+
+  $("start-btn").addEventListener("click", startGame);
+  $("restart-btn").addEventListener("click", startGame);
+})();
+</script>
+</body>
+</html>
