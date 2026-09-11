@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0d1b2e">
+  <title>Ночной пруд — ловля иероглифов</title>
+  <style>
+    :root {
+      --night: #0d1b2e;
+      --deep: #091223;
+      --pond: #10263f;
+      --moon: #e8ecf4;
+      --muted: #8fa8bd;
+      --gold: #e8c877;
+      --amber: #ffd98a;
+      --green: #7fd0a0;
+      --red: #ff9d8a;
+      --serif: Georgia, "Times New Roman", serif;
+      --cjk: "MS Gothic", "Noto Sans CJK SC", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-width: 280px; min-height: 100%; margin: 0; }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(8px, 2vw, 18px);
+      color: var(--moon);
+      background: radial-gradient(circle at 72% -12%, #1c3c60 0, var(--night) 55%, var(--deep) 100%);
+      font-family: var(--serif);
+    }
+
+    button { font: inherit; }
+
+    .game-shell {
+      position: relative;
+      width: min(100%, 660px);
+      height: min(calc(100svh - 20px), 760px);
+      min-height: 460px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(215, 228, 240, 0.26);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #132b4d 0%, #0e2036 36%, #0c1a2c 68%, #0a1524 100%);
+      box-shadow: 0 18px 60px rgba(2, 8, 18, 0.6), inset 0 0 70px rgba(24, 56, 100, 0.28);
+      overflow: hidden;
+    }
+
+    .game-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1.6px 1.6px at 11% 12%, rgba(240, 246, 255, 0.95) 50%, transparent 60%),
+        radial-gradient(1px 1px at 24% 30%, rgba(240, 246, 255, 0.55) 50%, transparent 60%),
+        radial-gradient(1.2px 1.2px at 38% 9%, rgba(240, 246, 255, 0.8) 50%, transparent 60%),
+        radial-gradient(1px 1px at 52% 22%, rgba(240, 246, 255, 0.5) 50%, transparent 60%),
+        radial-gradient(1.6px 1.6px at 63% 7%, rgba(240, 246, 255, 0.9) 50%, transparent 60%),
+        radial-gradient(1px 1px at 82% 18%, rgba(240, 246, 255, 0.6) 50%, transparent 60%),
+        radial-gradient(1.2px 1.2px at 91% 34%, rgba(240, 246, 255, 0.75) 50%, transparent 60%),
+        radial-gradient(1px 1px at 70% 26%, rgba(240, 246, 255, 0.45) 50%, transparent 60%),
+        radial-gradient(1px 1px at 7% 36%, rgba(240, 246, 255, 0.5) 50%, transparent 60%);
+      animation: twinkle 7s ease-in-out infinite alternate;
+    }
+
+    .moon {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      z-index: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 36% 32%, #fdfbf2, #e3e9f2 56%, #c7d3e5);
+      box-shadow: 0 0 36px 9px rgba(236, 242, 250, 0.26);
+      pointer-events: none;
+    }
+
+    .moon::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(7px 7px at 63% 60%, rgba(158, 174, 198, 0.75) 46%, transparent 60%),
+        radial-gradient(4px 4px at 32% 70%, rgba(158, 174, 198, 0.5) 46%, transparent 60%),
+        radial-gradient(5px 5px at 48% 38%, rgba(158, 174, 198, 0.45) 46%, transparent 60%);
+    }
+
+    .screen { position: relative; z-index: 1; flex: 1; display: grid; }
+    .screen[hidden] { display: none; }
+
+    .start-screen, .victory-screen {
+      place-items: center;
+      align-content: center;
+      padding: clamp(16px, 4vw, 30px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    h1, h2 { margin: 0 0 12px; font-weight: 700; }
+
+    h1 {
+      max-width: 460px;
+      font-size: clamp(1.7rem, 6vw, 2.6rem);
+      line-height: 1.08;
+      text-shadow: 0 0 26px rgba(232, 200, 119, 0.35);
+    }
+
+    .start-copy {
+      max-width: 440px;
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .btn {
+      min-height: 46px;
+      padding: 12px 28px;
+      border: 1px solid rgba(255, 224, 160, 0.55);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #f4d789, #d8a94f);
+      color: #241b08;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 6px 22px rgba(232, 200, 119, 0.35);
+      cursor: pointer;
+    }
+
+    .btn:hover { filter: brightness(1.07); }
+    .btn:active { transform: translateY(1px); }
+    .btn:focus-visible { outline: 2px solid var(--moon); outline-offset: 3px; }
+
+    .demo-bug {
+      display: grid;
+      justify-items: center;
+      margin-bottom: 18px;
+      animation: hover 3.4s ease-in-out infinite alternate;
+    }
+
+    .demo-bug .bug { width: 52px; height: 36px; }
+    .demo-bug .glyph { font-size: 1.9rem; }
+    .glyph {
+      font-family: var(--cjk);
+      line-height: 1.15;
+      color: var(--moon);
+      text-shadow: 0 0 10px rgba(255, 217, 138, 0.75), 0 0 24px rgba(255, 217, 138, 0.4);
+    }
+
+    .play-screen {
+      padding: clamp(10px, 2vw, 16px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .play-header {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .round-count, .err-count {
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 10px;
+      border: 1px solid rgba(215, 228, 240, 0.25);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #7fd0a0, #b9e6c9);
+      box-shadow: 0 0 10px rgba(127, 208, 160, 0.6);
+      transition: width 350ms ease;
+    }
+
+    .task-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px 12px;
+      padding: 8px 12px;
+      border: 1px solid rgba(215, 228, 240, 0.14);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .task-label {
+      color: var(--muted);
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .task-word {
+      max-width: 100%;
+      color: var(--moon);
+      font-size: clamp(1.25rem, 4.5vw, 1.65rem);
+      font-weight: 700;
+      text-align: center;
+      text-shadow: 0 0 16px rgba(232, 236, 244, 0.45);
+    }
+
+    .pond {
+      position: relative;
+      flex: 1;
+      min-height: 230px;
+      border: 1px solid rgba(157, 199, 231, 0.2);
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(13, 30, 52, 0.4), rgba(7, 17, 32, 0.8)),
+        repeating-linear-gradient(0deg, rgba(157, 199, 231, 0.05) 0 2px, transparent 2px 16px);
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: none;
+    }
+
+    .reeds {
+      position: absolute;
+      bottom: -2px;
+      width: 108px;
+      height: 84px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .reeds.right { right: -2px; transform: scaleX(-1); }
+    .reeds:not(.right) { left: -2px; }
+
+    .fly {
+      position: absolute;
+      z-index: 1;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 9px 3px rgba(255, 217, 138, 0.55);
+      pointer-events: none;
+      animation: drift var(--d, 9s) ease-in-out infinite alternate, pulse 2.6s ease-in-out infinite alternate;
+    }
+
+    .mosq {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 2;
+      width: 64px;
+      height: 64px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: inherit;
+      cursor: none;
+      will-change: transform;
+    }
+
+    .mosq .wrap {
+      display: grid;
+      justify-items: center;
+      align-content: end;
+      width: 100%;
+      height: 100%;
+      padding-bottom: 2px;
+    }
+
+    .mosq .bug {
+      width: 42px;
+      height: 29px;
+      filter: drop-shadow(0 0 4px rgba(157, 199, 231, 0.35));
+    }
+
+    .mosq .glyph { font-size: 26px; }
+
+    .mosq:hover .glyph { color: #ffffff; }
+    .mosq:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; border-radius: 10px; }
+
+    .mosq.wrong .wrap { animation: shake 450ms ease; }
+    .mosq.wrong .glyph { color: var(--red); text-shadow: 0 0 12px rgba(255, 157, 138, 0.85); }
+
+    .mosq.caught { pointer-events: none; }
+    .mosq.caught .wrap { animation: catch-pop 720ms ease forwards; }
+    .mosq.caught .glyph { color: var(--green); text-shadow: 0 0 14px rgba(127, 208, 160, 0.9); }
+
+    .bug { display: block; }
+    .bug .w1 { transform-box: fill-box; transform-origin: 100% 100%; animation: flap 180ms ease-in-out infinite alternate; }
+    .bug .w2 { transform-box: fill-box; transform-origin: 0% 100%; animation: flap 180ms ease-in-out infinite alternate-reverse; }
+
+    .net {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 5;
+      width: 92px;
+      height: 92px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 180ms ease;
+      will-change: transform;
+    }
+
+    .net.on { opacity: 1; }
+    .net svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 0 8px rgba(207, 224, 238, 0.4)); }
+    .net.swing svg { animation: swing 320ms ease; }
+
+    .feedback {
+      min-height: 1.5em;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .feedback.good { color: var(--green); }
+    .feedback.bad { color: var(--red); }
+
+    .victory-glyph {
+      margin-bottom: 8px;
+      font-family: var(--cjk);
+      font-size: clamp(3.2rem, 11vw, 4.8rem);
+      line-height: 1;
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(232, 200, 119, 0.6);
+      animation: hover 3.2s ease-in-out infinite alternate;
+    }
+
+    .victory-stats { margin: 0 0 14px; color: var(--muted); font-size: 0.95rem; }
+
+    .victory-code {
+      margin: 0 0 24px;
+      color: var(--gold);
+      font-size: clamp(2rem, 8vw, 3.1rem);
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-shadow: 0 0 22px rgba(232, 200, 119, 0.55);
+    }
+
+    @keyframes twinkle { from { opacity: 0.65; } to { opacity: 1; } }
+    @keyframes hover { from { transform: translateY(0); } to { transform: translateY(-9px); } }
+    @keyframes flap { from { transform: rotate(0deg); } to { transform: rotate(-10deg) scaleY(0.55); } }
+    @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(18px, -26px); } }
+    @keyframes pulse { from { opacity: 0.35; } to { opacity: 0.9; } }
+    @keyframes swing { 0% { transform: scale(0.82); } 55% { transform: scale(1.12); } 100% { transform: scale(1); } }
+    @keyframes catch-pop {
+      0% { transform: scale(1); opacity: 1; }
+      30% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(0.15); opacity: 0; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-3px); }
+    }
+
+    @media (pointer: coarse) {
+      .pond, .mosq { cursor: default; }
+    }
+
+    @media (max-height: 560px) {
+      .demo-bug { display: none; }
+      .start-copy { margin-bottom: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell" aria-live="polite">
+    <section class="screen start-screen" id="start-screen">
+      <div class="moon" aria-hidden="true"></div>
+      <div>
+        <div class="demo-bug" aria-hidden="true">
+          <svg class="bug" viewBox="0 0 64 44">
+            <path class="w1" d="M34 16 C26 2 10 2 8 10 C6 18 22 22 34 20 Z" fill="rgba(199,222,244,0.38)"/>
+            <path class="w2" d="M40 16 C48 2 62 4 62 12 C62 20 48 22 40 20 Z" fill="rgba(199,222,244,0.3)"/>
+            <path d="M30 26 L20 34 M36 27 L34 38 M42 26 L52 34" stroke="#9db8cf" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <circle cx="26" cy="21" r="5" fill="#243b57"/>
+            <path d="M22 24 L6 32" stroke="#9db8cf" stroke-width="1.6" stroke-linecap="round"/>
+            <ellipse cx="41" cy="23" rx="13" ry="7" fill="#1d3049" stroke="#9db8cf" stroke-width="1.2"/>
+            <circle cx="52" cy="25" r="4.5" fill="#16283d" stroke="#9db8cf" stroke-width="1"/>
+          </svg>
+          <span class="glyph">蚊</span>
+        </div>
+        <p class="eyebrow">Ночной пруд</p>
+        <h1>Ловля иероглифов</h1>
+        <p class="start-copy">Над прудом кружат комары-переводчики. Читайте слово и ловите сачком комара с подходящим иероглифом. Поймайте всех девятерых.</p>
+        <button class="btn" id="start-button" type="button">Начать</button>
+      </div>
+    </section>
+
+    <section class="screen play-screen" id="play-screen" hidden>
+      <header class="play-header">
+        <span class="round-count" id="round-count">0 / 9</span>
+        <div class="progress-track" role="progressbar" aria-label="Прогресс" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="err-count" id="err-count">Ошибок: 0</span>
+      </header>
+
+      <div class="task-panel">
+        <span class="task-label">Слово</span>
+        <span class="task-word" id="task-word">…</span>
+      </div>
+
+      <div class="pond" id="pond">
+        <svg class="reeds" viewBox="0 0 108 84" aria-hidden="true">
+          <path d="M14 84 L14 34 a7 7 0 0 1 14 0 L28 84 Z" fill="#0a1526"/>
+          <path d="M40 84 L41 44 a5 5 0 0 1 10 0 L52 84 Z" fill="#0c1a2e"/>
+          <path d="M66 84 L66 52 a6 6 0 0 1 12 0 L80 84 Z" fill="#0a1526"/>
+          <path d="M8 84 C14 64 6 52 12 34" stroke="#0c1a2e" stroke-width="3" fill="none"/>
+          <path d="M34 84 C42 70 56 66 60 48" stroke="#0c1a2e" stroke-width="2.5" fill="none"/>
+          <path d="M86 84 C78 70 90 60 84 46" stroke="#0c1a2e" stroke-width="2.5" fill="none"/>
+        </svg>
+        <svg class="reeds right" viewBox="0 0 108 84" aria-hidden="true">
+          <path d="M14 84 L14 34 a7 7 0 0 1 14 0 L28 84 Z" fill="#0a1526"/>
+          <path d="M40 84 L41 44 a5 5 0 0 1 10 0 L52 84 Z" fill="#0c1a2e"/>
+          <path d="M8 84 C14 64 6 52 12 34" stroke="#0c1a2e" stroke-width="3" fill="none"/>
+          <path d="M34 84 C42 70 56 66 60 48" stroke="#0c1a2e" stroke-width="2.5" fill="none"/>
+        </svg>
+        <span class="fly" style="top:22%; left:14%; --d:7.5s"></span>
+        <span class="fly" style="top:64%; left:9%; --d:10s; animation-delay:-2s"></span>
+        <span class="fly" style="top:38%; left:86%; --d:8s; animation-delay:-4s"></span>
+        <span class="fly" style="top:76%; left:78%; --d:11s; animation-delay:-1s"></span>
+        <span class="fly" style="top:14%; left:48%; --d:9s; animation-delay:-3s"></span>
+
+        <div class="net" id="net" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="rgba(207,224,238,0.07)" stroke="#cfe0ee" stroke-width="3.5"/>
+            <circle cx="50" cy="50" r="27" fill="none" stroke="rgba(207,224,238,0.45)" stroke-width="1.4"/>
+            <circle cx="50" cy="50" r="14" fill="none" stroke="rgba(207,224,238,0.45)" stroke-width="1.4"/>
+            <path d="M50 10v80M10 50h80M22 22l56 56M78 22l-56 56" stroke="rgba(207,224,238,0.4)" stroke-width="1.2"/>
+            <path d="M78 78 L97 97" stroke="#caa96a" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <p class="feedback" id="feedback">Взмахните сачком по комару.</p>
+    </section>
+
+    <section class="screen victory-screen" id="victory-screen" hidden>
+      <div class="moon" aria-hidden="true"></div>
+      <div>
+        <div class="victory-glyph" aria-hidden="true">蚊</div>
+        <p class="eyebrow">Тишина над прудом</p>
+        <h2>Победа!</h2>
+        <p class="victory-stats" id="victory-stats">Все девять комаров пойманы.</p>
+        <p class="victory-code" id="victory-code" aria-label="Код победы"></p>
+        <button class="btn" id="restart-button" type="button">Играть снова</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const TASKS = [
+        { char: "术", translation: "искусство" },
+        { char: "中", translation: "середина" },
+        { char: "右", translation: "правый" },
+        { char: "心", translation: "сердце" },
+        { char: "必", translation: "обязательно" },
+        { char: "想", translation: "думать" },
+        { char: "白", translation: "белый" },
+        { char: "勺", translation: "ложка" },
+        { char: "的", translation: "частица притяжательности (мой, твой, его)" }
+      ];
+      const BY_CHAR = {};
+      TASKS.forEach((task) => { BY_CHAR[task.char] = task.translation; });
+
+      const VICTORY_CODE = "7766";
+      const SWARM = 6;
+      const SIZE = 64;
+      const NET = 92;
+      const HIT_R = 48;
+
+      const BUG_SVG =
+        '<svg class="bug" viewBox="0 0 64 44" aria-hidden="true">' +
+        '<path class="w1" d="M34 16 C26 2 10 2 8 10 C6 18 22 22 34 20 Z" fill="rgba(199,222,244,0.38)"/>' +
+        '<path class="w2" d="M40 16 C48 2 62 4 62 12 C62 20 48 22 40 20 Z" fill="rgba(199,222,244,0.3)"/>' +
+        '<path d="M30 26 L20 34 M36 27 L34 38 M42 26 L52 34" stroke="#9db8cf" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="26" cy="21" r="5" fill="#243b57"/>' +
+        '<path d="M22 24 L6 32" stroke="#9db8cf" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<ellipse cx="41" cy="23" rx="13" ry="7" fill="#1d3049" stroke="#9db8cf" stroke-width="1.2"/>' +
+        '<circle cx="52" cy="25" r="4.5" fill="#16283d" stroke="#9db8cf" stroke-width="1"/>' +
+        '</svg>';
+
+      const screens = {
+        start: document.getElementById("start-screen"),
+        play: document.getElementById("play-screen"),
+        victory: document.getElementById("victory-screen")
+      };
+      const els = {
+        startButton: document.getElementById("start-button"),
+        restartButton: document.getElementById("restart-button"),
+        roundCount: document.getElementById("round-count"),
+        progressTrack: document.getElementById("progress-track"),
+        progressFill: document.getElementById("progress-fill"),
+        errCount: document.getElementById("err-count"),
+        taskWord: document.getElementById("task-word"),
+        pond: document.getElementById("pond"),
+        net: document.getElementById("net"),
+        feedback: document.getElementById("feedback"),
+        victoryStats: document.getElementById("victory-stats"),
+        victoryCode: document.getElementById("victory-code")
+      };
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const speedScale = reduceMotion ? 0.45 : 1;
+
+      let sequence = [];
+      let index = 0;
+      let errors = 0;
+      let locked = false;
+      let running = false;
+      let rafId = 0;
+      let lastT = 0;
+      let bounds = { minX: 38, minY: 38, maxX: 300, maxY: 300 };
+      const mosqs = [];
+      const net = { x: 0, y: 0, tx: 0, ty: 0, on: false };
+
+      function rand(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function shuffle(items) {
+        const shuffled = [...items];
+        for (let i = shuffled.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+
+      function showScreen(name) {
+        Object.entries(screens).forEach(([key, screen]) => {
+          screen.hidden = key !== name;
+        });
+      }
+
+      function setFeedback(message, tone) {
+        els.feedback.textContent = message;
+        els.feedback.className = "feedback" + (tone ? " " + tone : "");
+      }
+
+      function updateMeters() {
+        const total = sequence.length || 9;
+        els.roundCount.textContent = index + " / " + total;
+        els.progressFill.style.width = (index / total) * 100 + "%";
+        els.progressTrack.setAttribute("aria-valuenow", String(index));
+        els.errCount.textContent = "Ошибок: " + errors;
+      }
+
+      function measure() {
+        const w = els.pond.clientWidth;
+        const h = els.pond.clientHeight;
+        const pad = SIZE / 2 + 4;
+        bounds = {
+          minX: pad,
+          minY: pad,
+          maxX: Math.max(pad, w - pad),
+          maxY: Math.max(pad, h - pad)
+        };
+      }
+
+      function clampAll() {
+        mosqs.forEach((m) => {
+          m.x = Math.min(Math.max(m.x, bounds.minX), bounds.maxX);
+          m.y = Math.min(Math.max(m.y, bounds.minY), bounds.maxY);
+        });
+      }
+
+      function makeMosq(char) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "mosq";
+        button.dataset.char = char;
+        button.setAttribute("aria-label", "Комар с иероглифом " + char);
+        const wrap = document.createElement("span");
+        wrap.className = "wrap";
+        wrap.innerHTML = BUG_SVG;
+        const glyph = document.createElement("span");
+        glyph.className = "glyph";
+        glyph.textContent = char;
+        wrap.append(glyph);
+        button.append(wrap);
+        return button;
+      }
+
+      function placeMosq(m) {
+        const lean = Math.max(-14, Math.min(14, Math.cos(m.a) * 14));
+        m.el.style.transform =
+          "translate(" + (m.x - SIZE / 2) + "px," + (m.y - SIZE / 2) + "px) rotate(" + lean + "deg)";
+      }
+
+      function spawnRound() {
+        locked = false;
+        const task = sequence[index];
+        els.taskWord.textContent = task.translation;
+        const others = TASKS.filter((item) => item.char !== task.char).map((item) => item.char);
+        const chars = shuffle([task.char, ...shuffle(others).slice(0, SWARM - 1)]);
+        measure();
+        els.pond.querySelectorAll(".mosq").forEach((node) => node.remove());
+        mosqs.length = 0;
+        chars.forEach((char) => {
+          const el = makeMosq(char);
+          els.pond.append(el);
+          let x = rand(bounds.minX, bounds.maxX);
+          let y = rand(bounds.minY, bounds.maxY);
+          for (let attempt = 0; attempt < 14; attempt += 1) {
+            if (mosqs.every((m) => Math.hypot(m.x - x, m.y - y) > 76)) break;
+            x = rand(bounds.minX, bounds.maxX);
+            y = rand(bounds.minY, bounds.maxY);
+          }
+          const m = {
+            el,
+            char,
+            x,
+            y,
+            a: rand(0, Math.PI * 2),
+            baseSp: rand(46, 92) * speedScale,
+            f: rand(1.6, 3.2),
+            ph: rand(0, Math.PI * 2),
+            flee: 0
+          };
+          placeMosq(m);
+          mosqs.push(m);
+        });
+        setFeedback("Ловите комара со знаком со значением «" + task.translation + "».", "");
+      }
+
+      function pondPoint(evt) {
+        const rect = els.pond.getBoundingClientRect();
+        return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+      }
+
+      function swing(evt) {
+        if (locked || !running) return;
+        const point = pondPoint(evt);
+        net.tx = point.x;
+        net.ty = point.y;
+        net.x = point.x;
+        net.y = point.y;
+        net.on = true;
+        els.net.classList.add("on");
+        els.net.classList.remove("swing");
+        void els.net.offsetWidth;
+        els.net.classList.add("swing");
+        let best = null;
+        let bestDist = HIT_R;
+        mosqs.forEach((m) => {
+          if (m.el.classList.contains("caught")) return;
+          const dist = Math.hypot(m.x - point.x, m.y - point.y);
+          if (dist < bestDist) {
+            bestDist = dist;
+            best = m;
+          }
+        });
+        if (best) attempt(best);
+        else setFeedback("Мимо! Комар ускользнул.", "bad");
+      }
+
+      function attempt(m) {
+        if (locked || m.el.classList.contains("caught")) return;
+        const task = sequence[index];
+        if (m.char === task.char) {
+          locked = true;
+          m.el.classList.add("caught");
+          m.el.disabled = true;
+          setFeedback("Пойман! " + task.char + " — «" + task.translation + "».", "good");
+          index += 1;
+          updateMeters();
+          window.setTimeout(() => {
+            if (index >= sequence.length) finish();
+            else spawnRound();
+          }, 950);
+        } else {
+          errors += 1;
+          updateMeters();
+          setFeedback("Не тот знак: " + m.char + " — «" + BY_CHAR[m.char] + "».", "bad");
+          m.el.classList.add("wrong");
+          window.setTimeout(() => m.el.classList.remove("wrong"), 520);
+          m.flee = 0.8;
+          m.a = Math.atan2(m.y - net.y, m.x - net.x);
+          m.baseSp = rand(46, 92) * speedScale;
+        }
+      }
+
+      function tick(time) {
+        if (!running) return;
+        const dt = Math.min((time - lastT) / 1000 || 0, 0.05);
+        lastT = time;
+        net.x += (net.tx - net.x) * Math.min(1, dt * 14);
+        net.y += (net.ty - net.y) * Math.min(1, dt * 14);
+        const tilt = Math.max(-20, Math.min(20, (net.tx - net.x) * 0.35));
+        els.net.style.transform =
+          "translate(" + (net.x - NET / 2) + "px," + (net.y - NET / 2) + "px) rotate(" + tilt + "deg)";
+        mosqs.forEach((m) => {
+          if (m.el.classList.contains("caught")) return;
+          let speed = m.baseSp;
+          if (m.flee > 0) {
+            m.flee -= dt;
+            speed *= 2.8;
+          } else {
+            m.a += (Math.random() - 0.5) * 3.4 * dt;
+          }
+          m.x += Math.cos(m.a) * speed * dt;
+          m.y += Math.sin(m.a) * speed * dt * 0.75;
+          if (!reduceMotion) m.y += Math.sin((time / 1000) * m.f + m.ph) * 16 * dt;
+          if (m.x < bounds.minX) { m.x = bounds.minX; m.a = Math.PI - m.a; }
+          else if (m.x > bounds.maxX) { m.x = bounds.maxX; m.a = Math.PI - m.a; }
+          if (m.y < bounds.minY) { m.y = bounds.minY; m.a = -m.a; }
+          else if (m.y > bounds.maxY) { m.y = bounds.maxY; m.a = -m.a; }
+          placeMosq(m);
+        });
+        rafId = window.requestAnimationFrame(tick);
+      }
+
+      function startGame() {
+        sequence = shuffle(TASKS);
+        index = 0;
+        errors = 0;
+        showScreen("play");
+        updateMeters();
+        measure();
+        net.on = false;
+        els.net.classList.remove("on");
+        els.net.style.transform = "";
+        spawnRound();
+        if (!running) {
+          running = true;
+          lastT = performance.now();
+          rafId = window.requestAnimationFrame(tick);
+        }
+      }
+
+      function finish() {
+        running = false;
+        window.cancelAnimationFrame(rafId);
+        els.victoryStats.textContent = "Все девять комаров пойманы. Ошибок: " + errors + ".";
+        els.victoryCode.textContent = VICTORY_CODE;
+        showScreen("victory");
+      }
+
+      els.startButton.addEventListener("click", startGame);
+      els.restartButton.addEventListener("click", startGame);
+
+      els.pond.addEventListener("pointermove", (evt) => {
+        const point = pondPoint(evt);
+        net.tx = point.x;
+        net.ty = point.y;
+        if (!net.on) {
+          net.on = true;
+          net.x = point.x;
+          net.y = point.y;
+          els.net.classList.add("on");
+        }
+      });
+
+      els.pond.addEventListener("pointerdown", (evt) => {
+        evt.preventDefault();
+        swing(evt);
+      });
+
+      els.pond.addEventListener("pointerleave", () => {
+        net.on = false;
+        els.net.classList.remove("on");
+      });
+
+      els.pond.addEventListener("keydown", (evt) => {
+        if (evt.key !== "Enter" && evt.key !== " ") return;
+        const button = evt.target.closest(".mosq");
+        if (!button || locked) return;
+        evt.preventDefault();
+        const m = mosqs.find((item) => item.el === button);
+        if (!m) return;
+        net.tx = m.x;
+        net.ty = m.y;
+        net.x = m.x;
+        net.y = m.y;
+        els.net.classList.add("on");
+        els.net.classList.remove("swing");
+        void els.net.offsetWidth;
+        els.net.classList.add("swing");
+        attempt(m);
+      });
+
+      window.addEventListener("resize", () => {
+        measure();
+        clampAll();
+      });
+    })();
+  </script>
+</body>
+</html>
