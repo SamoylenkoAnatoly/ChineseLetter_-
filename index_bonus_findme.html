@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#150c2e">
+  <title>Роща древних рун — найди иероглиф</title>
+  <style>
+    :root {
+      --night: #170d2b;
+      --deep: #0d0720;
+      --grove-a: #2a1a4e;
+      --grove-b: #1d1140;
+      --grove-c: #150c2e;
+      --text: #ece6fb;
+      --muted: #a793c9;
+      --emerald: #6fe3a8;
+      --emerald-soft: #b9f5d4;
+      --gold: #ffd98a;
+      --red: #ff8f9d;
+      --serif: Georgia, "Times New Roman", serif;
+      --cjk: "MS Gothic", "Noto Sans CJK SC", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-width: 280px; min-height: 100%; margin: 0; }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: clamp(8px, 2vw, 18px);
+      color: var(--text);
+      background: radial-gradient(circle at 74% -12%, #3a2260 0, var(--night) 55%, var(--deep) 100%);
+      font-family: var(--serif);
+    }
+
+    button { font: inherit; }
+
+    .game-shell {
+      position: relative;
+      width: min(100%, 660px);
+      height: min(calc(100svh - 20px), 760px);
+      min-height: 460px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(205, 185, 242, 0.24);
+      border-radius: 16px;
+      background: linear-gradient(180deg, var(--grove-a) 0%, var(--grove-b) 38%, var(--grove-c) 70%, #100926 100%);
+      box-shadow: 0 18px 60px rgba(4, 1, 14, 0.65), inset 0 0 80px rgba(96, 58, 168, 0.3);
+      overflow: hidden;
+    }
+
+    .game-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(340px 180px at 12% 88%, rgba(111, 227, 168, 0.09), transparent 70%),
+        radial-gradient(300px 170px at 88% 78%, rgba(150, 110, 240, 0.12), transparent 70%),
+        radial-gradient(240px 140px at 50% 6%, rgba(90, 62, 170, 0.14), transparent 72%);
+      animation: mist 9s ease-in-out infinite alternate;
+    }
+
+    @keyframes mist {
+      from { opacity: 0.7; }
+      to { opacity: 1; }
+    }
+
+    .gem {
+      position: absolute;
+      top: 20px;
+      right: 26px;
+      z-index: 0;
+      width: 42px;
+      height: 58px;
+      background: linear-gradient(160deg, #b7ffe0, #5adf9f 45%, #2ea97a 72%, #7ff0c0);
+      clip-path: polygon(50% 0%, 100% 34%, 50% 100%, 0% 34%);
+      filter: drop-shadow(0 0 16px rgba(111, 227, 168, 0.5));
+      pointer-events: none;
+      animation: gem-float 4.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes gem-float {
+      from { transform: translateY(0) rotate(-4deg); }
+      to { transform: translateY(-9px) rotate(4deg); }
+    }
+
+    .screen { position: relative; z-index: 1; flex: 1; display: grid; }
+    .screen[hidden] { display: none; }
+
+    .start-screen, .victory-screen {
+      place-items: center;
+      align-content: center;
+      padding: clamp(16px, 4vw, 30px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    h1, h2 { margin: 0 0 12px; font-weight: 700; }
+
+    h1 {
+      max-width: 460px;
+      font-size: clamp(1.7rem, 6vw, 2.6rem);
+      line-height: 1.08;
+      text-shadow: 0 0 26px rgba(111, 227, 168, 0.4);
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 6vw, 2.3rem);
+      text-shadow: 0 0 22px rgba(255, 217, 138, 0.45);
+    }
+
+    .start-copy {
+      max-width: 440px;
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .btn {
+      min-height: 46px;
+      padding: 12px 28px;
+      border: 1px solid rgba(190, 255, 220, 0.55);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #8fefc0, #3fbb84);
+      color: #06281a;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 6px 22px rgba(111, 227, 168, 0.35);
+      cursor: pointer;
+    }
+
+    .btn:hover { filter: brightness(1.07); }
+    .btn:active { transform: translateY(1px); }
+    .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+    .demo-runes {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .demo-runes span {
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border: 1px solid rgba(180, 150, 240, 0.4);
+      border-radius: 12px;
+      background: linear-gradient(160deg, #35205c, #241145 60%, #1b0d38);
+      box-shadow: inset 0 0 14px rgba(120, 80, 200, 0.35), 0 6px 18px rgba(10, 4, 26, 0.5);
+      color: #e9e2ff;
+      font-family: var(--cjk);
+      font-size: 26px;
+      animation: demo-float 3.6s ease-in-out infinite alternate;
+    }
+
+    .demo-runes span:nth-child(1) { transform: rotate(-6deg); }
+    .demo-runes span:nth-child(2) { animation-delay: -1.2s; }
+    .demo-runes span:nth-child(3) { transform: rotate(5deg); animation-delay: -2.4s; }
+
+    @keyframes demo-float {
+      from { translate: 0 0; }
+      to { translate: 0 -8px; }
+    }
+
+    .play-screen {
+      padding: clamp(10px, 2vw, 16px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .play-header {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .round-count, .err-count {
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .slots {
+      flex: 1;
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .slot {
+      flex: 1;
+      max-width: 36px;
+      height: 16px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(205, 185, 242, 0.22);
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      color: transparent;
+      font-family: var(--cjk);
+      font-size: 11px;
+      line-height: 1;
+      overflow: hidden;
+      transition: border-color 300ms ease, background 300ms ease, color 300ms ease;
+    }
+
+    .slot.lit {
+      border-color: rgba(111, 227, 168, 0.65);
+      background: rgba(111, 227, 168, 0.16);
+      color: var(--gold);
+      text-shadow: 0 0 6px rgba(255, 217, 138, 0.8);
+      box-shadow: 0 0 10px rgba(111, 227, 168, 0.3);
+    }
+
+    .task-panel {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border: 1px solid rgba(205, 185, 242, 0.16);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .task-label {
+      color: var(--muted);
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .task-word {
+      color: var(--text);
+      font-size: clamp(1.25rem, 4.5vw, 1.65rem);
+      font-weight: 700;
+      text-shadow: 0 0 16px rgba(111, 227, 168, 0.5);
+    }
+
+    .grove {
+      position: relative;
+      flex: 1;
+      min-height: 220px;
+      border: 1px solid rgba(180, 150, 240, 0.2);
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(90, 60, 160, 0.22), transparent 62%),
+        linear-gradient(180deg, rgba(42, 26, 78, 0.55), rgba(13, 7, 32, 0.85));
+      overflow: hidden;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: none;
+    }
+
+    .rune-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(78%, 320px);
+      aspect-ratio: 1;
+      translate: -50% -50%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+      animation: ring-spin 90s linear infinite;
+    }
+
+    @keyframes ring-spin {
+      to { rotate: 360deg; }
+    }
+
+    .shrooms {
+      position: absolute;
+      bottom: -2px;
+      width: 104px;
+      height: 78px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .shrooms.right { right: -2px; transform: scaleX(-1); }
+    .shrooms:not(.right) { left: -2px; }
+
+    .firefly {
+      position: absolute;
+      z-index: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: firefly-drift var(--d, 10s) ease-in-out infinite alternate, firefly-pulse 2.8s ease-in-out infinite alternate;
+    }
+
+    .firefly.emerald { background: var(--emerald-soft); box-shadow: 0 0 9px 3px rgba(111, 227, 168, 0.5); }
+    .firefly.gold { background: var(--gold); box-shadow: 0 0 9px 3px rgba(255, 217, 138, 0.45); }
+
+    @keyframes firefly-drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(22px, -30px); }
+    }
+
+    @keyframes firefly-pulse {
+      from { opacity: 0.3; }
+      to { opacity: 0.9; }
+    }
+
+    .rune {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 2;
+      width: 54px;
+      height: 54px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: inherit;
+      cursor: none;
+      will-change: transform;
+    }
+
+    .rune .plate {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(180, 150, 240, 0.38);
+      border-radius: 12px;
+      background: linear-gradient(160deg, #35205c, #241145 60%, #1b0d38);
+      box-shadow: inset 0 0 12px rgba(120, 80, 200, 0.32), 0 4px 12px rgba(8, 3, 22, 0.5);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+      animation: rune-in 380ms ease-out backwards;
+    }
+
+    .rune .glyph {
+      font-family: var(--cjk);
+      font-size: 27px;
+      line-height: 1;
+      color: #e9e2ff;
+      text-shadow: 0 0 8px rgba(150, 120, 230, 0.5);
+      transition: color 180ms ease, text-shadow 180ms ease;
+    }
+
+    @media (hover: hover) {
+      .rune:hover .plate {
+        transform: scale(1.16);
+        border-color: rgba(111, 227, 168, 0.75);
+        box-shadow: inset 0 0 14px rgba(111, 227, 168, 0.25), 0 0 18px rgba(111, 227, 168, 0.4);
+      }
+
+      .rune:hover .glyph {
+        color: #ffffff;
+        text-shadow: 0 0 12px rgba(111, 227, 168, 0.9);
+      }
+    }
+
+    .rune:focus-visible { outline: none; }
+    .rune:focus-visible .plate {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(255, 217, 138, 0.7), 0 0 16px rgba(255, 217, 138, 0.4);
+    }
+
+    .rune.wrong .plate { animation: shake 450ms ease; }
+    .rune.wrong .glyph { color: var(--red); text-shadow: 0 0 12px rgba(255, 143, 157, 0.85); }
+
+    .rune.caught { pointer-events: none; }
+    .rune.caught .plate {
+      border-color: rgba(255, 217, 138, 0.9);
+      box-shadow: 0 0 26px rgba(255, 217, 138, 0.75);
+      animation: rune-pop 760ms ease forwards;
+    }
+
+    .rune.caught .glyph {
+      color: var(--gold);
+      text-shadow: 0 0 16px rgba(255, 217, 138, 0.95);
+    }
+
+    @keyframes rune-in {
+      from { transform: scale(0.3) rotate(-18deg); opacity: 0; }
+      to { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes rune-pop {
+      0% { transform: scale(1); opacity: 1; }
+      35% { transform: scale(1.35); opacity: 1; }
+      100% { transform: scale(0.15); opacity: 0; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-3px); }
+    }
+
+    .spark {
+      position: absolute;
+      z-index: 3;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: spark-fly 720ms ease-out forwards;
+    }
+
+    .spark.gold { background: var(--gold); box-shadow: 0 0 9px 2px rgba(255, 217, 138, 0.7); }
+    .spark.ruby { background: var(--red); box-shadow: 0 0 9px 2px rgba(255, 143, 157, 0.6); }
+
+    @keyframes spark-fly {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.15); opacity: 0; }
+    }
+
+    .wand {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 5;
+      width: 78px;
+      height: 78px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 200ms ease;
+      will-change: transform;
+    }
+
+    .wand.on { opacity: 1; }
+    .wand svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 0 8px rgba(111, 227, 168, 0.45)); }
+    .wand.pulse svg { animation: wand-pulse 320ms ease; }
+
+    @keyframes wand-pulse {
+      0% { transform: scale(0.85); }
+      55% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+
+    .feedback {
+      min-height: 1.5em;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .feedback.good { color: var(--emerald); }
+    .feedback.bad { color: var(--red); }
+
+    .victory-glyph {
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-size: clamp(3rem, 10vw, 4.2rem);
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(255, 217, 138, 0.6);
+      animation: gem-float 3.4s ease-in-out infinite alternate;
+    }
+
+    .victory-stats { margin: 0 0 14px; color: var(--muted); font-size: 0.95rem; }
+
+    .victory-code {
+      margin: 0 0 24px;
+      color: var(--gold);
+      font-size: clamp(2rem, 8vw, 3.1rem);
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-shadow: 0 0 22px rgba(255, 217, 138, 0.55);
+    }
+
+    @media (pointer: coarse) {
+      .grove, .rune { cursor: default; }
+      .wand { display: none; }
+    }
+
+    @media (max-height: 560px) {
+      .demo-runes { display: none; }
+      .start-copy { margin-bottom: 14px; }
+      .gem { width: 34px; height: 48px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell" aria-live="polite">
+    <section class="screen start-screen" id="start-screen">
+      <div class="gem" aria-hidden="true"></div>
+      <div>
+        <div class="demo-runes" aria-hidden="true">
+          <span>口</span>
+          <span>木</span>
+          <span>目</span>
+        </div>
+        <p class="eyebrow">Волшебная роща · дрейфующие руны</p>
+        <h1>Роща древних рун</h1>
+        <p class="start-copy">В лесной чаще медленно дрейфуют руны-иероглифы. Роща называет слово — отыщите среди мерцающих рун знак с этим значением. Соберите все девять и получите дар рощи.</p>
+        <button class="btn" id="start-button" type="button">Начать</button>
+      </div>
+    </section>
+
+    <section class="screen play-screen" id="play-screen" hidden>
+      <header class="play-header">
+        <span class="round-count" id="round-count">0 / 9</span>
+        <div class="slots" role="progressbar" aria-label="Прогресс" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="slots"></div>
+        <span class="err-count" id="err-count">Ошибок: 0</span>
+      </header>
+
+      <div class="task-panel">
+        <span class="task-label">Зов рощи</span>
+        <span class="task-word" id="task-word">…</span>
+      </div>
+
+      <div class="grove" id="grove">
+        <svg class="rune-ring" viewBox="0 0 240 240" aria-hidden="true">
+          <circle cx="120" cy="120" r="112" fill="none" stroke="rgba(160,220,190,0.14)" stroke-width="1.4"/>
+          <circle cx="120" cy="120" r="86" fill="none" stroke="rgba(160,220,190,0.12)" stroke-width="1" stroke-dasharray="6 10"/>
+          <circle cx="120" cy="120" r="58" fill="none" stroke="rgba(160,220,190,0.1)" stroke-width="1"/>
+          <path d="M120 8v224M8 120h224M41 41l158 158M199 41 41 199" stroke="rgba(160,220,190,0.07)" stroke-width="1"/>
+          <circle cx="120" cy="8" r="3" fill="rgba(111,227,168,0.35)"/>
+          <circle cx="120" cy="232" r="3" fill="rgba(111,227,168,0.35)"/>
+          <circle cx="8" cy="120" r="3" fill="rgba(255,217,138,0.3)"/>
+          <circle cx="232" cy="120" r="3" fill="rgba(255,217,138,0.3)"/>
+        </svg>
+        <svg class="shrooms" viewBox="0 0 110 78" aria-hidden="true">
+          <rect x="24" y="34" width="9" height="40" rx="4" fill="#241845"/>
+          <ellipse cx="28" cy="32" rx="22" ry="13" fill="#3d2a66"/>
+          <circle cx="20" cy="28" r="2.2" fill="#9ef0c6" opacity="0.85"/>
+          <circle cx="33" cy="35" r="1.8" fill="#ffd98a" opacity="0.8"/>
+          <circle cx="38" cy="26" r="1.6" fill="#9ef0c6" opacity="0.6"/>
+          <rect x="62" y="48" width="7" height="28" rx="3.5" fill="#1d1340"/>
+          <ellipse cx="65" cy="47" rx="15" ry="9" fill="#33225a"/>
+          <circle cx="60" cy="44" r="1.6" fill="#ffd98a" opacity="0.75"/>
+          <circle cx="71" cy="49" r="1.4" fill="#9ef0c6" opacity="0.6"/>
+        </svg>
+        <svg class="shrooms right" viewBox="0 0 110 78" aria-hidden="true">
+          <rect x="24" y="34" width="9" height="40" rx="4" fill="#241845"/>
+          <ellipse cx="28" cy="32" rx="22" ry="13" fill="#3d2a66"/>
+          <circle cx="20" cy="28" r="2.2" fill="#9ef0c6" opacity="0.85"/>
+          <circle cx="33" cy="35" r="1.8" fill="#ffd98a" opacity="0.8"/>
+          <rect x="62" y="48" width="7" height="28" rx="3.5" fill="#1d1340"/>
+          <ellipse cx="65" cy="47" rx="15" ry="9" fill="#33225a"/>
+          <circle cx="60" cy="44" r="1.6" fill="#ffd98a" opacity="0.75"/>
+        </svg>
+        <span class="firefly emerald" style="top:18%; left:12%; --d:9s"></span>
+        <span class="firefly gold" style="top:62%; left:8%; --d:12s; animation-delay:-3s"></span>
+        <span class="firefly emerald" style="top:34%; left:88%; --d:10s; animation-delay:-5s"></span>
+        <span class="firefly gold" style="top:74%; left:82%; --d:13s; animation-delay:-2s"></span>
+        <span class="firefly emerald" style="top:12%; left:52%; --d:11s; animation-delay:-6s"></span>
+
+        <div class="wand" id="wand" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="gem-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#b7ffe0"/>
+                <stop offset="0.55" stop-color="#5adf9f"/>
+                <stop offset="1" stop-color="#2ea97a"/>
+              </linearGradient>
+            </defs>
+            <path d="M38 74 L60 88" stroke="#caa96a" stroke-width="5" stroke-linecap="round"/>
+            <polygon points="44,6 62,26 44,56 26,26" fill="url(#gem-grad)" stroke="#d9fff0" stroke-width="1.4"/>
+            <path d="M44 6 L44 56 M26 26 L62 26" stroke="rgba(217,255,240,0.55)" stroke-width="1"/>
+            <circle cx="70" cy="14" r="2.6" fill="#ffd98a"/>
+            <circle cx="76" cy="40" r="1.8" fill="#b7ffe0"/>
+            <circle cx="16" cy="46" r="2" fill="#ffd98a"/>
+          </svg>
+        </div>
+      </div>
+
+      <p class="feedback" id="feedback">Дрейфующие руны ждут касания.</p>
+    </section>
+
+    <section class="screen victory-screen" id="victory-screen" hidden>
+      <div class="gem" aria-hidden="true"></div>
+      <div>
+        <div class="victory-glyph" aria-hidden="true">✦</div>
+        <p class="eyebrow">Туман рассеялся</p>
+        <h2>Победа!</h2>
+        <p class="victory-stats" id="victory-stats">Все девять рун собраны.</p>
+        <p class="victory-code" id="victory-code" aria-label="Код победы"></p>
+        <button class="btn" id="restart-button" type="button">Играть снова</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const TASKS = [
+        { char: "口", translation: "рот" },
+        { char: "品", translation: "товар, качество" },
+        { char: "日", translation: "солнце, день" },
+        { char: "目", translation: "глаз" },
+        { char: "人", translation: "человек" },
+        { char: "众", translation: "толпа" },
+        { char: "木", translation: "дерево" },
+        { char: "林", translation: "лес" },
+        { char: "相", translation: "взаимный, облик" }
+      ];
+
+      const EXTRAS = [
+        { char: "中", translation: "середина" },
+        { char: "右", translation: "правый" },
+        { char: "心", translation: "сердце" },
+        { char: "必", translation: "обязательно" },
+        { char: "想", translation: "думать" },
+        { char: "白", translation: "белый" },
+        { char: "勺", translation: "ложка" },
+        { char: "的", translation: "частица принадлежности" },
+        { char: "月", translation: "луна" },
+        { char: "明", translation: "светлый" },
+        { char: "有", translation: "иметь" },
+        { char: "朋", translation: "друг" },
+        { char: "用", translation: "использовать" },
+        { char: "夕", translation: "вечер" },
+        { char: "名", translation: "имя" },
+        { char: "自", translation: "сам" },
+        { char: "息", translation: "дыхание" },
+        { char: "术", translation: "приём, искусство" }
+      ];
+
+      const MEANING = {};
+      TASKS.concat(EXTRAS).forEach((item) => { MEANING[item.char] = item.translation; });
+
+      const POOL = TASKS.concat(EXTRAS).map((item) => item.char);
+      const VICTORY_CODE = "5555";
+      const MAX_GLYPHS = 34;
+      const SIZE = 54;
+      const MIN_DIST = 68;
+
+      const screens = {
+        start: document.getElementById("start-screen"),
+        play: document.getElementById("play-screen"),
+        victory: document.getElementById("victory-screen")
+      };
+      const els = {
+        startButton: document.getElementById("start-button"),
+        restartButton: document.getElementById("restart-button"),
+        roundCount: document.getElementById("round-count"),
+        slots: document.getElementById("slots"),
+        errCount: document.getElementById("err-count"),
+        taskWord: document.getElementById("task-word"),
+        grove: document.getElementById("grove"),
+        wand: document.getElementById("wand"),
+        feedback: document.getElementById("feedback"),
+        victoryStats: document.getElementById("victory-stats"),
+        victoryCode: document.getElementById("victory-code")
+      };
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const coarse = window.matchMedia("(pointer: coarse)").matches;
+      const speedScale = reduceMotion ? 0.35 : 1;
+
+      let sequence = [];
+      let index = 0;
+      let errors = 0;
+      let locked = false;
+      let running = false;
+      let rafId = 0;
+      let lastT = 0;
+      let bounds = { minX: 33, minY: 33, maxX: 300, maxY: 300 };
+      const runes = [];
+      const wand = { x: 0, y: 0, tx: 0, ty: 0, on: false };
+
+      function rand(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function shuffle(items) {
+        const shuffled = [...items];
+        for (let i = shuffled.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+
+      function showScreen(name) {
+        Object.entries(screens).forEach(([key, screen]) => {
+          screen.hidden = key !== name;
+        });
+      }
+
+      function setFeedback(message, tone) {
+        els.feedback.textContent = message;
+        els.feedback.className = "feedback" + (tone ? " " + tone : "");
+      }
+
+      function buildSlots() {
+        els.slots.innerHTML = "";
+        for (let i = 0; i < TASKS.length; i += 1) {
+          const slot = document.createElement("span");
+          slot.className = "slot";
+          els.slots.append(slot);
+        }
+      }
+
+      function updateMeters() {
+        const total = sequence.length || TASKS.length;
+        els.roundCount.textContent = index + " / " + total;
+        els.slots.setAttribute("aria-valuenow", String(index));
+        Array.prototype.forEach.call(els.slots.children, (slot, i) => {
+          const lit = i < index;
+          slot.classList.toggle("lit", lit);
+          slot.textContent = lit ? sequence[i].char : "";
+        });
+        els.errCount.textContent = "Ошибок: " + errors;
+      }
+
+      function measure() {
+        const w = els.grove.clientWidth;
+        const h = els.grove.clientHeight;
+        const pad = SIZE / 2 + 6;
+        bounds = {
+          minX: pad,
+          minY: pad,
+          maxX: Math.max(pad, w - pad),
+          maxY: Math.max(pad, h - pad)
+        };
+      }
+
+      function glyphBudget() {
+        const usable = Math.max(0, bounds.maxX - bounds.minX) * Math.max(0, bounds.maxY - bounds.minY);
+        return Math.max(10, Math.min(MAX_GLYPHS, Math.floor(usable / (MIN_DIST * MIN_DIST))));
+      }
+
+      function clampAll() {
+        runes.forEach((r) => {
+          r.x = Math.min(Math.max(r.x, bounds.minX), bounds.maxX);
+          r.y = Math.min(Math.max(r.y, bounds.minY), bounds.maxY);
+        });
+      }
+
+      function makeRune(char) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "rune";
+        button.dataset.char = char;
+        button.setAttribute("aria-label", "Руна " + char);
+        const plate = document.createElement("span");
+        plate.className = "plate";
+        const glyph = document.createElement("span");
+        glyph.className = "glyph";
+        glyph.textContent = char;
+        plate.append(glyph);
+        button.append(plate);
+        return button;
+      }
+
+      function placeRune(r) {
+        const lean = Math.max(-10, Math.min(10, Math.cos(r.a) * 10));
+        r.el.style.transform =
+          "translate(" + (r.x - SIZE / 2) + "px," + (r.y - SIZE / 2) + "px) rotate(" + lean + "deg)";
+      }
+
+      function burst(x, y, tone) {
+        for (let i = 0; i < 8; i += 1) {
+          const spark = document.createElement("span");
+          spark.className = "spark " + tone;
+          const angle = (Math.PI * 2 * i) / 8 + rand(-0.2, 0.2);
+          const dist = rand(24, 52);
+          spark.style.left = (x - 3) + "px";
+          spark.style.top = (y - 3) + "px";
+          spark.style.setProperty("--dx", (Math.cos(angle) * dist).toFixed(1) + "px");
+          spark.style.setProperty("--dy", (Math.sin(angle) * dist).toFixed(1) + "px");
+          spark.style.animationDelay = (i % 3) * 40 + "ms";
+          spark.addEventListener("animationend", () => spark.remove());
+          els.grove.append(spark);
+        }
+      }
+
+      function spawnRound() {
+        locked = false;
+        const task = sequence[index];
+        els.taskWord.textContent = task.translation;
+        measure();
+        const count = glyphBudget();
+        let others = shuffle(POOL.filter((char) => char !== task.char));
+        const chars = shuffle([task.char].concat(others.slice(0, count - 1)));
+        while (chars.length < count) {
+          others = shuffle(others);
+          chars.push(...others.slice(0, count - chars.length));
+        }
+        els.grove.querySelectorAll(".rune").forEach((node) => node.remove());
+        runes.length = 0;
+        chars.forEach((char) => {
+          const el = makeRune(char);
+          els.grove.append(el);
+          let x = rand(bounds.minX, bounds.maxX);
+          let y = rand(bounds.minY, bounds.maxY);
+          for (let attempt = 0; attempt < 24; attempt += 1) {
+            if (runes.every((r) => Math.hypot(r.x - x, r.y - y) > MIN_DIST)) break;
+            x = rand(bounds.minX, bounds.maxX);
+            y = rand(bounds.minY, bounds.maxY);
+          }
+          const rune = {
+            el,
+            char,
+            x,
+            y,
+            a: rand(0, Math.PI * 2),
+            sp: rand(12, 30) * speedScale,
+            f: rand(0.7, 1.6),
+            ph: rand(0, Math.PI * 2)
+          };
+          placeRune(rune);
+          runes.push(rune);
+          el.addEventListener("click", () => attemptRune(rune));
+        });
+        setFeedback("Ищите руну со значением «" + task.translation + "».", "");
+      }
+
+      function attemptRune(rune) {
+        if (locked || rune.el.classList.contains("caught")) return;
+        const task = sequence[index];
+        if (rune.char === task.char) {
+          locked = true;
+          rune.el.classList.add("caught");
+          rune.el.disabled = true;
+          burst(rune.x, rune.y, "gold");
+          setFeedback("Свершилось! " + task.char + " — «" + task.translation + "».", "good");
+          index += 1;
+          updateMeters();
+          window.setTimeout(() => {
+            if (index >= sequence.length) finish();
+            else spawnRound();
+          }, 950);
+        } else {
+          errors += 1;
+          updateMeters();
+          setFeedback("Не та руна: " + rune.char + " — «" + (MEANING[rune.char] || "?") + "». Ищите дальше.", "bad");
+          rune.el.classList.add("wrong");
+          burst(rune.x, rune.y, "ruby");
+          rune.a = rand(0, Math.PI * 2);
+          rune.sp = rand(26, 44) * speedScale;
+          window.setTimeout(() => {
+            rune.el.classList.remove("wrong");
+            rune.sp = rand(12, 30) * speedScale;
+          }, 900);
+        }
+      }
+
+      function tick(time) {
+        if (!running) return;
+        const dt = Math.min((time - lastT) / 1000 || 0, 0.05);
+        lastT = time;
+        wand.x += (wand.tx - wand.x) * Math.min(1, dt * 14);
+        wand.y += (wand.ty - wand.y) * Math.min(1, dt * 14);
+        const tilt = Math.max(-18, Math.min(18, (wand.tx - wand.x) * 0.3));
+        els.wand.style.transform =
+          "translate(" + (wand.x - 39) + "px," + (wand.y - 39) + "px) rotate(" + tilt + "deg)";
+        runes.forEach((rune) => {
+          if (rune.el.classList.contains("caught")) return;
+          rune.a += (Math.random() - 0.5) * 2.6 * dt;
+          rune.x += Math.cos(rune.a) * rune.sp * dt;
+          rune.y += Math.sin(rune.a) * rune.sp * dt * 0.8;
+          if (!reduceMotion) rune.y += Math.sin((time / 1000) * rune.f + rune.ph) * 10 * dt;
+          if (rune.x < bounds.minX) { rune.x = bounds.minX; rune.a = Math.PI - rune.a; }
+          else if (rune.x > bounds.maxX) { rune.x = bounds.maxX; rune.a = Math.PI - rune.a; }
+          if (rune.y < bounds.minY) { rune.y = bounds.minY; rune.a = -rune.a; }
+          else if (rune.y > bounds.maxY) { rune.y = bounds.maxY; rune.a = -rune.a; }
+          placeRune(rune);
+        });
+        rafId = window.requestAnimationFrame(tick);
+      }
+
+      function startGame() {
+        sequence = shuffle(TASKS);
+        index = 0;
+        errors = 0;
+        buildSlots();
+        showScreen("play");
+        updateMeters();
+        measure();
+        wand.on = false;
+        els.wand.classList.remove("on");
+        spawnRound();
+        if (!running) {
+          running = true;
+          lastT = performance.now();
+          rafId = window.requestAnimationFrame(tick);
+        }
+      }
+
+      function finish() {
+        running = false;
+        window.cancelAnimationFrame(rafId);
+        wand.on = false;
+        els.wand.classList.remove("on");
+        els.victoryStats.textContent = errors === 0
+          ? "Девять из девять — ни единой ошибки. Идеально!"
+          : "Все девять рун собраны. Ошибок: " + errors + ".";
+        els.victoryCode.textContent = VICTORY_CODE;
+        showScreen("victory");
+      }
+
+      els.startButton.addEventListener("click", startGame);
+      els.restartButton.addEventListener("click", startGame);
+
+      els.grove.addEventListener("pointermove", (evt) => {
+        if (coarse) return;
+        const rect = els.grove.getBoundingClientRect();
+        wand.tx = evt.clientX - rect.left;
+        wand.ty = evt.clientY - rect.top;
+        if (!wand.on) {
+          wand.on = true;
+          wand.x = wand.tx;
+          wand.y = wand.ty;
+          els.wand.classList.add("on");
+        }
+      });
+
+      els.grove.addEventListener("pointerdown", () => {
+        if (coarse) return;
+        els.wand.classList.remove("pulse");
+        void els.wand.offsetWidth;
+        els.wand.classList.add("pulse");
+      });
+
+      els.grove.addEventListener("pointerleave", () => {
+        wand.on = false;
+        els.wand.classList.remove("on");
+      });
+
+      window.addEventListener("resize", () => {
+        measure();
+        clampAll();
+      });
+    })();
+  </script>
+</body>
+</html>
