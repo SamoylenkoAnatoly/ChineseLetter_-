@@ -1,0 +1,67 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&display=swap" rel="stylesheet"><title>Магия тонов — вступление</title><style>
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 20px 14px 26px;
+  font-family: 'Philosopher', Georgia, 'Times New Roman', serif;
+  color: #3b2a1a;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255,251,235,.9), rgba(255,251,235,0) 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(212,160,23,.14), rgba(212,160,23,0) 50%),
+    repeating-linear-gradient(0deg, rgba(139,105,20,.045) 0 2px, rgba(0,0,0,0) 2px 7px),
+    linear-gradient(160deg, #f4e4bc, #ecd9ac);
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+h1 { font-size: 30px; text-align: center; margin: 6px 0 2px; color: #3b2a1a; }
+h2 { font-size: 24px; text-align: center; margin: 8px 0 4px; }
+.orn { text-align: center; color: #b8860b; font-size: 17px; margin: 2px 0; letter-spacing: 4px; }
+p { font-size: 17px; line-height: 1.55; margin: 10px 0; }
+img.hero { display: block; margin: 10px auto; max-width: min(100%, 430px); height: auto;
+  border: 5px double #8b6914; border-radius: 10px; background: #fffdf5; padding: 6px; }
+.panel { background: #2c2244; border: 2px solid #d4a017; border-radius: 12px;
+  color: #f0e6d2; padding: 14px 18px; margin: 14px 0;
+  box-shadow: inset 0 0 24px rgba(0,0,0,.45), 0 3px 10px rgba(59,42,26,.25); }
+.panel p { margin: 8px 0; }
+.frame { border: 2px solid #8b6914; border-radius: 12px; background: rgba(255,251,235,.55);
+  padding: 12px 16px; margin: 12px 0; }
+.legend { font-size: 14px; color: #6b5a3e; margin: 8px 0; }
+.sylrow { text-align: center; font-size: 30px; margin: 14px 0; }
+ul.words { font-size: 19px; line-height: 1.7; padding-left: 22px; }
+.syl { cursor: pointer; border-bottom: 2px dashed rgba(139,105,20,.5); padding: 0 2px; }
+.syl:hover { background: rgba(212,160,23,.18); border-radius: 4px; }
+button.seal {
+  font-family: inherit; font-size: 17px; cursor: pointer;
+  color: #f4e4bc; background: radial-gradient(circle at 35% 30%, #9c3540, #5a1e26);
+  border: 3px solid #d4a017; border-radius: 999px; padding: 10px 22px; margin: 6px 8px 2px 0;
+  box-shadow: 0 3px 8px rgba(59,42,26,.4), inset 0 0 10px rgba(0,0,0,.35);
+}
+button.seal.plain { background: radial-gradient(circle at 35% 30%, #3f335c, #241b3a); }
+button.seal:active { transform: scale(.96); }
+button.seal.playing { animation: pulse .7s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(212,160,23,.55); }
+  50% { box-shadow: 0 0 0 10px rgba(212,160,23,0); } }
+svg.tonegram { display: block; margin: 8px auto; width: 100%; max-width: 560px; height: auto; }
+.foot { text-align: center; font-size: 13px; color: #8a8378; margin-top: 14px; }
+</style></head><body><div class="wrap">
+<p class="orn">✦ ⚜ ✦</p>
+<h1>Магия тонов в китайском</h1>
+<p class="orn">✦ ⚜ ✦</p>
+<img class="hero" src="https://ucarecdn.stepik.net/f3a2c7a0-a331-4d6c-9752-bf82ba6c4814/" alt="Обложка урока">
+<p>Ты уже знаешь, что китайские слова записываются иероглифами. Но чтобы их читать и произносить, нужна ещё и латинская запись — <strong>пиньинь (pīnyīn)</strong>. А в пиньине нас ждёт самое важное: <strong>тоны</strong>. 🎵</p>
+<p>Тон — это не эмоция и не украшение, а <strong>полноценная часть слова</strong>. Один и тот же слог с разной интонацией — это совсем разные слова. Смотри на классический пример <em>(нажимай на слоги — они звучат)</em>:</p>
+<p class="sylrow"><span class="syl" style="color:#d64545; font-weight:700;" onclick="play('ma1')" >mā</span> <span style="color:#b8860b;">✦</span> <span class="syl" style="color:#e8862e; font-weight:700;" onclick="play('ma2')" >má</span> <span style="color:#b8860b;">✦</span> <span class="syl" style="color:#3b7dd8; font-weight:700;" onclick="play('ma3')" >mǎ</span> <span style="color:#b8860b;">✦</span> <span class="syl" style="color:#8e5bd8; font-weight:700;" onclick="play('ma4')" >mà</span></p>
+<p class="legend">Цвета тонов: <span style="color:#d64545;">1-й — ровно и высоко</span> · <span style="color:#e8862e;">2-й — вверх</span> · <span style="color:#3b7dd8;">3-й — галочка ∨</span> · <span style="color:#8e5bd8;">4-й — вниз</span> · <span style="color:#8a8378;">нейтральный — коротко, без ударения</span>.</p>
+<ul class="words"><li><span class="syl" style="color:#d64545; font-weight:700;" onclick="play('ma1')" >mā</span> <strong>妈</strong> — «мама»</li><li><span class="syl" style="color:#e8862e; font-weight:700;" onclick="play('ma2')" >má</span> <strong>麻</strong> — «лен»</li><li><span class="syl" style="color:#3b7dd8; font-weight:700;" onclick="play('ma3')" >mǎ</span> <strong>马</strong> — «лошадь»</li><li><span class="syl" style="color:#8e5bd8; font-weight:700;" onclick="play('ma4')" >mà</span> <strong>骂</strong> — «ругать»</li></ul>
+<p>Одна и та же буква, четыре разных слова! Поэтому учить пиньинь без тонов не имеет смысла. Знакомимся с каждым тоном.</p>
+<script>
+const SRC = { ma1: 'https://samoylenkoanatoly.github.io/ChineseLetter_-/audio/ma1.mp3', ma2: 'https://samoylenkoanatoly.github.io/ChineseLetter_-/audio/ma2.mp3', ma3: 'https://samoylenkoanatoly.github.io/ChineseLetter_-/audio/ma3.mp3', ma4: 'https://samoylenkoanatoly.github.io/ChineseLetter_-/audio/ma4.mp3', mama: 'https://samoylenkoanatoly.github.io/ChineseLetter_-/audio/mama.mp3' };
+const cache = {};
+function play(k) {
+  if (!cache[k]) cache[k] = new Audio(SRC[k]);
+  const a = cache[k];
+  a.currentTime = 0;
+  const b = window.event ? window.event.target : null;
+  if (b) { b.classList.add('playing'); a.onended = () => b.classList.remove('playing'); }
+  a.play().catch(()=>{});
+}
+</script>
+</div></body></html>

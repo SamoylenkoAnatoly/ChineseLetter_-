@@ -1,0 +1,82 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&display=swap" rel="stylesheet"><title>Магия тонов — 3-й тон — вниз и вверх: mǎ</title><style>
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 20px 14px 26px;
+  font-family: 'Philosopher', Georgia, 'Times New Roman', serif;
+  color: #3b2a1a;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255,251,235,.9), rgba(255,251,235,0) 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(212,160,23,.14), rgba(212,160,23,0) 50%),
+    repeating-linear-gradient(0deg, rgba(139,105,20,.045) 0 2px, rgba(0,0,0,0) 2px 7px),
+    linear-gradient(160deg, #f4e4bc, #ecd9ac);
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+h1 { font-size: 30px; text-align: center; margin: 6px 0 2px; color: #3b2a1a; }
+h2 { font-size: 24px; text-align: center; margin: 8px 0 4px; }
+.orn { text-align: center; color: #b8860b; font-size: 17px; margin: 2px 0; letter-spacing: 4px; }
+p { font-size: 17px; line-height: 1.55; margin: 10px 0; }
+img.hero { display: block; margin: 10px auto; max-width: min(100%, 430px); height: auto;
+  border: 5px double #8b6914; border-radius: 10px; background: #fffdf5; padding: 6px; }
+.panel { background: #2c2244; border: 2px solid #d4a017; border-radius: 12px;
+  color: #f0e6d2; padding: 14px 18px; margin: 14px 0;
+  box-shadow: inset 0 0 24px rgba(0,0,0,.45), 0 3px 10px rgba(59,42,26,.25); }
+.panel p { margin: 8px 0; }
+.frame { border: 2px solid #8b6914; border-radius: 12px; background: rgba(255,251,235,.55);
+  padding: 12px 16px; margin: 12px 0; }
+.legend { font-size: 14px; color: #6b5a3e; margin: 8px 0; }
+.sylrow { text-align: center; font-size: 30px; margin: 14px 0; }
+ul.words { font-size: 19px; line-height: 1.7; padding-left: 22px; }
+.syl { cursor: pointer; border-bottom: 2px dashed rgba(139,105,20,.5); padding: 0 2px; }
+.syl:hover { background: rgba(212,160,23,.18); border-radius: 4px; }
+button.seal {
+  font-family: inherit; font-size: 17px; cursor: pointer;
+  color: #f4e4bc; background: radial-gradient(circle at 35% 30%, #9c3540, #5a1e26);
+  border: 3px solid #d4a017; border-radius: 999px; padding: 10px 22px; margin: 6px 8px 2px 0;
+  box-shadow: 0 3px 8px rgba(59,42,26,.4), inset 0 0 10px rgba(0,0,0,.35);
+}
+button.seal.plain { background: radial-gradient(circle at 35% 30%, #3f335c, #241b3a); }
+button.seal:active { transform: scale(.96); }
+button.seal.playing { animation: pulse .7s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(212,160,23,.55); }
+  50% { box-shadow: 0 0 0 10px rgba(212,160,23,0); } }
+svg.tonegram { display: block; margin: 8px auto; width: 100%; max-width: 560px; height: auto; }
+.foot { text-align: center; font-size: 13px; color: #8a8378; margin-top: 14px; }
+</style></head><body><div class="wrap">
+<p class="orn">✦ ⚜ ✦</p>
+<h2 style="color:#3b7dd8;">3-й тон — вниз и вверх: mǎ</h2>
+
+<svg class="tonegram" viewBox="0 0 420 175" role="img" aria-label="Контур 3-го тона">
+  <line x1="30" y1="35" x2="395" y2="35" stroke="#8b6914" stroke-width="1" stroke-dasharray="3 7" opacity=".45"/>
+  <line x1="30" y1="140" x2="395" y2="140" stroke="#8b6914" stroke-width="1" stroke-dasharray="3 7" opacity=".45"/>
+  <text x="30" y="28" font-size="12" fill="#8a8378" font-family="Georgia,serif">высоко</text>
+  <text x="30" y="158" font-size="12" fill="#8a8378" font-family="Georgia,serif">низко</text>
+  <path d="M 50 60 C 150 135, 250 135, 370 50" stroke="#3b7dd8" stroke-width="18" fill="none" stroke-linecap="round" opacity=".16"/>
+  <path d="M 50 60 C 150 135, 250 135, 370 50" stroke="#3b7dd8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  
+  <circle cx="50" cy="60" r="5" fill="#3b7dd8" opacity=".8"/>
+  <text x="378" y="90" font-size="34" fill="#3b7dd8" font-family="Georgia,serif" font-weight="bold">ǎ</text>
+  <circle id="spark" cx="50" cy="60" r="9" fill="#fffdf5" stroke="#3b7dd8" stroke-width="4">
+    <animateMotion id="am" dur="2.6s" begin="indefinite" fill="freeze" path="M 50 60 C 150 135, 250 135, 370 50"/>
+  </circle>
+</svg>
+<div class="frame"><p>Голос сначала опускается, потом поднимается, как капризное «ну-у-у?». Значок — галочка: ǎ.</p></div>
+<p style="text-align:center; margin: 4px 0 0;">
+  <button class="seal" onclick="playSyl()" aria-label="Послушать слог">🔊 Слог</button>
+  <button class="seal plain" onclick="restartAnim()" aria-label="Повторить анимацию">⟲ повторить</button>
+</p>
+<script>
+const audio = new Audio('https://samoylenkoanatoly.github.io/ChineseLetter_-/audio/ma3.mp3');
+const btn = document.querySelector('.seal');
+function restartAnim() {
+  document.querySelectorAll('animateMotion').forEach(a => { try { a.beginElement(); } catch(e) {} });
+}
+function playSyl() {
+  restartAnim();
+  audio.currentTime = 0;
+  btn.classList.add('playing');
+  audio.onended = () => btn.classList.remove('playing');
+  audio.play().catch(()=>{});
+}
+window.addEventListener('load', restartAnim);
+</script>
+</div></body></html>

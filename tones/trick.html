@@ -1,0 +1,63 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&display=swap" rel="stylesheet"><title>Магия тонов — маленькая хитрость</title><style>
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 20px 14px 26px;
+  font-family: 'Philosopher', Georgia, 'Times New Roman', serif;
+  color: #3b2a1a;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255,251,235,.9), rgba(255,251,235,0) 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(212,160,23,.14), rgba(212,160,23,0) 50%),
+    repeating-linear-gradient(0deg, rgba(139,105,20,.045) 0 2px, rgba(0,0,0,0) 2px 7px),
+    linear-gradient(160deg, #f4e4bc, #ecd9ac);
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+h1 { font-size: 30px; text-align: center; margin: 6px 0 2px; color: #3b2a1a; }
+h2 { font-size: 24px; text-align: center; margin: 8px 0 4px; }
+.orn { text-align: center; color: #b8860b; font-size: 17px; margin: 2px 0; letter-spacing: 4px; }
+p { font-size: 17px; line-height: 1.55; margin: 10px 0; }
+img.hero { display: block; margin: 10px auto; max-width: min(100%, 430px); height: auto;
+  border: 5px double #8b6914; border-radius: 10px; background: #fffdf5; padding: 6px; }
+.panel { background: #2c2244; border: 2px solid #d4a017; border-radius: 12px;
+  color: #f0e6d2; padding: 14px 18px; margin: 14px 0;
+  box-shadow: inset 0 0 24px rgba(0,0,0,.45), 0 3px 10px rgba(59,42,26,.25); }
+.panel p { margin: 8px 0; }
+.frame { border: 2px solid #8b6914; border-radius: 12px; background: rgba(255,251,235,.55);
+  padding: 12px 16px; margin: 12px 0; }
+.legend { font-size: 14px; color: #6b5a3e; margin: 8px 0; }
+.sylrow { text-align: center; font-size: 30px; margin: 14px 0; }
+ul.words { font-size: 19px; line-height: 1.7; padding-left: 22px; }
+.syl { cursor: pointer; border-bottom: 2px dashed rgba(139,105,20,.5); padding: 0 2px; }
+.syl:hover { background: rgba(212,160,23,.18); border-radius: 4px; }
+button.seal {
+  font-family: inherit; font-size: 17px; cursor: pointer;
+  color: #f4e4bc; background: radial-gradient(circle at 35% 30%, #9c3540, #5a1e26);
+  border: 3px solid #d4a017; border-radius: 999px; padding: 10px 22px; margin: 6px 8px 2px 0;
+  box-shadow: 0 3px 8px rgba(59,42,26,.4), inset 0 0 10px rgba(0,0,0,.35);
+}
+button.seal.plain { background: radial-gradient(circle at 35% 30%, #3f335c, #241b3a); }
+button.seal:active { transform: scale(.96); }
+button.seal.playing { animation: pulse .7s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(212,160,23,.55); }
+  50% { box-shadow: 0 0 0 10px rgba(212,160,23,0); } }
+svg.tonegram { display: block; margin: 8px auto; width: 100%; max-width: 560px; height: auto; }
+.foot { text-align: center; font-size: 13px; color: #8a8378; margin-top: 14px; }
+</style></head><body><div class="wrap">
+<p class="orn">✦ ⚜ ✦</p>
+<h2 style="color:#8e5bd8;">Маленькая хитрость: два третьих тона подряд</h2>
+<img class="hero" src="https://ucarecdn.stepik.net/98526add-8ff2-4501-bc2b-83a0aaa29b34/" alt="Схема: два третьих тона подряд">
+<div class="frame"><p>Если рядом стоят два 3-х тона, первый произносится как 2-й: 你好 (<span style="color:#3b7dd8; font-weight:700;">nǐ hǎo</span>) — «привет» — на деле звучит как [<span style="color:#e8862e; font-weight:700;">ní</span> <span style="color:#3b7dd8; font-weight:700;">hǎo</span>]. Так языку удобнее, и это абсолютно нормально!</p></div>
+<p style="text-align:center; margin: 4px 0 0;">
+  <button class="seal" onclick="playSyl()" aria-label="Послушать 你好">🔊 你好</button>
+</p>
+<div class="panel"><p><strong>Как запоминать:</strong> привязывай тоны к знакомым русским интонациям (переспрос — 2-й тон, команда — 4-й), слушай живую речь и повторяй вслух. И помни: значок тона всегда ставится над гласной — <span style="color:#e8862e; font-weight:700;">má</span>, <span style="color:#3b7dd8; font-weight:700;">mǎ</span>, <span style="color:#8e5bd8; font-weight:700;">mà</span>.</p></div>
+<script>
+const audio = new Audio('https://samoylenkoanatoly.github.io/ChineseLetter_-/audio/nihao.mp3');
+const btn = document.querySelector('.seal');
+function playSyl() {
+  audio.currentTime = 0;
+  btn.classList.add('playing');
+  audio.onended = () => btn.classList.remove('playing');
+  audio.play().catch(()=>{});
+}
+</script>
+</div></body></html>
