@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>口 — Визуальная ассоциация · Болото Жаберта</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/tone.css">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/site-common.js"></script>
+  <style>
+    :root {
+      --ink: #22301c;
+      --bg: #0e2318;
+      --panel: #dcebd0;
+      --bubble-bg: #eaf5dd;
+      --bubble-border: #2e4626;
+      --accent: #4e9940;
+      --accent-deep: #35682a;
+      --btn-bg: #cfe3bd;
+    }
+    body {
+      background:
+        radial-gradient(80% 60% at 80% 0%, rgba(141, 226, 255, 0.12), transparent 55%),
+        radial-gradient(60% 50% at 15% 100%, rgba(80, 200, 120, 0.14), transparent 60%),
+        linear-gradient(#0b1f14, #123321 55%, #0a2417);
+      background-attachment: fixed;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .moon {
+      position: absolute;
+      top: 26px;
+      right: 5%;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fdf6d8, #d9d3a8 70%);
+      box-shadow: 0 0 40px 12px rgba(253, 246, 216, 0.35);
+    }
+    .reeds {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: 130px;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        repeating-linear-gradient(93deg, transparent 0 46px, rgba(9, 40, 24, 0.9) 46px 50px, transparent 50px 120px),
+        linear-gradient(transparent, rgba(6, 30, 18, 0.85));
+    }
+    .stage { position: relative; z-index: 1; }
+    #fireflies { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .fly {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ffe97a;
+      box-shadow: 0 0 12px 4px rgba(255, 233, 122, 0.65);
+      animation: flyFloat 7s infinite ease-in-out;
+    }
+    @keyframes flyFloat {
+      0%, 100% { transform: translate(0, 0); opacity: 0.25; }
+      25% { opacity: 1; }
+      50% { transform: translate(26px, -34px); opacity: 0.5; }
+      75% { opacity: 0.9; }
+    }
+    .photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .lily { background: #eaf5dd; }
+    .photos .img-frame img { height: 150px; }
+    .cricket-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      padding: 8px 10px;
+      background: rgba(14, 46, 28, 0.75);
+      border: 3px dashed #7fbf6a;
+      border-radius: 10px;
+      color: #d6f0c8;
+      font-size: 14.5px;
+    }
+    .cricket-bar .btn { color: #22301c; }
+    .hint-card { margin-top: 10px; text-align: center; font-size: 17px; }
+    .hint-card .emoji { font-size: 32px; }
+    .photos .img-frame { cursor: zoom-in; }
+    .mouth-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      padding: 10px 12px;
+    }
+    .mouth {
+      width: 132px;
+      height: 36px;
+      border: 5px solid #7c3b46;
+      border-radius: 10px;
+      background: #7e2437;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: height 0.18s ease;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+      flex-shrink: 0;
+    }
+    .mouth::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 11px;
+      background: repeating-linear-gradient(90deg, #ffffff 0 16px, #efe9dd 16px 19px);
+      border-bottom: 3px solid #7c3b46;
+    }
+    .mouth::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 12%;
+      right: 12%;
+      height: 30px;
+      background: #e2708b;
+      border-radius: 50% 50% 0 0;
+      transform: translateY(70%);
+      transition: transform 0.18s ease;
+    }
+    .mouth.open { height: 92px; }
+    .mouth.open::after { transform: translateY(12%); }
+    .mouth-label { font-size: 15.5px; max-width: 300px; text-align: center; }
+    .mouth-label b { color: var(--accent-deep); }
+    @media (max-width: 640px) {
+      .photos { grid-template-columns: 1fr; }
+      .moon { width: 44px; height: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="moon"></div>
+  <div id="fireflies"></div>
+  <div class="reeds"></div>
+
+  <div class="stage tone-3">
+    <div class="scene-top">
+      <div class="character-wrap">
+        <img class="character" src="../assets/characters/zhabert.svg" alt="Пиксельная лягушка Жаберт в очках с флейтой">
+        <span class="character-name">Жаберт</span>
+      </div>
+      <div class="bubble">
+        <p><b>Ква-а!</b> Приветствую на моём болоте, путник. Я Жаберт — лягушка-флейтист. Сверчки уже настроили инструменты, начнём! 🎶</p>
+        <p>Смотри на иероглиф <b>口</b>. На что он похож? Конечно — на <b>широко открытый РОТ</b>! Когда мы едим хот-дог, мы открываем рот вот так: <b>口</b>!</p>
+      </div>
+    </div>
+
+    <div class="card hint-card">
+      <span class="emoji">👄</span> Смотри: <b>口</b> — это же открытый рот! Сверчок подсказывает: <i>«пропой kǒu, как я!»</i> 🦗
+    </div>
+
+    <div class="card mouth-card">
+      <div class="mouth" id="mouth" role="button" tabindex="0" aria-label="Открой рот как 口"></div>
+      <div class="mouth-label"><b>Нажми на рот</b> — он откроется, как 口, и ты услышишь <b>kǒu</b>!</div>
+    </div>
+
+    <div class="photos">
+      <div class="img-frame" data-lightbox data-caption="口 как открытый рот — наведи или нажми 🔍">
+        <img src="img/visual_1.jpg" alt="口 как открытый рот">
+        <div class="img-caption">Рот открыт — почти 口! · нажми, чтобы рассмотреть 🔍</div>
+      </div>
+      <div class="img-frame lily" data-lightbox data-caption="口 и хот-дог — нажми 🔍">
+        <img src="img/visual_2.jpg" alt="Хот-дог и открытый рот — ассоциация для 口">
+        <div class="img-caption">Хот-дог требует широкого 口! · нажми 🔍</div>
+      </div>
+    </div>
+
+    <div class="cricket-bar">
+      🦗 Сверчки болота исполняют серенаду для иероглифа 口:
+      <button class="btn" id="cricket-btn">🦗 Послушать сверчков</button>
+    </div>
+
+    <span class="part-badge">Урок 1 · 口 (kǒu) · Часть 3 из 5 — Визуальная ассоциация</span>
+  </div>
+
+  <script>
+    (function () {
+      document.getElementById("cricket-btn").addEventListener("click", function () {
+        try {
+          var Ctx = window.AudioContext || window.webkitAudioContext;
+          var ctx = new Ctx();
+          var t0 = ctx.currentTime;
+          function chirp(start, base) {
+            for (var n = 0; n < 3; n++) {
+              var o = ctx.createOscillator();
+              var g = ctx.createGain();
+              o.type = "sine";
+              o.frequency.value = base + Math.random() * 300;
+              var ts = start + n * 0.09;
+              g.gain.setValueAtTime(0, ts);
+              g.gain.linearRampToValueAtTime(0.12, ts + 0.015);
+              g.gain.exponentialRampToValueAtTime(0.0001, ts + 0.07);
+              o.connect(g);
+              g.connect(ctx.destination);
+              o.start(ts);
+              o.stop(ts + 0.09);
+            }
+          }
+          chirp(t0 + 0.05, 4300);
+          chirp(t0 + 0.5, 3900);
+          chirp(t0 + 1.0, 4600);
+          setTimeout(function () { ctx.close(); }, 2200);
+        } catch (e) { /* звук недоступен — не страшно */ }
+      });
+
+      var mouth = document.getElementById("mouth");
+      var closeTimer = null;
+      function chomp() {
+        clearTimeout(closeTimer);
+        mouth.classList.add("open");
+        HanziSite.playAudio("audio/kou.mp3", 0.9);
+        closeTimer = setTimeout(function () {
+          mouth.classList.remove("open");
+        }, 750);
+      }
+      mouth.addEventListener("click", chomp);
+      mouth.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          chomp();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

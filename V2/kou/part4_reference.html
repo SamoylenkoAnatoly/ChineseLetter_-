@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>口 — Справка и примеры · Лаборатория робота</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/tone.css">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/site-common.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <style>
+    :root {
+      --ink: #dfeaf5;
+      --bg: #101a26;
+      --panel: rgba(23, 36, 52, 0.92);
+      --bubble-bg: #dfeaf5;
+      --bubble-border: #0b121b;
+      --accent: #35c0d8;
+      --accent-deep: #1a7f95;
+      --btn-bg: #9fd8e6;
+    }
+    body {
+      background:
+        linear-gradient(rgba(53, 192, 216, 0.05), rgba(53, 192, 216, 0.05)),
+        repeating-linear-gradient(0deg, transparent 0 39px, rgba(53, 192, 216, 0.12) 39px 40px),
+        repeating-linear-gradient(90deg, transparent 0 39px, rgba(53, 192, 216, 0.12) 39px 40px),
+        linear-gradient(#0d1620, #101a26 60%, #0a111a);
+      background-attachment: fixed;
+    }
+    .card { color: #dfeaf5; }
+    .terminal {
+      font-family: "Courier New", monospace;
+      font-size: 13.5px;
+      background: #04121c;
+      color: #7ef2c5;
+      border: 3px solid #1a7f95;
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    .terminal .cursor {
+      display: inline-block;
+      width: 9px;
+      height: 16px;
+      background: #7ef2c5;
+      vertical-align: text-bottom;
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+      align-items: start;
+    }
+    .section-title {
+      font-size: 17px;
+      margin: 0 0 8px;
+      color: var(--accent);
+    }
+    .examples {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .ex-card {
+      background: rgba(10, 26, 38, 0.9);
+      border: 2px solid #2a5a6e;
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .ex-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 0 14px rgba(53, 192, 216, 0.35);
+    }
+    .ex-card:active { transform: translateY(0); }
+    .ex-card .big { font-size: 36px; line-height: 1.1; font-weight: 700; }
+    .ex-card .py { font-size: 15px; font-weight: 700; }
+    .ex-card .tr { font-size: 13px; opacity: 0.85; }
+    .ex-card .hint { font-size: 11.5px; color: var(--accent); margin-top: 3px; }
+    .viewer-card { position: relative; }
+    #lab-viewer {
+      margin: 0 auto;
+      width: 190px;
+      touch-action: none;
+    }
+    .scene-top { align-items: center; }
+    .scene-top .bubble { flex: 1 1 220px; min-width: 200px; }
+    .lab-monitor { flex: 0 0 285px; }
+    .lab-monitor .section-title { font-size: 14px; margin: 0 0 6px; }
+    .lab-monitor .screen {
+      position: relative;
+      background: #04121c;
+      border: 3px solid #1a7f95;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: zoom-in;
+      box-shadow: inset 0 0 18px rgba(53, 192, 216, 0.18);
+    }
+    .lab-monitor .screen img {
+      display: block;
+      width: 100%;
+      height: 295px;
+      object-fit: contain;
+    }
+    .lab-monitor .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, rgba(53, 192, 216, 0.07) 0 2px, transparent 2px 4px);
+      pointer-events: none;
+    }
+    .mon-cap {
+      font-size: 12px;
+      text-align: center;
+      margin-top: 4px;
+      color: #9fd8e6;
+    }
+    #viewer-status { text-align: center; font-size: 15px; min-height: 1.3em; margin-top: 6px; }
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .compare .cell {
+      background: rgba(10, 26, 38, 0.9);
+      border: 2px dashed #2a5a6e;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      font-size: 15px;
+    }
+    .compare .glyph { font-size: 54px; font-weight: 700; line-height: 1.15; }
+    .ref-img { margin-top: 10px; }
+    #voice-tip { display: none; text-align: center; margin-top: 8px; font-size: 13px; color: #9fd8e6; }
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+      .lab-monitor { flex: 1 1 100%; }
+      .lab-monitor .screen img { height: 240px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage tone-3">
+    <div class="scene-top">
+      <div class="character-wrap">
+        <img class="character" src="../assets/characters/robot.svg" alt="Пиксельный робот-лаборант с одним жёлтым глазом">
+        <span class="character-name">РОБ-ОТ-3000</span>
+      </div>
+      <div class="bubble">
+        <p><b>БИП-БУП.</b> Я — РОБ-ОТ-3000, лаборант научного модуля. Датчики подключены. Начинаю доклад об иероглифе <b>口</b>.</p>
+      </div>
+      <div class="card lab-monitor">
+        <h2 class="section-title">📁 Архив сканов</h2>
+        <div class="screen" data-lightbox data-caption="Скан образца 吃 (chī): слева — ключ 口">
+          <img src="img/ref_chi.jpg" alt="Пример: иероглиф 吃, слева ключ 口">
+          <div class="scanlines"></div>
+        </div>
+        <div class="mon-cap">образец 吃 (chī) · клик — увеличить</div>
+      </div>
+    </div>
+
+    <div class="terminal">
+      &gt; АНАЛИЗ ОБЪЕКТА «口» ... 100%<br>
+      &gt; СТАТУС: <b>фундамент китайского языка</b><br>
+      &gt; Самостоятельное слово «рот» + ключ (радикал) <b>№30</b>. Входит в состав <b>сотен</b> других иероглифов. Частотность: очень высокая.<br>
+      &gt; Нажимайте на образцы справа для сканирования порядка черт <span class="cursor"></span>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <h2 class="section-title">🧪 Образцы из базы данных (нажми на карточку)</h2>
+        <div class="examples">
+          <div class="ex-card" data-char="吃" data-audio="audio/chi.mp3" data-speak-word="吃">
+            <div class="big">吃</div>
+            <div class="py tone-1">chī</div>
+            <div class="tr">есть</div>
+            <div class="hint">▶ скан черт</div>
+          </div>
+          <div class="ex-card" data-char="叫" data-audio="audio/jiao.mp3" data-speak-word="叫">
+            <div class="big">叫</div>
+            <div class="py tone-4">jiào</div>
+            <div class="tr">звать, кричать</div>
+            <div class="hint">▶ скан черт</div>
+          </div>
+          <div class="ex-card" data-char="名" data-audio="audio/ming.mp3" data-speak-word="名">
+            <div class="big">名</div>
+            <div class="py tone-2">míng</div>
+            <div class="tr">имя</div>
+            <div class="hint">▶ скан черт</div>
+          </div>
+          <div class="ex-card" data-char="品" data-audio="audio/pin.mp3" data-speak-word="品">
+            <div class="big">品</div>
+            <div class="py tone-3">pǐn</div>
+            <div class="tr">товар, дегустировать</div>
+            <div class="hint">▶ скан черт · след. урок!</div>
+          </div>
+          <div class="ex-card" data-char="回" data-audio="audio/hui.mp3" data-speak-word="回">
+            <div class="big">回</div>
+            <div class="py tone-2">huí</div>
+            <div class="tr">возвращаться</div>
+            <div class="hint">▶ скан черт</div>
+          </div>
+          <div class="ex-card" data-speak-only="1" data-audio="audio/chukou.mp3" data-speak-word="出口">
+            <div class="big">出口</div>
+            <div class="py"><span class="tone-text tone-1">chū</span><span class="tone-text tone-3">kǒu</span></div>
+            <div class="tr">выход («наружу через рот»)</div>
+            <div class="hint">🔊 озвучить</div>
+          </div>
+          <div class="ex-card" data-speak-only="1" data-audio="audio/yikouren.mp3" data-speak-word="一口人">
+            <div class="big">一口人</div>
+            <div class="py"><span class="tone-text tone-1">yī</span> <span class="tone-text tone-3">kǒu</span> <span class="tone-text tone-2">rén</span></div>
+            <div class="tr">«один член семьи»</div>
+            <div class="hint">🔊 озвучить</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card viewer-card">
+          <h2 class="section-title">🔬 Сканер черт</h2>
+          <div id="lab-viewer"></div>
+          <div id="viewer-status">Выбери образец слева</div>
+          <div class="actions" style="display:flex;gap:10px;justify-content:center;margin-top:8px;">
+            <button class="btn" id="replay-btn" disabled>Повторить скан</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:10px;">
+          <h2 class="section-title">⚖️ Не перепутай: 口 и 囗</h2>
+          <div class="compare">
+            <div class="cell">
+              <div class="glyph">口</div>
+              <div><b>Ключ №30 «рот»</b></div>
+              <div>стоит <b>сбоку</b> от другого элемента. Пример: 吃</div>
+            </div>
+            <div class="cell">
+              <div class="glyph">囗</div>
+              <div><b>Ключ №31 «ограда» (wéi)</b></div>
+              <div><b>окружает</b> компоненты рамкой. Пример: 回</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p id="voice-tip">Если звук не воспроизвёлся — в системе не установлен китайский голос (zh-CN). Добавьте его в настройках ОС.</p>
+    <span class="part-badge">Урок 1 · 口 (kǒu) · Часть 4 из 5 — Справка и примеры</span>
+  </div>
+
+  <script>
+    (function () {
+      var currentChar = null;
+      var replayBtn = document.getElementById("replay-btn");
+      var viewerStatus = document.getElementById("viewer-status");
+
+      function scan(char) {
+        currentChar = char;
+        replayBtn.disabled = false;
+        viewerStatus.textContent = "Сканирование: " + char;
+        var holder = document.getElementById("lab-viewer");
+        holder.innerHTML = "";
+        var div = document.createElement("div");
+        holder.appendChild(div);
+        var writer = HanziWriter.create(div, char, {
+          width: 190,
+          height: 190,
+          padding: 5,
+          showOutline: true,
+          strokeColor: "#35c0d8",
+          outlineColor: "#2a5a6e",
+          highlightColor: "#9fe8f5",
+          highlightCompleteColor: "#35c0d8"
+        });
+        writer.animateCharacter({
+          onComplete: function () {
+            viewerStatus.textContent = "Скан завершён: " + char;
+            HanziSite.sparkBurst(document.querySelector(".viewer-card"), { count: 30, colors: ["#35c0d8", "#9fe8f5", "#ffffff"] });
+          }
+        });
+      }
+
+      document.querySelectorAll(".ex-card").forEach(function (card) {
+        card.addEventListener("click", function () {
+          var word = card.getAttribute("data-speak-word");
+          var audio = card.getAttribute("data-audio");
+          if (audio) {
+            HanziSite.playAudio(audio, 0.9);
+          } else if (word) {
+            HanziSite.speak(word, 0.75);
+          }
+          if (card.getAttribute("data-speak-only")) return;
+          scan(card.getAttribute("data-char"));
+        });
+      });
+
+      replayBtn.addEventListener("click", function () {
+        if (currentChar) scan(currentChar);
+      });
+    })();
+  </script>
+</body>
+</html>

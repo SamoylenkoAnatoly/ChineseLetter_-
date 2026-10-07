@@ -1,0 +1,38 @@
+/* Палитра тонов курса */
+:root {
+  --tone1: #e53935; /* 1-й тон — красный */
+  --tone2: #fb8c00; /* 2-й тон — оранжевый */
+  --tone3: #29b6f6; /* 3-й тон — голубой */
+  --tone4: #8e24aa; /* 4-й тон — фиолетовый */
+  --tone0: #9e9e9e; /* нейтральный тон — серый */
+}
+.tone-1 { --tone: var(--tone1); }
+.tone-2 { --tone: var(--tone2); }
+.tone-3 { --tone: var(--tone3); }
+.tone-4 { --tone: var(--tone4); }
+.tone-0 { --tone: var(--tone0); }
+
+.tone-text { color: var(--tone, inherit); font-weight: 700; }
+
+.tone-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 2px solid var(--tone);
+  color: var(--tone);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+}
+.tone-chip .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--tone);
+  display: inline-block;
+}
+.tone-chip.active {
+  background: var(--tone);
+  color: #fff;
+}

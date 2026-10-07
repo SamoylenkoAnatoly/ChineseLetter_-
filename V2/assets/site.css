@@ -1,0 +1,193 @@
+/* Общие компоненты интерактивных страниц курса */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Nunito", "Segoe UI", "Trebuchet MS", sans-serif;
+  color: var(--ink, #2c2418);
+  background: var(--bg, #f5edda);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 10px 12px 14px;
+}
+
+/* Персонаж + реплика */
+.scene-top {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.character-wrap {
+  flex-shrink: 0;
+  width: 122px;
+  text-align: center;
+  position: relative;
+}
+.character-wrap img.character {
+  width: 100%;
+  image-rendering: pixelated;
+  display: block;
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.25));
+}
+.character-name {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 1px 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent, #6d4c2f);
+  border-radius: 999px;
+  border: 2px solid rgba(0, 0, 0, 0.45);
+}
+
+.bubble {
+  position: relative;
+  flex: 1 1 320px;
+  background: var(--bubble-bg, #fffdf3);
+  border: 3px solid var(--bubble-border, #3a2c1e);
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--bubble-ink, #2c2418);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.28);
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 34px;
+  border: 7px solid transparent;
+  border-right-color: var(--bubble-border, #3a2c1e);
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 36px;
+  border: 5px solid transparent;
+  border-right-color: var(--bubble-bg, #fffdf3);
+}
+.bubble p { margin: 0 0 8px; }
+.bubble p:last-child { margin-bottom: 0; }
+
+/* Кнопки в пиксельном стиле */
+.btn {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink, #2c2418);
+  background: var(--btn-bg, #f0d9a8);
+  border: 3px solid var(--bubble-border, #3a2c1e);
+  border-radius: 10px;
+  padding: 7px 13px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--bubble-border, #3a2c1e);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--bubble-border, #3a2c1e);
+}
+.btn.primary { background: var(--accent, #d9832b); color: #fff; }
+.btn:disabled { opacity: 0.55; cursor: default; }
+
+/* Карточки */
+.card {
+  background: var(--panel, #fffdf3);
+  border: 3px solid var(--bubble-border, #3a2c1e);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.22);
+}
+
+/* Большой иероглиф */
+.glyph-hero {
+  font-size: clamp(64px, 12vw, 96px);
+  line-height: 1.08;
+  text-align: center;
+  font-weight: 700;
+}
+
+.pinyin-hero {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tone, inherit);
+}
+
+.meta-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  font-size: 14px;
+}
+.meta-list li {
+  padding: 4px 2px;
+  border-top: 2px dashed rgba(0, 0, 0, 0.15);
+}
+.meta-list li b { color: var(--accent-deep, #7a4a12); }
+
+/* Рамки для картинок */
+.img-frame {
+  border: 3px solid var(--bubble-border, #3a2c1e);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.22);
+}
+.img-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.img-caption {
+  text-align: center;
+  font-size: 12.5px;
+  padding: 4px 6px;
+  color: #4a4438;
+  opacity: 1;
+}
+
+/* Полоса прогресса черт */
+.progress {
+  text-align: center;
+  font-weight: 700;
+  min-height: 1.4em;
+  margin: 8px 0 0;
+}
+.status {
+  text-align: center;
+  font-size: 15px;
+  min-height: 1.3em;
+  margin: 4px 0 10px;
+}
+
+/* Подвал-бейдж урока */
+.part-badge {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+@media (max-width: 640px) {
+  .scene-top { flex-direction: column; }
+  .character-wrap { width: 128px; margin: 0 auto; }
+  .bubble::before, .bubble::after { display: none; }
+}

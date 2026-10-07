@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>口 — Интересные факты · Лес енота</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/tone.css">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/site-common.js"></script>
+  <style>
+    :root {
+      --ink: #2a2416;
+      --bg: #0f1c10;
+      --panel: #f2ead2;
+      --bubble-bg: #f8f1dd;
+      --bubble-border: #33291a;
+      --accent: #8fae4f;
+      --accent-deep: #5f7a2e;
+      --btn-bg: #dfe3b8;
+    }
+    body {
+      background:
+        radial-gradient(70% 55% at 50% 0%, rgba(120, 200, 110, 0.12), transparent 60%),
+        linear-gradient(#0c1810, #142615 55%, #0a140b);
+      background-attachment: fixed;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .trees {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(18% 40% at 4% 100%, rgba(6, 20, 8, 0.95), transparent 70%),
+        radial-gradient(16% 34% at 96% 100%, rgba(6, 20, 8, 0.95), transparent 70%),
+        radial-gradient(30% 60% at 50% 108%, rgba(8, 26, 10, 0.8), transparent 70%);
+    }
+    .mushroom {
+      position: fixed;
+      bottom: 8px;
+      width: 26px;
+      height: 20px;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50% 50% 45% 45%;
+      background: radial-gradient(circle at 30% 30%, #ff8f6b, #c94f35 70%);
+      box-shadow: 0 0 22px 7px rgba(255, 143, 107, 0.35);
+    }
+    .mushroom::after {
+      content: "";
+      position: absolute;
+      left: 9px;
+      bottom: -7px;
+      width: 8px;
+      height: 9px;
+      background: #e8dcc2;
+      border-radius: 2px;
+    }
+    .mushroom.m1 { left: 7%; }
+    .mushroom.m2 { left: 88%; transform: scale(0.8); }
+    .stage { position: relative; z-index: 1; }
+    #forest-flies { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .fly {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #d9ffa8;
+      box-shadow: 0 0 10px 3px rgba(217, 255, 168, 0.55);
+      animation: flyFloat 8s infinite ease-in-out;
+    }
+    @keyframes flyFloat {
+      0%, 100% { transform: translate(0, 0); opacity: 0.2; }
+      50% { transform: translate(30px, -40px); opacity: 1; }
+    }
+    .fact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .flip {
+      perspective: 900px;
+      height: 185px;
+      cursor: pointer;
+    }
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1.2);
+    }
+    .flip.flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border: 3px solid var(--bubble-border);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+    }
+    .flip-front {
+      background: linear-gradient(160deg, #6d8a3a, #4d6a26);
+      color: #f6f2df;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .flip-front .num {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .flip-front .icon { font-size: 34px; margin-bottom: 6px; }
+    .flip-front .tap {
+      margin-top: 8px;
+      font-size: 12px;
+      opacity: 0.8;
+      font-weight: 400;
+    }
+    .flip-back {
+      background: var(--panel);
+      transform: rotateY(180deg);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .flip-back b { color: var(--accent-deep); }
+    .facts-img {
+      margin: 10px auto 0;
+      max-width: 300px;
+    }
+    @media (max-width: 640px) {
+      .flip { height: 205px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="trees"></div>
+  <div class="mushroom m1"></div>
+  <div class="mushroom m2"></div>
+  <div id="forest-flies"></div>
+
+  <div class="stage tone-3">
+    <div class="scene-top">
+      <div class="character-wrap">
+        <img class="character" src="../assets/characters/raccoon.svg" alt="Пиксельный енот в капюшоне с книгой">
+        <span class="character-name">Енот Шуршик</span>
+      </div>
+      <div class="bubble">
+        <p><b>Шурх-шурх!</b> Я — енот Шуршик. Ночью в этом волшебном лесу я нашёл старую книгу тайн. В ней — редкие факты об иероглифе <b>口</b>!</p>
+        <p>Переверни странички-карточки, только аккуратно: книга волшебная и любит любопытных. 📖✨</p>
+      </div>
+    </div>
+
+    <div class="fact-grid">
+      <div class="flip" tabindex="0" role="button" aria-label="Факт 1 — источник болезней">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">
+            <div class="num">ФАКТ №1</div>
+            <div class="icon">🤧</div>
+            «Источник болезней»
+            <div class="tap">нажми, чтобы перевернуть</div>
+          </div>
+          <div class="flip-face flip-back">
+            <p>В китайской культуре <b>рот</b> считается главным местом входа внешних угроз в организм. Береги 口 — и он скажет тебе «спасибо»!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip" tabindex="0" role="button" aria-label="Факт 2 — любое отверстие">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">
+            <div class="num">ФАКТ №2</div>
+            <div class="icon">🕳️</div>
+            «Любое отверстие»
+            <div class="tap">нажми, чтобы перевернуть</div>
+          </div>
+          <div class="flip-face flip-back">
+            <p>Хотя основное значение 口 — «рот», «уста» или «губы», в китайском языке он обозначает <b>любое отверстие или вход</b>! Двери, окна, горлышки — всё это 口.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip" tabindex="0" role="button" aria-label="Факт 3 — три рта">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">
+            <div class="num">ФАКТ №3</div>
+            <div class="icon">😋😋😋</div>
+            «Три рта»
+            <div class="tap">нажми, чтобы перевернуть</div>
+          </div>
+          <div class="flip-face flip-back">
+            <p>Три рта сразу — это <b>品 (pǐn)</b> — «товар, дегустировать»: много людей пробуют и обсуждают качество. Этот иероглиф ждёт тебя <b>на следующем уроке</b>!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="img-frame facts-img" data-lightbox data-caption="Иероглиф 口 в жизни: от рта до квадратного окошка">
+      <img src="img/facts_1.jpg" alt="Иллюстрация к интересным фактам об иероглифе 口">
+      <div class="img-caption">клик — рассмотреть побольше 🔍</div>
+      <div class="img-caption">Страница из книги тайн енота Шуршика</div>
+    </div>
+
+    <span class="part-badge">Урок 1 · 口 (kǒu) · Часть 5 из 5 — Интересные факты</span>
+  </div>
+
+  <script>
+    (function () {
+      var host = document.getElementById("forest-flies");
+      for (var i = 0; i < 18; i++) {
+        var f = document.createElement("div");
+        f.className = "fly";
+        f.style.left = (4 + Math.random() * 92) + "%";
+        f.style.top = (10 + Math.random() * 75) + "%";
+        f.style.animationDelay = (Math.random() * 8).toFixed(2) + "s";
+        f.style.animationDuration = (6 + Math.random() * 5).toFixed(2) + "s";
+        host.appendChild(f);
+      }
+      document.querySelectorAll(".flip").forEach(function (card) {
+        function toggle() {
+          card.classList.toggle("flipped");
+          if (card.classList.contains("flipped")) {
+            HanziSite.sparkBurst(card, { count: 26, colors: ["#d9ffa8", "#fff6c9", "#9fdc6a"] });
+          }
+        }
+        card.addEventListener("click", toggle);
+        card.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

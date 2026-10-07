@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>口 — Знакомство · Трактир «Наливай и плач»</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/tone.css">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/site-common.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <style>
+    :root {
+      --ink: #2c1d0e;
+      --bg: #7a4a26;
+      --panel: #f6e7c1;
+      --bubble-bg: #fdf3d7;
+      --bubble-border: #4a3014;
+      --accent: #c96f1f;
+      --accent-deep: #8a4a0f;
+      --btn-bg: #f0d9a8;
+    }
+    body {
+      background:
+        radial-gradient(120% 90% at 50% -10%, rgba(255, 214, 140, 0.35), transparent 60%),
+        repeating-linear-gradient(0deg,
+          #7a4a26 0 64px,
+          #6d3f1e 64px 67px,
+          #7a4a26 67px 130px,
+          #663a1b 130px 133px),
+        #6d3f1e;
+      background-attachment: fixed;
+    }
+    .assoc-zone {
+      margin-bottom: 10px;
+      margin-top: 2px;
+      padding: 8px 10px 6px;
+      background: linear-gradient(#fbf0cf, #f3e3b4);
+      border: 3px solid #c9962f;
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.25), inset 0 0 14px rgba(201, 150, 47, 0.25);
+    }
+    .assoc-title {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent-deep);
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+    .assoc-hint {
+      text-align: center;
+      font-size: 12px;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
+    .gallery-top {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .gallery-top .img-frame {
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .gallery-top .img-frame:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+    }
+    .gallery-top .img-frame img { height: 78px; }
+    .tavern-sign {
+      margin: 0 auto 10px;
+      display: table;
+      padding: 6px 22px;
+      background: linear-gradient(#a8703a, #8a5626);
+      border: 4px solid #4a3014;
+      border-radius: 10px;
+      color: #ffe9b8;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      box-shadow: 0 5px 0 rgba(0,0,0,0.35), inset 0 0 16px rgba(0,0,0,0.35);
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.45);
+    }
+    .tavern-sign::before { content: "🍺 "; }
+    .tavern-sign::after { content: " 🍺"; }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(210px, 1fr) minmax(260px, 1.25fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .writer-card {
+      position: relative;
+      background: linear-gradient(#fbf0cf, #f1dfae);
+    }
+    .writer-title {
+      text-align: center;
+      font-size: 17px;
+      font-weight: 800;
+      margin: 0 0 4px;
+      color: var(--accent-deep);
+    }
+    #writer-target {
+      margin: 0 auto;
+      width: 210px;
+      touch-action: none;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .success-msg {
+      display: none;
+      margin: 8px auto 0;
+      padding: 6px 10px;
+      max-width: 400px;
+      text-align: center;
+      background: #fffae0;
+      border: 3px dashed var(--accent);
+      border-radius: 10px;
+      font-weight: 700;
+      color: var(--accent-deep);
+      font-size: 14px;
+    }
+    .success-msg.show { display: block; }
+    .btn.speaking { outline: 3px solid var(--tone3); }
+    #voice-tip { display: none; text-align: center; margin-top: 6px; font-size: 12px; color: #fff0d0; }
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+      .gallery-top { grid-template-columns: 1fr 1fr 1fr; }
+      .tavern-sign { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage tone-3">
+    <div class="tavern-sign">Трактир «Наливай и плач»</div>
+
+    <div class="assoc-zone">
+      <div class="assoc-title">🖼 Визуальные ассоциации 口</div>
+      <div class="gallery-top">
+        <div class="img-frame" data-lightbox data-caption="Визуальная ассоциация: иероглиф 口">
+          <img src="img/art_1.jpg" alt="Иероглиф 口">
+        </div>
+        <div class="img-frame" data-lightbox data-caption="口 на разных носителях">
+          <img src="img/art_2.jpg" alt="Иероглиф 口 на разных носителях">
+        </div>
+        <div class="img-frame" data-lightbox data-caption="Стилизованный иероглиф 口">
+          <img src="img/art_3.jpg" alt="Стилизованный иероглиф 口">
+        </div>
+      </div>
+      <div class="assoc-hint">нажми на картинку, чтобы рассмотреть 🔍</div>
+    </div>
+
+    <div class="scene-top">
+      <div class="character-wrap">
+        <img class="character" src="../assets/characters/cinnabon.svg" alt="Пиксельный кот Синнабон — морда в доспехах">
+        <span class="character-name">Синнабон</span>
+      </div>
+      <div class="bubble" id="cinnabon-bubble">
+        <p><b>Мяу-мяу!</b> Я Синнабон — искатель приключений, и это мой любимый трактир. Заглянул пропустить стакан молока — и поделиться с тобой <b>самым первым иероглифом</b>: <b>口</b> — <i>«рот»</i>!</p>
+        <p>Слева гляди внимательно, в центре — рисуй сам, черта за чертой. За старание — волшебные искры! ✨</p>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <div class="glyph-hero">口</div>
+        <div class="pinyin-hero">kǒu</div>
+        <ul class="meta-list">
+          <li><b>Произношение:</b> kǒu — 3-й тон <span class="tone-chip tone-3"><span class="dot"></span>голубой</span></li>
+          <li><b>Перевод:</b> рот</li>
+          <li><b>Черт:</b> 3 · <b>Ключ:</b> №30 «рот»</li>
+        </ul>
+        <div class="actions" style="margin-top:8px;">
+          <button class="btn" data-audio="audio/kou.mp3" data-speak="口" data-rate="1">🔊 Произнести</button>
+        </div>
+      </div>
+
+      <div class="card writer-card">
+        <h2 class="writer-title">✍️ Тренировка письма</h2>
+        <p class="status" id="status">Обведи 口 по чертам — мышкой или пальцем</p>
+        <div id="writer-target" aria-label="Поле для написания иероглифа 口"></div>
+        <p class="progress" id="progress">Черта 0 из 3</p>
+        <div class="actions">
+          <button class="btn" id="animate-btn">Показать черты</button>
+          <button class="btn primary" id="retry-btn">Заново</button>
+        </div>
+        <div class="success-msg" id="success-msg">✨ Великолепно! Настоящая магия приключений! Синнабон угощает тебя молоком 🥛</div>
+      </div>
+    </div>
+
+    <p id="voice-tip">Если звук не воспроизвёлся — не удалось загрузить аудио.</p>
+    <span class="part-badge">Урок 1 · 口 (kǒu) · Часть 1 из 5 — Знакомство с иероглифом</span>
+  </div>
+
+  <script>
+    (function () {
+      var progress = document.getElementById("progress");
+      var status = document.getElementById("status");
+      var successMsg = document.getElementById("success-msg");
+      var bubble = document.getElementById("cinnabon-bubble");
+      var writerCard = document.querySelector(".writer-card");
+      var totalStrokes = 3;
+
+      var writer = HanziWriter.create("writer-target", "口", {
+        width: 210,
+        height: 210,
+        padding: 5,
+        showOutline: true,
+        strokeColor: "#29b6f6",
+        outlineColor: "#d9c08c",
+        drawingColor: "#0288d1",
+        highlightColor: "#b3e5fc",
+        highlightCompleteColor: "#29b6f6"
+      });
+
+      function startQuiz() {
+        successMsg.classList.remove("show");
+        progress.textContent = "Черта 0 из " + totalStrokes;
+        status.textContent = "Обведи 口 по чертам — мышкой или пальцем";
+        writer.quiz({
+          onCorrectStroke: function (data) {
+            progress.textContent = "Черта " + data.strokeNum + " из " + totalStrokes;
+            status.textContent = "Отлично! Дальше!";
+            HanziSite.sparkBurst(writerCard, { count: 14 });
+          },
+          onMistake: function (data) {
+            status.textContent = "Не та черта — начни с черты №" + (data.strokeNum + 1) + ". Нужна подсказка? Жми «Показать черты»!";
+          },
+          onComplete: function () {
+            progress.textContent = "Черта " + totalStrokes + " из " + totalStrokes;
+            status.textContent = "Иероглиф 口 написан верно!";
+            successMsg.classList.add("show");
+            HanziSite.sparkBurst(writerCard, { count: 80 });
+            setTimeout(function () { HanziSite.sparkBurst(writerCard, { count: 50 }); }, 300);
+            bubble.innerHTML = "<p><b>Мррр-р!</b> Идеально! Ты написал 口 своими лапками... то есть руками! За такое искусство искателя приключений обязаны угощать — стакан молока с меня! 🥛✨</p>";
+          }
+        });
+      }
+
+      document.getElementById("retry-btn").addEventListener("click", startQuiz);
+      document.getElementById("animate-btn").addEventListener("click", function () {
+        successMsg.classList.remove("show");
+        writer.animateCharacter({
+          onComplete: function () {
+            status.textContent = "Теперь попробуй сам — жми «Заново»!";
+          }
+        });
+      });
+
+      startQuiz();
+    })();
+  </script>
+</body>
+</html>
