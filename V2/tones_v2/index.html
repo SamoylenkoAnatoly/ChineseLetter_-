@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0f2a">
+  <meta name="description" content="Обсерватория Магистра Коко: интерактивный урок о тонах в китайском языке — телескоп мелодий, кристаллы тонов, рисование и квиз.">
+  <title>Обсерватория тонов · Магистр Коко</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 30 12 16 30 2 12Z' fill='%23c99a4b'/%3E%3Ccircle cx='16' cy='13' r='3' fill='%233b7dd8'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #e9edff;
+      --bg: #0b0f2a;
+      --wall: #161b46;
+      --wall-line: #232a5e;
+      --panel: rgba(15, 20, 54, 0.94);
+      --panel-deep: #101538;
+      --line: #39437f;
+      --brass: #c99a4b;
+      --brass-light: #e8c069;
+      --brass-deep: #8a6a2f;
+      --brass-shadow: #5d4620;
+      --bubble-bg: #f2e7cd;
+      --bubble-ink: #3d3115;
+      --gold: #ffd54f;
+      --tone1: #d64545;
+      --tone2: #e8862e;
+      --tone3: #3b7dd8;
+      --tone4: #8e5bd8;
+      --tone0: #8a8378;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Nunito", "Noto Sans SC", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #080b22;
+      overflow-wrap: anywhere;
+      min-height: 100vh;
+    }
+    .tone-1 { --tone: var(--tone1); }
+    .tone-2 { --tone: var(--tone2); }
+    .tone-3 { --tone: var(--tone3); }
+    .tone-4 { --tone: var(--tone4); }
+    .tone-0 { --tone: var(--tone0); }
+    button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+    h1, h2, h3, p { margin: 0; }
+    .t1 { color: var(--tone1); font-weight: 800; }
+    .t2 { color: var(--tone2); font-weight: 800; }
+    .t3 { color: var(--tone3); font-weight: 800; }
+    .t4 { color: var(--tone4); font-weight: 800; }
+    .t0 { color: var(--tone0); font-weight: 800; }
+
+    .starfield { position: fixed; inset: 0; z-index: -1; background: radial-gradient(100% 70% at 50% 0%, rgba(59, 125, 216, 0.16), transparent 55%), radial-gradient(80% 60% at 50% 100%, rgba(201, 154, 75, 0.1), transparent 60%), linear-gradient(#0b0f2a, #101638 55%, #070a1e); overflow: hidden; }
+    .starfield::before, .starfield::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(#e9edff 1px, transparent 1.6px), radial-gradient(#aab4e8 1px, transparent 1.6px); background-size: 190px 190px, 130px 130px; background-position: 12px 24px, 60px 90px; }
+    .starfield::before { animation: twinkleA 5s ease-in-out infinite alternate; }
+    .starfield::after { background-size: 240px 240px, 170px 170px; background-position: 130px 70px, 20px 150px; animation: twinkleB 7s ease-in-out infinite alternate; }
+    @keyframes twinkleA { from { opacity: .35; } to { opacity: .9; } }
+    @keyframes twinkleB { from { opacity: .8; } to { opacity: .3; } }
+    .shooting-star { position: absolute; top: 12%; left: -120px; width: 110px; height: 2px; background: linear-gradient(90deg, transparent, #fff, transparent); border-radius: 2px; transform: rotate(12deg); animation: shoot 9s linear infinite; opacity: 0; }
+    @keyframes shoot { 0%, 86% { transform: translateX(0) rotate(12deg); opacity: 0; } 87% { opacity: 1; } 100% { transform: translateX(120vw) rotate(12deg); opacity: 0; } }
+
+    .shell { max-width: 1000px; margin: 0 auto; padding: max(16px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left)); }
+    .route { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #aab4e8; font-size: 11px; padding: 0 4px 12px; }
+    .route-name { display: flex; align-items: center; gap: 8px; }
+    .route-name::before { content: ""; width: 8px; height: 8px; background: var(--brass-light); box-shadow: 0 0 0 3px #232a5e; }
+    .chapter-track { display: flex; gap: 6px; }
+    .chapter-track span { width: 18px; height: 7px; background: #232a5e; border-bottom: 2px solid #070a1e; }
+    .chapter-track .current { background: var(--brass-light); }
+
+    .obs-dome { position: relative; height: 132px; border: 6px solid var(--brass); border-bottom: 0; border-radius: 240px 240px 0 0; background: radial-gradient(120% 160% at 50% 110%, #2a3276 0%, #1a1f52 55%, #10143c 100%); box-shadow: 0 0 0 3px #3a2f14, inset 0 0 30px #060924, 6px -4px 10px #05071a; overflow: hidden; }
+    .obs-dome::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(#e9edff 1px, transparent 1.5px), radial-gradient(#aab4e8 1px, transparent 1.5px); background-size: 90px 70px, 120px 90px; background-position: 16px 18px, 55px 40px; }
+    .dome-slit { position: absolute; top: 0; bottom: 0; left: 50%; width: 56px; transform: translateX(-50%); background: linear-gradient(#04061c, #0a1040); box-shadow: inset 0 0 14px #000; }
+    .dome-slit::after { content: ""; position: absolute; top: 22%; left: 50%; width: 4px; height: 4px; background: #fff; border-radius: 50%; box-shadow: 8px 14px 0 -1px #cfd6ff, -6px 30px 0 -2px #9fa9e8, 14px 38px 0 -2px #cfd6ff, -12px 8px 0 -2px #9fa9e8; }
+    .shutter { position: absolute; top: 0; bottom: 0; width: 17px; background: repeating-linear-gradient(0deg, var(--brass) 0 14px, var(--brass-deep) 14px 17px); }
+    .shutter.l { left: calc(50% - 28px); border-right: 3px solid var(--brass-shadow); }
+    .shutter.r { left: calc(50% + 11px); border-left: 3px solid var(--brass-shadow); }
+    .dome-ring { height: 12px; background: repeating-linear-gradient(90deg, var(--brass) 0 46px, var(--brass-deep) 46px 50px); border-top: 3px solid var(--brass-light); border-bottom: 3px solid var(--brass-shadow); }
+    .obs-dome.twinkle::before { animation: domeFlash .9s steps(3); }
+    @keyframes domeFlash { 0%, 100% { opacity: 1; } 50% { opacity: .2; } }
+
+    .obs-room { position: relative; isolation: isolate; border: 6px solid var(--brass); border-top: 0; background: repeating-linear-gradient(90deg, var(--wall) 0 96px, #131843 96px 100px), linear-gradient(#1a1f52, #131843); box-shadow: 0 0 0 3px #3a2f14, 8px 8px #05071a; }
+
+    .crown { display: grid; grid-template-columns: 100px minmax(0, 1fr) 100px; align-items: start; gap: 22px; padding: 18px 28px 16px; }
+    .porthole { position: relative; width: 100px; height: 100px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #101743 0%, #080c2c 70%); border: 7px solid var(--brass); box-shadow: 0 0 0 3px var(--brass-shadow), 0 0 0 4px #6b5024, 4px 4px 8px #05071a, inset 0 0 16px #000; overflow: hidden; }
+    .porthole::before { content: ""; position: absolute; top: 7px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; background: var(--brass-light); border-radius: 50%; box-shadow: 0 76px var(--brass-light), -45px 38px var(--brass-light), 45px 38px var(--brass-light); z-index: 2; }
+    .porthole::after { content: ""; position: absolute; top: 20px; left: 18px; width: 2px; height: 2px; background: #e9edff; border-radius: 50%; box-shadow: 20px 12px #aab4e8, 44px 30px #e9edff, 10px 40px #9fa9e8, 38px 4px #aab4e8, 50px 44px #9fa9e8; }
+    .porthole .moon { position: absolute; width: 14px; height: 14px; top: 16px; right: 16px; background: #f2e7cd; border-radius: 50%; box-shadow: inset -4px 2px 0 #b9ad8e; }
+    .tower-title { text-align: center; min-width: 0; }
+    .eyebrow { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; color: var(--brass-light); }
+    h1 { color: #f3f0e2; font-size: clamp(24px, 3.8vw, 36px); line-height: 1.1; text-shadow: 0 2px 0 #3a2f14, 0 0 24px rgba(232, 192, 105, 0.35); margin: 8px 0; }
+    h1 .tone-dot-title { color: var(--brass-light); }
+    .tower-subtitle { color: #aab4e8; font-size: 12px; line-height: 1.45; }
+
+    .scope-hit { display: block; width: 96px; height: 52px; margin: 0 auto 8px; padding: 0; border: 0; background: none; }
+    .scope-hit svg { display: block; width: 96px; height: 52px; filter: drop-shadow(3px 3px #05071a); transform-origin: 60% 90%; }
+    .scope-hit.viewing svg { animation: scopeAim 1.1s steps(4); }
+    @keyframes scopeAim { 0%, 100% { transform: rotate(0) translateY(0); filter: drop-shadow(3px 3px #05071a); } 30% { transform: rotate(-7deg) translateY(-4px); filter: drop-shadow(3px 3px #05071a) brightness(1.5); } 65% { transform: rotate(-3deg) translateY(-2px); filter: drop-shadow(3px 3px #05071a) brightness(1.25); } }
+
+    .master-scene { display: grid; grid-template-columns: 128px minmax(0, 1fr) 168px; gap: 18px; align-items: center; padding: 0 28px 16px; }
+    .master-cover { text-align: center; min-width: 0; }
+    .master { text-align: center; position: relative; }
+    .master img { display: block; width: 122px; height: 122px; object-fit: contain; image-rendering: pixelated; margin: 0 auto; filter: drop-shadow(3px 3px #05071a); }
+    .master-name { display: inline-block; border: 2px solid var(--brass); background: #1a1f52; padding: 4px 9px; color: #f3f0e2; font-size: 11px; font-weight: 800; }
+    .master-plinth { width: 88px; height: 10px; margin: 4px auto 0; background: var(--brass-deep); border-top: 3px solid var(--brass-light); box-shadow: 0 3px #05071a; }
+    .master-dialogue { position: relative; background: var(--bubble-bg); color: var(--bubble-ink); border: 3px solid var(--brass-deep); padding: 14px 16px; box-shadow: 4px 0 var(--brass-shadow), -4px 0 var(--brass-shadow), 0 4px var(--brass-shadow), 0 -4px var(--brass-shadow), 6px 6px #05071a; min-width: 0; }
+    .master-dialogue::before { content: ""; position: absolute; width: 12px; height: 12px; left: -15px; top: 38px; background: var(--bubble-bg); border-left: 3px solid var(--brass-deep); border-bottom: 3px solid var(--brass-deep); }
+    .dialogue-label { font-size: 10px; color: var(--brass-deep); letter-spacing: .08em; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
+    .master-dialogue p { font-size: 13px; line-height: 1.55; }
+    .master-dialogue p + p { margin-top: 8px; }
+
+    .hero-button { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; }
+    .hero-replica { position: absolute; left: 50%; bottom: calc(100% - 2px); transform: translateX(-50%); z-index: 6; padding: 5px 10px; background: #1a1f52; border: 2px solid var(--brass-light); color: #f3f0e2; font-size: 11px; font-weight: 800; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 3px 3px #05071a; }
+    .hero-replica.show { opacity: 1; animation: replicaPop 1.9s steps(4) forwards; }
+    @keyframes replicaPop { 0% { opacity: 0; transform: translateX(-50%) translateY(6px); } 10% { opacity: 1; transform: translateX(-50%) translateY(0); } 84% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(0); } }
+    .hero-ring { position: absolute; left: 50%; top: 50%; width: 130px; height: 130px; margin: -65px 0 0 -65px; border: 3px solid var(--brass); opacity: 0; pointer-events: none; }
+    .hero-ring.one { width: 102px; height: 102px; margin: -51px 0 0 -51px; border-color: var(--brass-light); }
+    .hero-ring.two { transform: rotate(45deg); }
+    .hero-button.casting .hero-ring.one { animation: ringOne 1.4s steps(8) forwards; }
+    .hero-button.casting .hero-ring.two { animation: ringTwo 1.4s steps(8) forwards; }
+    @keyframes ringOne { 0% { opacity: 0; transform: rotate(0deg) scale(.5); } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; transform: rotate(90deg) scale(1); } }
+    @keyframes ringTwo { 0% { opacity: 0; transform: rotate(45deg) scale(.5); } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; transform: rotate(135deg) scale(1); } }
+    .spell-glyph { position: absolute; left: 50%; top: 38%; font-size: 26px; font-weight: 800; color: var(--gold); text-shadow: 0 0 10px #ffd54f88; opacity: 0; pointer-events: none; }
+    .spell-glyph.g1 { --dx: -42px; color: var(--tone1); animation-delay: 0s; }
+    .spell-glyph.g2 { --dx: -14px; color: var(--tone2); animation-delay: .12s; }
+    .spell-glyph.g3 { --dx: 14px; color: var(--tone3); animation-delay: .24s; }
+    .spell-glyph.g4 { --dx: 42px; color: var(--tone4); animation-delay: .36s; }
+    .hero-button.casting .spell-glyph { animation-name: glyphRise; animation-duration: 1.4s; animation-timing-function: ease-out; animation-fill-mode: forwards; }
+    @keyframes glyphRise { 0% { opacity: 0; transform: translate(-50%, 0) scale(.5); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(-50% + var(--dx, 0px)), -110px) scale(1.2); } }
+    .hero-button.casting img { animation: castPose 1.2s steps(3); }
+    @keyframes castPose { 0%, 100% { transform: translateY(0) rotate(0deg); } 40% { transform: translateY(-8px) rotate(-4deg); } 70% { transform: translateY(-3px) rotate(-2deg); } }
+
+    .word-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; padding: 0 28px 10px; }
+    .word-card { display: grid; gap: 3px; justify-items: center; padding: 10px 8px 9px; background: var(--panel-deep); border: 3px solid var(--line); border-top: 5px solid var(--tone); box-shadow: inset 0 0 0 2px #0c1130, 3px 3px #05071a; transition: transform .12s ease; }
+    .word-card:hover { transform: translateY(-3px); }
+    .word-card:active { transform: translateY(1px); }
+    .word-pinyin { font-size: 24px; font-weight: 800; color: var(--tone); text-shadow: 0 0 12px color-mix(in srgb, var(--tone) 55%, transparent); }
+    .word-hanzi { font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 26px; line-height: 1.1; color: #f3f0e2; }
+    .word-meaning { font-size: 11px; color: #aab4e8; }
+    .word-card.speaking { outline: 3px solid var(--tone); outline-offset: 3px; }
+    .lesson-line { padding: 4px 28px 14px; color: #cfd6ff; font-size: 13px; line-height: 1.5; text-align: center; }
+
+    .hall { position: relative; margin: 0 26px 20px; padding: 14px 14px 16px; background: var(--panel); border: 4px solid var(--brass); border-bottom-width: 7px; box-shadow: inset 0 0 0 3px #0c1130, 4px 4px #05071a; }
+    .hall-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .hall-head h2 { font-size: 16px; color: #f0e6c8; text-shadow: 0 2px 0 #05071a; }
+    .hall-head span { font-size: 10.5px; color: #aab4e8; }
+
+    .crystal-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .crystal { display: grid; justify-items: center; gap: 3px; width: 86px; padding: 8px 4px 10px; background: var(--panel-deep); border: 3px solid var(--line); box-shadow: inset 0 0 0 2px #0c1130, 3px 3px #05071a; transition: transform .12s ease, box-shadow .12s ease; }
+    .crystal:hover { transform: translateY(-3px); }
+    .gem { width: 34px; height: 42px; background: linear-gradient(160deg, color-mix(in srgb, var(--tone) 35%, #e9edff) 0 22%, var(--tone) 23% 55%, color-mix(in srgb, var(--tone) 60%, #0b0f2a) 56%); clip-path: polygon(50% 0, 82% 20%, 100% 52%, 50% 100%, 0 52%, 18% 20%); filter: drop-shadow(0 0 7px color-mix(in srgb, var(--tone) 70%, transparent)); animation: gemFloat 3.4s ease-in-out infinite; }
+    .crystal:nth-child(2) .gem { animation-delay: .4s; }
+    .crystal:nth-child(3) .gem { animation-delay: .8s; }
+    .crystal:nth-child(4) .gem { animation-delay: 1.2s; }
+    .crystal:nth-child(5) .gem { animation-delay: 1.6s; }
+    @keyframes gemFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    .crystal-num { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #aab4e8; }
+    .crystal-mark { font-size: 17px; font-weight: 800; color: var(--tone); }
+    .crystal.active { border-color: var(--tone); box-shadow: inset 0 0 0 2px var(--tone), 0 0 20px color-mix(in srgb, var(--tone) 60%, transparent), 3px 3px #05071a; transform: translateY(-3px); }
+    .crystal.active .gem { animation: gemFloat 3.4s ease-in-out infinite, gemPulse 1.6s ease-in-out infinite; }
+    @keyframes gemPulse { 0%, 100% { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--tone) 60%, transparent)); } 50% { filter: drop-shadow(0 0 15px var(--tone)); } }
+
+    .sky-stage { position: relative; background: #070b28; border: 4px solid var(--brass); border-bottom-width: 6px; box-shadow: inset 0 0 0 3px #0c1130; padding: 8px 6px 4px; margin-bottom: 14px; }
+    .sky-tag { position: absolute; top: -2px; right: 10px; background: linear-gradient(var(--brass-light), var(--brass)); color: #241a05; font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; padding: 3px 9px; border: 2px solid var(--brass-shadow); }
+    #sky-svg { display: block; width: 100%; max-width: 540px; height: auto; margin: 0 auto; }
+    .sky-bg { fill: #0a0f33; }
+    .sky-label { fill: #8f9bd0; font-size: 6.5px; font-family: "Nunito", sans-serif; }
+    #sky-path { stroke: #aab4e8; stroke-width: 2.6; stroke-dasharray: 6 5; stroke-linecap: round; transition: stroke .3s ease; }
+    #sky-dot { filter: drop-shadow(0 0 5px #fff); }
+
+    .tone-panel { border: 3px solid var(--line); background: var(--panel-deep); padding: 13px 14px 14px; box-shadow: inset 0 0 0 2px #0c1130; }
+    #tone-title { font-size: 16px; margin-bottom: 6px; color: var(--tone-current, var(--tone1)); }
+    #tone-desc { font-size: 13px; line-height: 1.55; color: #cfd6ff; }
+    .tone-analogy { display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; padding: 4px 10px; border: 2px solid var(--tone-current, var(--tone1)); color: #f3f0e2; font-size: 11.5px; font-weight: 800; }
+    .tone-analogy::before { content: ""; width: 7px; height: 7px; background: var(--tone-current, var(--tone1)); }
+    .actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 12px; }
+    .sound-button { display: flex; justify-content: center; align-items: center; gap: 7px; min-height: 44px; padding: 8px; border: 2px solid var(--brass-deep); background: linear-gradient(var(--brass-light), var(--brass)); color: #2d2107; font-size: 12.5px; font-weight: 800; box-shadow: 0 4px var(--brass-shadow); transition: transform .12s ease, filter .12s ease; }
+    .sound-button svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .sound-button:hover { filter: brightness(1.08); }
+    .sound-button:active { transform: translateY(3px); box-shadow: 0 1px var(--brass-shadow); }
+    .sound-button.speaking { outline: 3px solid var(--tone-current, var(--tone3)); outline-offset: 3px; }
+    .tone-legend { margin-top: 10px; font-size: 11px; line-height: 1.55; color: #8f9bd0; }
+    .tone-legend b { font-weight: 800; }
+
+    .lesson-frame { display: block; border: 4px solid var(--brass); background: var(--bubble-bg); padding: 5px; box-shadow: 3px 3px #05071a; cursor: zoom-in; }
+    .lesson-frame:hover { border-color: var(--brass-light); }
+    .lesson-frame img { display: block; width: 100%; height: auto; }
+    .frame-cap { font-size: 10.5px; color: #aab4e8; text-align: center; margin-top: 5px; }
+    .cover-frame { margin: 0 auto; max-width: 168px; }
+    .tone-cols { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 14px; align-items: start; }
+    .tone-frame { max-width: 150px; }
+    .sandhi-frame { margin: 4px auto 6px; max-width: 260px; }
+    .lb-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(4, 6, 20, 0.93); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); cursor: zoom-out; animation: lbFade .18s ease; }
+    .lb-overlay img { display: block; max-width: 92vw; max-height: 78vh; border: 4px solid var(--brass); background: #fff; }
+    .lb-cap { color: #e9edff; font-size: 14px; line-height: 1.4; text-align: center; }
+    @keyframes lbFade { from { opacity: 0; } to { opacity: 1; } }
+
+    .draw-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 2px solid var(--tone); color: var(--tone); font-size: 11.5px; font-weight: 800; background: rgba(255, 255, 255, 0.06); }
+    .chip .dot { width: 7px; height: 7px; background: var(--tone); }
+    .chip.active { background: var(--tone); color: #fff; }
+    .draw-wrap { background: #070b28; border: 3px solid var(--brass-deep); box-shadow: inset 0 0 0 3px #0c1130; padding: 5px; }
+    #draw-canvas { display: block; width: 100%; height: 180px; touch-action: none; cursor: crosshair; }
+    .draw-verdict { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; min-height: 30px; }
+    .stars { display: flex; gap: 4px; }
+    .star { width: 17px; height: 17px; background: #262e5e; clip-path: polygon(50% 0, 63% 35%, 100% 38%, 72% 61%, 82% 100%, 50% 77%, 18% 100%, 28% 61%, 0 38%, 37% 35%); }
+    .star.on { background: var(--gold); filter: drop-shadow(0 0 4px #ffd54f88); }
+    #draw-verdict-text { font-size: 13px; line-height: 1.45; color: #cfd6ff; flex: 1 1 220px; }
+    .draw-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .ghost-button { min-height: 40px; padding: 8px 14px; border: 2px solid #7d89c9; background: transparent; color: #dfe4ff; font-size: 12px; font-weight: 800; box-shadow: 0 4px #05071a; }
+    .ghost-button:active { transform: translateY(3px); box-shadow: 0 1px #05071a; }
+    .ghost-button:hover { background: #1a1f52; }
+
+    .quiz-start-box { display: grid; gap: 12px; justify-items: center; text-align: center; padding: 4px 0 2px; }
+    .quiz-start-box p { font-size: 13px; line-height: 1.55; color: #cfd6ff; max-width: 520px; }
+    .primary-button { min-height: 46px; padding: 10px 22px; border: 3px solid var(--brass-light); background: linear-gradient(var(--brass-light), var(--brass)); color: #2d2107; font-size: 14px; font-weight: 800; box-shadow: 0 5px var(--brass-shadow); }
+    .primary-button:hover { filter: brightness(1.08); }
+    .primary-button:active { transform: translateY(3px); box-shadow: 0 2px var(--brass-shadow); }
+    .quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+    #quiz-round { font-size: 12.5px; font-weight: 800; color: #aab4e8; }
+    .quiz-replay { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 8px 14px; margin-bottom: 10px; border: 2px solid var(--brass-light); background: #1a1f52; color: #f0e6c8; font-size: 12.5px; font-weight: 800; box-shadow: 0 4px #05071a; }
+    .quiz-replay svg { width: 17px; height: 17px; }
+    .quiz-replay:active { transform: translateY(3px); box-shadow: 0 1px #05071a; }
+    .quiz-buttons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .quiz-btn { display: grid; gap: 2px; justify-items: center; padding: 9px 6px; background: var(--panel-deep); border: 3px solid var(--tone); box-shadow: inset 0 0 0 2px #0c1130, 3px 3px #05071a; transition: transform .12s ease; }
+    .quiz-btn b { font-size: 20px; color: var(--tone); }
+    .quiz-btn span { font-size: 10.5px; color: #aab4e8; }
+    .quiz-btn:hover:not(:disabled) { transform: translateY(-3px); }
+    .quiz-btn:disabled { opacity: .55; cursor: default; }
+    .quiz-btn.correct { background: color-mix(in srgb, var(--tone) 30%, var(--panel-deep)); box-shadow: inset 0 0 0 2px var(--tone), 0 0 16px color-mix(in srgb, var(--tone) 60%, transparent); opacity: 1; }
+    .quiz-btn.wrong { animation: shake .4s ease; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+    #quiz-feedback { min-height: 38px; margin-top: 10px; font-size: 13px; line-height: 1.45; color: #cfd6ff; }
+    #quiz-feedback b { color: var(--brass-light); }
+    .quiz-final-box { display: grid; gap: 12px; justify-items: center; text-align: center; padding: 4px 0; }
+    #quiz-result { font-size: 14.5px; line-height: 1.55; color: #f3f0e2; max-width: 520px; }
+    .badge { display: inline-block; padding: 6px 16px; border: 3px solid var(--brass-light); background: #1a1f52; color: var(--brass-light); font-weight: 800; font-size: 14px; box-shadow: 0 0 16px #e8c06944; }
+
+    .sandhi-demo { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 2px 0 12px; }
+    .sandhi-token { display: grid; justify-items: center; gap: 1px; padding: 8px 14px; background: var(--panel-deep); border: 3px solid var(--tone3); box-shadow: inset 0 0 0 2px #0c1130, 3px 3px #05071a; transition: border-color .5s ease, box-shadow .5s ease; }
+    .sandhi-token b { font-size: 23px; color: var(--tone3); transition: color .5s ease; }
+    .sandhi-token span { font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 25px; color: #f3f0e2; }
+    .sandhi-token.shifted { border-color: var(--tone2); box-shadow: inset 0 0 0 2px var(--tone2), 0 0 18px #e8862e66, 3px 3px #05071a; }
+    .sandhi-token.shifted b { color: var(--tone2); }
+    .sandhi-arrow { font-size: 22px; color: var(--brass-light); }
+    .sandhi-result { text-align: center; font-size: 13px; color: #aab4e8; margin-bottom: 10px; min-height: 18px; }
+    .sandhi-result b { font-size: 14.5px; }
+    .sandhi-text { font-size: 13px; line-height: 1.55; color: #cfd6ff; margin-bottom: 10px; }
+    .sandhi-actions { display: flex; justify-content: center; }
+
+    .tone-scroll { position: relative; margin: 0 26px 20px; padding: 16px 18px; border: 4px solid var(--brass); color: var(--bubble-ink); background: var(--bubble-bg); box-shadow: inset 0 0 0 3px #e0d2ae, 4px 4px #05071a; }
+    .tone-scroll::before, .tone-scroll::after { content: ""; position: absolute; left: -8px; right: -8px; height: 9px; background: linear-gradient(var(--brass-light), var(--brass)); border: 3px solid var(--brass-shadow); pointer-events: none; }
+    .tone-scroll::before { top: -9px; }
+    .tone-scroll::after { bottom: -9px; }
+    .tone-scroll h2 { font-size: 18px; margin-bottom: 8px; color: #4a3a12; }
+    .tone-scroll p { font-size: 13px; line-height: 1.55; }
+
+    #voice-tip { display: none; margin: 0 26px 18px; padding: 10px; background: #1a1f52; border: 2px solid var(--brass-deep); color: #e9edff; font-size: 12px; line-height: 1.45; }
+    .deck { height: 20px; background: repeating-linear-gradient(90deg, #232a5e 0 70px, #161b46 70px 74px); border-top: 4px solid var(--brass); box-shadow: inset 0 -4px var(--brass-shadow); }
+    .lesson-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; background: #060924; color: #aab4e8; padding: 12px 18px; font-size: 10.5px; }
+    .lesson-footer span:first-child { color: #f3f0e2; }
+    .skip-link { position: fixed; left: 14px; top: -150px; z-index: 100; max-width: calc(100% - 28px); padding: 12px; border: 3px solid var(--brass); color: #2d2107; background: var(--bubble-bg); }
+    .skip-link:focus { top: 14px; }
+    #ref-svg { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+    @media (max-width: 860px) {
+      .crown { grid-template-columns: 84px minmax(0, 1fr) 84px; gap: 16px; padding: 16px 22px 14px; }
+      .porthole { width: 84px; height: 84px; }
+      .master-scene { padding-left: 22px; padding-right: 22px; grid-template-columns: 118px minmax(0, 1fr) 140px; }
+      .cover-frame { max-width: 140px; }
+      .word-cards { padding-left: 22px; padding-right: 22px; }
+      .lesson-line { padding-left: 22px; padding-right: 22px; }
+      .hall { margin-left: 22px; margin-right: 22px; }
+      .tone-scroll { margin-left: 22px; margin-right: 22px; }
+      #voice-tip { margin-left: 22px; margin-right: 22px; }
+    }
+    @media (max-width: 700px) {
+      .obs-dome { height: 108px; }
+      .crown { grid-template-columns: minmax(0, 1fr); padding: 16px 20px 14px; }
+      .crown .porthole { position: absolute; width: 56px; height: 56px; top: 200px; }
+      .crown .porthole:first-child { left: 18px; }
+      .crown .porthole:last-of-type { right: 18px; }
+      .master-scene { grid-template-columns: minmax(0, 1fr); padding: 0 20px 14px; gap: 14px; }
+      .master { justify-self: center; }
+      .master img { width: 128px; height: 128px; }
+      .master-dialogue::before { left: 24px; top: -15px; border-bottom: 0; border-top: 3px solid var(--brass-deep); }
+      .master-cover { max-width: 180px; margin: 0 auto; }
+      .cover-frame { max-width: 150px; }
+      .word-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0 20px 8px; }
+      .lesson-line { padding: 2px 20px 12px; }
+      .hall { margin: 0 20px 16px; padding: 12px 10px 14px; }
+      .tone-cols { grid-template-columns: minmax(0, 1fr); }
+      .tone-frame { max-width: 190px; margin: 0 auto; }
+      .quiz-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #draw-canvas { height: 160px; }
+      .tone-scroll { margin: 0 20px 16px; padding: 14px 12px; }
+      #voice-tip { margin: 0 20px 14px; }
+    }
+    @media (max-width: 480px) {
+      .shell { padding-left: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); }
+      .route { font-size: 10px; padding: 0 2px 10px; gap: 6px; }
+      .obs-room { box-shadow: 0 0 0 2px var(--brass), 4px 4px #05071a; }
+      .crown .porthole { top: 190px; }
+      h1 { font-size: clamp(24px, 8vw, 30px); }
+      .master-scene { padding: 0 14px 12px; }
+      .word-cards { gap: 8px; padding: 0 14px 6px; }
+      .word-pinyin { font-size: 21px; }
+      .word-hanzi { font-size: 23px; }
+      .lesson-line { padding: 2px 14px 10px; font-size: 12px; }
+      .hall { margin: 0 14px 14px; }
+      .crystal-row { gap: 7px; }
+      .crystal { width: 31%; }
+      .actions { gap: 8px; }
+      .quiz-buttons { gap: 8px; }
+      .tone-scroll { margin: 0 14px 14px; }
+      #voice-tip { margin: 0 14px 12px; }
+      .hero-replica { font-size: 10.5px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="starfield" aria-hidden="true"><div class="shooting-star"></div></div>
+  <a class="skip-link" href="#tones">Перейти к тонам</a>
+  <main class="shell">
+    <header class="route"><span class="route-name">Обсерватория Магистра Коко · тоны китайского</span><div class="chapter-track" role="img" aria-label="Отдельная глава о тонах"><span class="current"></span></div></header>
+    <div class="obs-dome" aria-hidden="true"><div class="dome-slit"></div><div class="shutter l"></div><div class="shutter r"></div></div>
+    <div class="dome-ring" aria-hidden="true"></div>
+    <div class="obs-room">
+      <section class="crown" aria-labelledby="tower-title">
+        <div class="porthole" aria-hidden="true"><span class="moon"></span></div>
+        <div class="tower-title">
+          <button class="scope-hit" id="scope-btn" type="button" aria-label="Посмотреть в телескоп обсерватории"><svg viewBox="0 0 120 70" aria-hidden="true"><defs><linearGradient id="tube" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e8c069"/><stop offset=".5" stop-color="#c99a4b"/><stop offset="1" stop-color="#8a6a2f"/></linearGradient></defs><g transform="rotate(-32 62 30)"><rect x="16" y="22" width="76" height="15" rx="5" fill="url(#tube)" stroke="#5d4620" stroke-width="2"/><rect x="86" y="24" width="14" height="11" rx="3" fill="#8a6a2f" stroke="#5d4620" stroke-width="2"/><rect x="6" y="24" width="12" height="11" rx="3" fill="#e8c069" stroke="#5d4620" stroke-width="2"/><circle cx="14" cy="29.5" r="4" fill="#3b7dd8" stroke="#5d4620" stroke-width="2"/><rect x="44" y="15" width="10" height="6" rx="2" fill="#e8c069" stroke="#5d4620" stroke-width="2"/></g><rect x="57" y="33" width="10" height="8" fill="#8a6a2f"/><path d="M62 41 L48 66 M62 41 L76 66 M62 41 L62 66" stroke="#8a6a2f" stroke-width="5" stroke-linecap="round"/><circle cx="26" cy="12" r="2" fill="#e9edff"/><circle cx="102" cy="8" r="1.5" fill="#aab4e8"/><circle cx="110" cy="30" r="1.5" fill="#e9edff"/></svg></button>
+          <span class="eyebrow">Хитрый волшебник представляет</span>
+          <h1 id="tower-title">Обсерватория <span class="tone-dot-title">тонов</span></h1>
+          <p class="tower-subtitle">Пару слов о тонах в китайском: пять мелодий, которые меняют смысл слова.</p>
+        </div>
+        <div class="porthole" aria-hidden="true"><span class="moon"></span></div>
+      </section>
+      <section class="master-scene" aria-label="История Магистра Коко">
+        <div class="master"><button class="hero-button" id="hero-btn" type="button" data-glyphs="ā á ǎ à" data-spell="Заклинание: ma!" aria-label="Магистр Коко, хитрый волшебник в фиолетовой шляпе — нажми, чтобы увидеть заклинание"><img src="assets/wizard.svg" alt="" width="122" height="122"><span class="hero-replica" aria-live="polite"></span><span class="hero-ring one" aria-hidden="true"></span><span class="hero-ring two" aria-hidden="true"></span><span class="spell-glyph g1" aria-hidden="true"></span><span class="spell-glyph g2" aria-hidden="true"></span><span class="spell-glyph g3" aria-hidden="true"></span><span class="spell-glyph g4" aria-hidden="true"></span></button><span class="master-name">Магистр Коко</span><div class="master-plinth" aria-hidden="true"></div></div>
+        <div class="master-dialogue"><div class="dialogue-label">Магистр Коко · сказка-заклинание</div>
+          <p><b>Хе-хе-е...</b> <i>(хитро прищуривается)</i> Ты уже знаешь, что китайские слова записываются иероглифами. Но чтобы их читать и произносить, нужна ещё и латинская запись — <b>пиньинь (pīnyīn)</b>. А в пиньине нас ждёт самое важное: <b>тоны</b>.</p>
+          <p>Тон — это не эмоция и не украшение, а <b>полноценная часть слова</b>. Один и тот же слог с разной интонацией — совсем разные слова. Смотри в телескоп на классический пример: <span class="t1">mā</span> — <span class="t2">má</span> — <span class="t3">mǎ</span> — <span class="t4">mà</span>. Нажимай на карточки, слушай!</p>
+        </div>
+        <div class="master-cover">
+          <button class="lesson-frame cover-frame" type="button" data-lightbox data-caption="Обложка урока «Пару слов о тонах в китайском»" aria-label="Увеличить обложку урока"><img src="img/cover.png" alt="Обложка урока о тонах в китайском языке" width="1024" height="1024"></button>
+          <p class="frame-cap">Обложка урока</p>
+        </div>
+      </section>
+      <section class="word-cards" aria-label="Четыре слова из слога ma">
+        <button class="word-card tone-1" data-tone="1" type="button" aria-label="mā, 妈 — мама, первый тон"><span class="word-pinyin">mā</span><span class="word-hanzi" lang="zh-CN">妈</span><span class="word-meaning">«мама»</span></button>
+        <button class="word-card tone-2" data-tone="2" type="button" aria-label="má, 麻 — лён, второй тон"><span class="word-pinyin">má</span><span class="word-hanzi" lang="zh-CN">麻</span><span class="word-meaning">«лен»</span></button>
+        <button class="word-card tone-3" data-tone="3" type="button" aria-label="mǎ, 马 — лошадь, третий тон"><span class="word-pinyin">mǎ</span><span class="word-hanzi" lang="zh-CN">马</span><span class="word-meaning">«лошадь»</span></button>
+        <button class="word-card tone-4" data-tone="4" type="button" aria-label="mà, 骂 — ругать, четвёртый тон"><span class="word-pinyin">mà</span><span class="word-hanzi" lang="zh-CN">骂</span><span class="word-meaning">«ругать»</span></button>
+      </section>
+      <p class="lesson-line">Одна и та же буква — <b>четыре разных слова</b>! Поэтому учить пиньинь без тонов не имеет смысла. Знакомимся с каждым тоном.</p>
+
+      <section class="hall" id="tones" aria-labelledby="tones-title">
+        <div class="hall-head"><h2 id="tones-title">Кристаллы тонов</h2><span>Взгляд в телескоп: нажми на кристалл — увидишь мелодию</span></div>
+        <div class="crystal-row" role="group" aria-label="Выбери тон">
+          <button class="crystal tone-1" data-tone="1" type="button" aria-pressed="false"><span class="gem" aria-hidden="true"></span><span class="crystal-num">1-й тон</span><span class="crystal-mark">mā</span></button>
+          <button class="crystal tone-2" data-tone="2" type="button" aria-pressed="false"><span class="gem" aria-hidden="true"></span><span class="crystal-num">2-й тон</span><span class="crystal-mark">má</span></button>
+          <button class="crystal tone-3" data-tone="3" type="button" aria-pressed="false"><span class="gem" aria-hidden="true"></span><span class="crystal-num">3-й тон</span><span class="crystal-mark">mǎ</span></button>
+          <button class="crystal tone-4" data-tone="4" type="button" aria-pressed="false"><span class="gem" aria-hidden="true"></span><span class="crystal-num">4-й тон</span><span class="crystal-mark">mà</span></button>
+          <button class="crystal tone-0" data-tone="0" type="button" aria-pressed="false"><span class="gem" aria-hidden="true"></span><span class="crystal-num">нейтральный</span><span class="crystal-mark">ma</span></button>
+        </div>
+        <div class="sky-stage">
+          <span class="sky-tag" aria-hidden="true">телескоп</span>
+          <svg id="sky-svg" viewBox="0 0 220 100" role="img" aria-label="Мелодия тона: движение голоса по высоте звука">
+            <rect class="sky-bg" x="0" y="0" width="220" height="100"></rect>
+            <g fill="#8f9bd0" aria-hidden="true">
+              <circle cx="34" cy="14" r="0.9"></circle><circle cx="72" cy="46" r="0.7"></circle><circle cx="120" cy="10" r="0.9"></circle><circle cx="164" cy="38" r="0.7"></circle><circle cx="206" cy="12" r="0.8"></circle><circle cx="52" cy="86" r="0.7"></circle><circle cx="108" cy="94" r="0.8"></circle><circle cx="190" cy="90" r="0.7"></circle>
+            </g>
+            <line x1="20" y1="92" x2="204" y2="92" stroke="#39437f" stroke-width="1" stroke-dasharray="2 3" aria-hidden="true"></line>
+            <text class="sky-label" x="6" y="16">высоко</text>
+            <text class="sky-label" x="6" y="90">низко</text>
+            <text class="sky-label" x="210" y="98" text-anchor="end">время →</text>
+            <path id="sky-path" d="" fill="none" aria-hidden="true"></path>
+            <g id="sky-nodes" aria-hidden="true"></g>
+            <circle id="sky-dot" r="4.5" opacity="0" aria-hidden="true"></circle>
+          </svg>
+        </div>
+        <div class="tone-panel">
+          <div class="tone-cols">
+            <div class="tone-info">
+              <h3 id="tone-title"></h3>
+              <p id="tone-desc"></p>
+              <p class="tone-analogy"><span id="tone-analogy"></span></p>
+            </div>
+            <div>
+              <button class="lesson-frame tone-frame" id="tone-frame" type="button" data-lightbox data-caption="Схема: 1-й тон" aria-label="Увеличить схему мелодии тона"><img id="tone-img" src="img/tone1.png" alt="Схема мелодии первого тона" width="1024" height="1024"></button>
+              <p class="frame-cap">Схема из урока — нажми, чтобы рассмотреть</p>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="sound-button" id="tone-listen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round"/><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg>Послушать слог</button>
+            <button class="sound-button" id="tone-hum" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>Напеть мелодию</button>
+          </div>
+        </div>
+        <p class="tone-legend">Цвета тонов: <b class="t1">1-й — ровно и высоко</b> · <b class="t2">2-й — вверх</b> · <b class="t3">3-й — галочка ∨</b> · <b class="t4">4-й — вниз</b> · <b class="t0">нейтральный — коротко, без ударения</b>. Эта расцветка — во всех уроках курса.</p>
+      </section>
+
+      <section class="hall" id="draw" aria-labelledby="draw-title">
+        <div class="hall-head"><h2 id="draw-title">Проявись, мелодия!</h2><span>Нарисуй контур тона мышкой или пальцем</span></div>
+        <div class="draw-chips" role="group" aria-label="Тон для рисования">
+          <button class="chip tone-1" data-tone="1" type="button" aria-pressed="false"><span class="dot"></span>mā · ровно</button>
+          <button class="chip tone-2" data-tone="2" type="button" aria-pressed="false"><span class="dot"></span>má · вверх</button>
+          <button class="chip tone-3" data-tone="3" type="button" aria-pressed="true"><span class="dot"></span>mǎ · галочка</button>
+          <button class="chip tone-4" data-tone="4" type="button" aria-pressed="false"><span class="dot"></span>mà · вниз</button>
+        </div>
+        <div class="draw-wrap"><canvas id="draw-canvas" aria-label="Полотно для рисования мелодии тона" tabindex="0" role="img"></canvas></div>
+        <div class="draw-verdict"><div class="stars" id="draw-stars" aria-hidden="true"></div><p id="draw-verdict-text" aria-live="polite">Выбери тон и проведи линию слева направо — высоко подними голос или урони его вниз. Кристалл оценит заклинание!</p></div>
+        <div class="draw-actions"><button class="ghost-button" id="draw-clear" type="button">Стереть</button><button class="ghost-button" id="draw-ref" type="button" aria-pressed="false">Показать эталон</button></div>
+      </section>
+
+      <section class="hall" id="quiz" aria-labelledby="quiz-title">
+        <div class="hall-head"><h2 id="quiz-title">Угадай заклинание</h2><span>6 раундов · магистр произносит слог ma</span></div>
+        <div class="quiz-start-box" id="quiz-start-screen">
+          <p>Магистр Коко произнесёт слог <b>ma</b> одним из четырёх тонов. Внимай мелодии и выбери верный кристалл! За каждый разгаданный тон — звезда.</p>
+          <button class="primary-button" id="quiz-start" type="button">Начать испытание</button>
+        </div>
+        <div id="quiz-play" hidden>
+          <div class="quiz-top"><span id="quiz-round"></span><div class="stars" id="quiz-stars" aria-label="Звёзды за верные ответы"></div></div>
+          <button class="quiz-replay" id="quiz-replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round"/><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg>Послушать ещё раз</button>
+          <div class="quiz-buttons" id="quiz-buttons">
+            <button class="quiz-btn tone-1" data-tone="1" type="button"><b>mā</b><span>1-й · ровно</span></button>
+            <button class="quiz-btn tone-2" data-tone="2" type="button"><b>má</b><span>2-й · вверх</span></button>
+            <button class="quiz-btn tone-3" data-tone="3" type="button"><b>mǎ</b><span>3-й · галочка</span></button>
+            <button class="quiz-btn tone-4" data-tone="4" type="button"><b>mà</b><span>4-й · вниз</span></button>
+          </div>
+          <p id="quiz-feedback" aria-live="polite"></p>
+          <button class="primary-button" id="quiz-next" type="button" hidden>Дальше</button>
+        </div>
+        <div class="quiz-final-box" id="quiz-final" hidden>
+          <p id="quiz-result"></p>
+          <div class="stars" id="quiz-final-stars" aria-label="Итоговые звёзды"></div>
+          <button class="primary-button" id="quiz-restart" type="button">Ещё раз</button>
+        </div>
+      </section>
+
+      <section class="hall sandhi" id="sandhi" aria-labelledby="sandhi-title">
+        <div class="hall-head"><h2 id="sandhi-title">Маленькая хитрость: два третьих тона подряд</h2><span>Смотри, как меняется первый слог</span></div>
+        <div class="sandhi-demo" aria-hidden="true">
+          <div class="sandhi-token" id="sandhi-first"><b>nǐ</b><span lang="zh-CN">你</span></div>
+          <div class="sandhi-arrow">→</div>
+          <div class="sandhi-token"><b>hǎo</b><span lang="zh-CN">好</span></div>
+        </div>
+        <p class="sandhi-result" id="sandhi-result" aria-live="polite"></p>
+        <p class="sandhi-text">Если рядом стоят два 3-х тона, первый произносится как 2-й: 你好 (<span class="t3">nǐ</span> <span class="t3">hǎo</span>) — «привет» — на деле звучит как [<span class="t2">ní</span> <span class="t3">hǎo</span>]. Так языку удобнее, и это абсолютно нормально!</p>
+        <div>
+          <button class="lesson-frame sandhi-frame" type="button" data-lightbox data-caption="Схема: два третьих тона подряд" aria-label="Увеличить схему двух третьих тонов подряд"><img src="img/sandhi.png" alt="Схема: два третьих тона подряд — первый меняется на второй" width="1024" height="1024" loading="lazy"></button>
+          <p class="frame-cap">Схема из урока — нажми, чтобы рассмотреть</p>
+        </div>
+        <div class="sandhi-actions"><button class="sound-button" id="sandhi-play" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round"/><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg>Послушать 你好</button></div>
+      </section>
+
+      <section class="tone-scroll" aria-labelledby="tips-title">
+        <h2 id="tips-title">Как запоминать</h2>
+        <p>Привязывай тоны к знакомым русским интонациям (переспрос — <b class="t2">2-й тон</b>, команда — <b class="t4">4-й тон</b>), слушай живую речь и повторяй вслух. И помни: значок тона всегда ставится над гласной — <b class="t2">má</b>, <b class="t3">mǎ</b>, <b class="t4">mà</b>.</p>
+      </section>
+      <p id="voice-tip" role="status">Если звук не воспроизвёлся — не удалось загрузить аудио. Попробуй кнопку «Напеть мелодию».</p>
+      <div class="deck" aria-hidden="true"></div>
+      <footer class="lesson-footer"><span>Обсерватория Магистра Коко</span><span>тоны · pīnyīn · mā má mǎ mà</span></footer>
+    </div>
+  </main>
+  <svg id="ref-svg" aria-hidden="true" focusable="false">
+    <path id="ref-1" d="M20 24 L200 24"></path>
+    <path id="ref-2" d="M20 80 C 80 76, 130 55, 200 18"></path>
+    <path id="ref-3" d="M20 30 C 50 26, 62 62, 104 72 C 146 82, 168 48, 200 22"></path>
+    <path id="ref-4" d="M20 18 C 75 22, 130 40, 200 84"></path>
+    <path id="ref-0" d="M20 56 C 60 60, 105 62, 148 60"></path>
+  </svg>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+
+      var TONES = {
+        "1": { num: "1", color: "#d64545", mark: "mā", audio: "audio/ma1.mp3", speak: "妈",
+          img: "img/tone1.png", imgAlt: "Схема мелодии первого тона: ровная высокая линия", imgCap: "Схема: 1-й тон",
+          name: "1-й тон — высокий ровный: mā",
+          desc: "Голос тянется ровной высокой нотой, как «а-а-а» на осмотре у врача. Значок — черта над гласной: ā.",
+          analogy: "«а-а-а» на осмотре у врача",
+          wizard: "Ровно и высоко — держи ноту, как чистая струна!",
+          hum: [[0, 440], [0.85, 440]], dur: 0.85 },
+        "2": { num: "2", color: "#e8862e", mark: "má", audio: "audio/ma2.mp3", speak: "麻",
+          img: "img/tone2.png", imgAlt: "Схема мелодии второго тона: линия идёт снизу вверх", imgCap: "Схема: 2-й тон",
+          name: "2-й тон — восходящий: má",
+          desc: "Голос скользит снизу вверх, как переспрос «что-о?» или удивлённое «а?». Значок — á.",
+          analogy: "переспрос «что-о?»",
+          wizard: "Снизу вверх — как будто спрашиваешь «что-о?»",
+          hum: [[0, 300], [0.7, 450]], dur: 0.7 },
+        "3": { num: "3", color: "#3b7dd8", mark: "mǎ", audio: "audio/ma3.mp3", speak: "马",
+          img: "img/tone3.png", imgAlt: "Схема мелодии третьего тона: линия опускается вниз и поднимается вверх", imgCap: "Схема: 3-й тон",
+          name: "3-й тон — вниз и вверх: mǎ",
+          desc: "Голос сначала опускается, потом поднимается, как капризное «ну-у-у?». Значок — галочка: ǎ.",
+          analogy: "капризное «ну-у-у?»",
+          wizard: "Вниз и снова вверх — капризное «ну-у-у?»",
+          hum: [[0, 380], [0.32, 225], [0.68, 330]], dur: 0.7 },
+        "4": { num: "4", color: "#8e5bd8", mark: "mà", audio: "audio/ma4.mp3", speak: "骂",
+          img: "img/tone4.png", imgAlt: "Схема мелодии четвёртого тона: линия резко падает сверху вниз", imgCap: "Схема: 4-й тон",
+          name: "4-й тон — резко падающий: mà",
+          desc: "Голос обрывается сверху вниз, как команда «Стой!» или решительное «Да!». Значок — à.",
+          analogy: "команда «Стой!»",
+          wizard: "Резко вниз — как команда «Стой!»",
+          hum: [[0, 470], [0.38, 200]], dur: 0.4 },
+        "0": { num: "0", color: "#8a8378", mark: "ma", audio: "audio/mama.mp3", speak: "妈妈",
+          img: "img/tone0.png", imgAlt: "Схема нейтрального тона: короткая линия без движения", imgCap: "Схема: нейтральный тон",
+          name: "Нейтральный тон: ma",
+          desc: "Лёгкий безударный слог без значка. В слове 妈妈 (māma) — «мама» — второй слог произносится коротко и тихо, как безударный в русской речи.",
+          analogy: "безударный слог",
+          wizard: "Коротко и тихо — как эхо заклинания",
+          hum: [[0, 330], [0.22, 310]], dur: 0.22 }
+      };
+
+      var motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var audioEl = new Audio();
+      audioEl.preload = "none";
+
+      function showVoiceTip() {
+        var tip = document.getElementById("voice-tip");
+        if (tip) tip.style.display = "block";
+      }
+
+      function speakZh(text) {
+        if (!("speechSynthesis" in window)) return false;
+        var voices = speechSynthesis.getVoices();
+        var voice = null;
+        for (var i = 0; i < voices.length; i++) {
+          if (/^zh[-_]CN/i.test(voices[i].lang)) { voice = voices[i]; break; }
+        }
+        if (!voice) {
+          for (var j = 0; j < voices.length; j++) {
+            if (/^zh/i.test(voices[j].lang)) { voice = voices[j]; break; }
+          }
+        }
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = "zh-CN";
+        if (voice) u.voice = voice;
+        u.rate = 0.85;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+        return !!voice;
+      }
+
+      function humTone(key) {
+        var cfg = TONES[key];
+        try {
+          var Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx || !cfg) return false;
+          var ctx = new Ctx();
+          var osc = ctx.createOscillator();
+          var gain = ctx.createGain();
+          var now = ctx.currentTime;
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(cfg.hum[0][1], now);
+          for (var i = 1; i < cfg.hum.length; i++) {
+            osc.frequency.linearRampToValueAtTime(cfg.hum[i][1], now + cfg.hum[i][0]);
+          }
+          var end = now + cfg.dur + 0.12;
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(0.12, now + 0.04);
+          gain.gain.setValueAtTime(0.12, now + Math.max(0.04, cfg.dur - 0.05));
+          gain.gain.exponentialRampToValueAtTime(0.0001, end);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(end + 0.05);
+          setTimeout(function () { ctx.close().catch(function () {}); }, (end - now + 0.4) * 1000);
+          return true;
+        } catch (e) { return false; }
+      }
+
+      function playToneAudio(key) {
+        var cfg = TONES[key];
+        if (!cfg) return;
+        var handled = false;
+        function fallback() {
+          if (handled) return;
+          handled = true;
+          var hummed = humTone(key);
+          var spoke = speakZh(cfg.speak);
+          if (!hummed && !spoke) showVoiceTip();
+        }
+        try {
+          audioEl.pause();
+          audioEl.onerror = fallback;
+          audioEl.src = cfg.audio;
+          audioEl.currentTime = 0;
+        } catch (e) { fallback(); return; }
+        var p = audioEl.play();
+        if (p && p.catch) p.catch(fallback);
+      }
+
+      var skyPath = document.getElementById("sky-path");
+      var skyDot = document.getElementById("sky-dot");
+      var skyNodes = document.getElementById("sky-nodes");
+      var tonePanel = document.querySelector(".tone-panel");
+      var rafId = null;
+      var hideTimer = null;
+      var generation = 0;
+
+      function stopSky() {
+        generation++;
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        clearTimeout(hideTimer);
+        rafId = null;
+        hideTimer = null;
+        skyDot.setAttribute("opacity", "0");
+      }
+
+      function buildNodes(path, color) {
+        while (skyNodes.firstChild) skyNodes.removeChild(skyNodes.firstChild);
+        var len = path.getTotalLength();
+        for (var i = 0; i <= 4; i++) {
+          var pt = path.getPointAtLength(len * i / 4);
+          var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          c.setAttribute("cx", pt.x);
+          c.setAttribute("cy", pt.y);
+          c.setAttribute("r", i === 0 || i === 4 ? 1.6 : 1);
+          c.setAttribute("fill", color);
+          c.setAttribute("opacity", "0.55");
+          skyNodes.appendChild(c);
+        }
+      }
+
+      function animateSky(key) {
+        stopSky();
+        var cfg = TONES[key];
+        if (!cfg) return;
+        var path = document.getElementById("ref-" + key);
+        skyPath.setAttribute("d", path.getAttribute("d"));
+        skyPath.setAttribute("stroke", cfg.color);
+        buildNodes(skyPath, cfg.color);
+        var version = generation;
+        if (motion.matches) {
+          skyDot.setAttribute("opacity", "0");
+          return;
+        }
+        var len = skyPath.getTotalLength();
+        var dur = 900 * (cfg.dur / 0.7);
+        var t0 = null;
+        var first = skyPath.getPointAtLength(0);
+        skyDot.setAttribute("fill", cfg.color);
+        skyDot.setAttribute("cx", first.x);
+        skyDot.setAttribute("cy", first.y);
+        skyDot.setAttribute("opacity", "1");
+        function frame(ts) {
+          if (version !== generation) return;
+          if (t0 === null) t0 = ts;
+          var t = Math.min((ts - t0) / dur, 1);
+          var ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          var point = skyPath.getPointAtLength(ease * len);
+          skyDot.setAttribute("cx", point.x);
+          skyDot.setAttribute("cy", point.y);
+          if (t < 1) rafId = requestAnimationFrame(frame);
+          else {
+            rafId = null;
+            hideTimer = setTimeout(function () { if (version === generation) skyDot.setAttribute("opacity", "0"); }, 400);
+          }
+        }
+        rafId = requestAnimationFrame(frame);
+      }
+
+      var currentTone = "1";
+
+      function activateTone(key, withSound) {
+        currentTone = key;
+        var cfg = TONES[key];
+        document.querySelectorAll(".crystal").forEach(function (c) {
+          var on = c.getAttribute("data-tone") === key;
+          c.classList.toggle("active", on);
+          c.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        document.getElementById("tone-title").textContent = cfg.name;
+        document.getElementById("tone-desc").textContent = cfg.desc;
+        document.getElementById("tone-analogy").textContent = cfg.analogy;
+        var toneImg = document.getElementById("tone-img");
+        toneImg.setAttribute("src", cfg.img);
+        toneImg.setAttribute("alt", cfg.imgAlt);
+        document.getElementById("tone-frame").setAttribute("data-caption", cfg.imgCap);
+        tonePanel.style.setProperty("--tone-current", cfg.color);
+        animateSky(key);
+        if (withSound) {
+          playToneAudio(key);
+          showReplica(cfg.wizard);
+        }
+      }
+
+      document.querySelectorAll(".crystal").forEach(function (c) {
+        c.addEventListener("click", function () {
+          activateTone(c.getAttribute("data-tone"), true);
+          sparkBurst(c, { count: 22, colors: [TONES[c.getAttribute("data-tone")].color, "#ffd54f", "#e9edff"] });
+        });
+      });
+
+      document.querySelectorAll(".word-card").forEach(function (card) {
+        card.addEventListener("click", function () {
+          var key = card.getAttribute("data-tone");
+          activateTone(key, true);
+          card.classList.add("speaking");
+          setTimeout(function () { card.classList.remove("speaking"); }, 900);
+          sparkBurst(card, { count: 20, colors: [TONES[key].color, "#ffd54f", "#e9edff"] });
+        });
+      });
+
+      document.getElementById("tone-listen").addEventListener("click", function () {
+        playToneAudio(currentTone);
+        animateSky(currentTone);
+      });
+      document.getElementById("tone-hum").addEventListener("click", function () {
+        var ok = humTone(currentTone);
+        if (!ok) { speakZh(TONES[currentTone].speak); showVoiceTip(); }
+        animateSky(currentTone);
+      });
+
+      var heroButton = document.getElementById("hero-btn");
+      var heroReplica = heroButton.querySelector(".hero-replica");
+      var glyphs = heroButton.getAttribute("data-glyphs").split(" ");
+      var replicaTimer = null;
+      var heroTimer = null;
+      var replicaNo = 0;
+      var replicas = [
+        "Тоны — это музыка слов!",
+        "Один слог — четыре смысла!",
+        "Нажми на кристалл, я всё покажу!",
+        "Нарисуй мелодию — проверим магию!",
+        "Не забудь про хитрость с 你好!"
+      ];
+      heroButton.querySelectorAll(".spell-glyph").forEach(function (g, i) { g.textContent = glyphs[i % glyphs.length]; });
+      function showReplica(text) {
+        clearTimeout(replicaTimer);
+        heroReplica.textContent = text;
+        heroReplica.classList.remove("show");
+        void heroReplica.offsetWidth;
+        heroReplica.classList.add("show");
+        replicaTimer = setTimeout(function () { heroReplica.classList.remove("show"); heroReplica.textContent = ""; }, 2000);
+      }
+      heroButton.addEventListener("click", function () {
+        showReplica(replicas[replicaNo % replicas.length]);
+        replicaNo++;
+        if (motion.matches) return;
+        clearTimeout(heroTimer);
+        heroButton.classList.remove("casting");
+        void heroButton.offsetWidth;
+        heroButton.classList.add("casting");
+        sparkBurst(heroButton, { count: 24, colors: ["#c99a4b", "#ffd54f", "#e9edff"] });
+        heroTimer = setTimeout(function () { heroButton.classList.remove("casting"); }, 1500);
+      });
+
+      var scopeButton = document.getElementById("scope-btn");
+      var domeEl = document.querySelector(".obs-dome");
+      var scopeTimer = null;
+      var domeTimer = null;
+      function chime() {
+        try {
+          var Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          var ctx = new Ctx();
+          [660, 990].forEach(function (freq, index) {
+            var oscillator = ctx.createOscillator();
+            var gain = ctx.createGain();
+            var start = ctx.currentTime + index * 0.03;
+            oscillator.type = "sine";
+            oscillator.frequency.value = freq;
+            gain.gain.setValueAtTime(0.0001, start);
+            gain.gain.exponentialRampToValueAtTime(index ? 0.05 : 0.08, start + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.9);
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+            oscillator.start(start);
+            oscillator.stop(start + 1);
+          });
+          setTimeout(function () { ctx.close().catch(function () {}); }, 1300);
+        } catch (error) {}
+      }
+      scopeButton.addEventListener("click", function () {
+        chime();
+        if (motion.matches) return;
+        clearTimeout(scopeTimer);
+        scopeButton.classList.remove("viewing");
+        void scopeButton.offsetWidth;
+        scopeButton.classList.add("viewing");
+        scopeTimer = setTimeout(function () { scopeButton.classList.remove("viewing"); }, 1200);
+        clearTimeout(domeTimer);
+        domeEl.classList.remove("twinkle");
+        void domeEl.offsetWidth;
+        domeEl.classList.add("twinkle");
+        domeTimer = setTimeout(function () { domeEl.classList.remove("twinkle"); }, 1300);
+      });
+
+      function sparkBurst(host, opts) {
+        if (!host || motion.matches) return;
+        opts = opts || {};
+        var colors = opts.colors || ["#ffd54f", "#fff3c4", "#ffb74d", "#ffffff"];
+        var count = opts.count || 60;
+        var rect = host.getBoundingClientRect();
+        var canvas = document.createElement("canvas");
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        canvas.style.position = "absolute";
+        canvas.style.left = "0";
+        canvas.style.top = "0";
+        canvas.style.pointerEvents = "none";
+        canvas.style.zIndex = "50";
+        if (getComputedStyle(host).position === "static") host.style.position = "relative";
+        host.appendChild(canvas);
+        var ctx = canvas.getContext("2d");
+        var cx = rect.width / 2;
+        var cy = rect.height / 2;
+        var parts = [];
+        for (var i = 0; i < count; i++) {
+          var ang = Math.random() * Math.PI * 2;
+          var spd = 1.5 + Math.random() * 4.5;
+          parts.push({
+            x: cx + (Math.random() - 0.5) * rect.width * 0.35,
+            y: cy + (Math.random() - 0.5) * rect.height * 0.35,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd - 2,
+            size: 2 + Math.random() * 4,
+            life: 1,
+            decay: 0.012 + Math.random() * 0.02,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            star: Math.random() > 0.65
+          });
+        }
+        var frame = 0;
+        (function tick() {
+          frame++;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          var alive = false;
+          for (var k = 0; k < parts.length; k++) {
+            var p = parts[k];
+            if (p.life <= 0) continue;
+            alive = true;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.09;
+            p.vx *= 0.985;
+            p.life -= p.decay;
+            ctx.globalAlpha = Math.max(p.life, 0);
+            ctx.fillStyle = p.color;
+            if (p.star) {
+              ctx.save();
+              ctx.translate(p.x, p.y);
+              ctx.rotate(frame * 0.15);
+              var s = p.size * 0.5;
+              ctx.beginPath();
+              for (var a = 0; a < 4; a++) {
+                ctx.rotate(Math.PI / 2);
+                ctx.moveTo(0, 0);
+                ctx.lineTo(s, 0.4);
+                ctx.lineTo(s * 2.2, 0);
+                ctx.lineTo(s, -0.4);
+              }
+              ctx.closePath();
+              ctx.fill();
+              ctx.restore();
+            } else {
+              ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+            }
+          }
+          ctx.globalAlpha = 1;
+          if (alive) requestAnimationFrame(tick);
+          else if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+        })();
+      }
+
+      var drawCanvas = document.getElementById("draw-canvas");
+      var drawCtx = drawCanvas.getContext("2d");
+      var drawStars = document.getElementById("draw-stars");
+      var drawVerdict = document.getElementById("draw-verdict-text");
+      var drawTone = "3";
+      var drawPts = [];
+      var refShown = false;
+      var drawing = false;
+      var refCache = {};
+
+      function renderStars(container, count, total) {
+        container.textContent = "";
+        for (var i = 0; i < total; i++) {
+          var s = document.createElement("span");
+          s.className = "star" + (i < count ? " on" : "");
+          container.appendChild(s);
+        }
+      }
+      renderStars(drawStars, 0, 5);
+
+      function refPoints(key) {
+        if (!refCache[key]) {
+          var path = document.getElementById("ref-" + key);
+          var len = path.getTotalLength();
+          var pts = [];
+          for (var i = 0; i <= 40; i++) {
+            var pt = path.getPointAtLength(len * i / 40);
+            pts.push({ x: pt.x, y: pt.y });
+          }
+          refCache[key] = pts;
+        }
+        return refCache[key];
+      }
+
+      function redraw() {
+        var w = drawCanvas.width;
+        var h = drawCanvas.height;
+        var sx = w / 220;
+        var sy = h / 100;
+        drawCtx.clearRect(0, 0, w, h);
+        drawCtx.strokeStyle = "#2a3160";
+        drawCtx.lineWidth = 1;
+        [15, 50, 85].forEach(function (fy) {
+          drawCtx.beginPath();
+          drawCtx.moveTo(20 * sx, fy * sy);
+          drawCtx.lineTo(204 * sx, fy * sy);
+          drawCtx.stroke();
+        });
+        drawCtx.font = (11 * Math.min(sx, 1.2)) + "px Nunito, sans-serif";
+        drawCtx.fillStyle = "#8f9bd0";
+        drawCtx.fillText("высоко", 24 * sx, 12 * sy);
+        drawCtx.fillText("низко", 24 * sx, 98 * sy);
+        if (refShown) {
+          var rp = refPoints(drawTone);
+          drawCtx.strokeStyle = "#6a74b4";
+          drawCtx.lineWidth = 3;
+          drawCtx.setLineDash([8, 7]);
+          drawCtx.beginPath();
+          rp.forEach(function (p, i) {
+            if (i === 0) drawCtx.moveTo(p.x * sx, p.y * sy);
+            else drawCtx.lineTo(p.x * sx, p.y * sy);
+          });
+          drawCtx.stroke();
+          drawCtx.setLineDash([]);
+        }
+        if (drawPts.length > 1) {
+          var color = TONES[drawTone].color;
+          drawCtx.strokeStyle = color;
+          drawCtx.lineWidth = Math.max(4, 4 * sx * 0.8);
+          drawCtx.lineJoin = "round";
+          drawCtx.lineCap = "round";
+          drawCtx.shadowColor = color;
+          drawCtx.shadowBlur = 14;
+          drawCtx.beginPath();
+          drawPts.forEach(function (p, i) {
+            if (i === 0) drawCtx.moveTo(p.x, p.y);
+            else drawCtx.lineTo(p.x, p.y);
+          });
+          drawCtx.stroke();
+          drawCtx.shadowBlur = 0;
+        }
+      }
+
+      function resizeDraw() {
+        var dpr = window.devicePixelRatio || 1;
+        var cssW = drawCanvas.clientWidth;
+        var cssH = drawCanvas.clientHeight;
+        drawCanvas.width = Math.round(cssW * dpr);
+        drawCanvas.height = Math.round(cssH * dpr);
+        redraw();
+      }
+
+      function canvasPos(e) {
+        var r = drawCanvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+      }
+
+      drawCanvas.addEventListener("pointerdown", function (e) {
+        drawing = true;
+        drawPts = [canvasPos(e)];
+        drawCanvas.setPointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+      drawCanvas.addEventListener("pointermove", function (e) {
+        if (!drawing) return;
+        drawPts.push(canvasPos(e));
+        redraw();
+      });
+      function endStroke() {
+        if (!drawing) return;
+        drawing = false;
+        scoreDrawing();
+      }
+      drawCanvas.addEventListener("pointerup", endStroke);
+      drawCanvas.addEventListener("pointercancel", endStroke);
+      drawCanvas.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        var key = e.shiftKey ? String((Number(drawTone) % 4) + 1) : drawTone;
+        selectDrawTone(key);
+      });
+
+      function userYAt(refPtsUser, x) {
+        if (refPtsUser.length === 0) return null;
+        if (x <= refPtsUser[0].x) return refPtsUser[0].y;
+        for (var i = 1; i < refPtsUser.length; i++) {
+          if (x <= refPtsUser[i].x) {
+            var a = refPtsUser[i - 1];
+            var b = refPtsUser[i];
+            var t = (x - a.x) / (b.x - a.x || 1);
+            return a.y + (b.y - a.y) * t;
+          }
+        }
+        return refPtsUser[refPtsUser.length - 1].y;
+      }
+
+      function scoreDrawing() {
+        if (drawPts.length < 8) {
+          drawVerdict.textContent = "Слишком короткий росчерк! Веди линию слева направо через всё полотно.";
+          renderStars(drawStars, 0, 5);
+          return;
+        }
+        var w = drawCanvas.clientWidth;
+        var h = drawCanvas.clientHeight;
+        var xs = drawPts.map(function (p) { return p.x; });
+        var xmin = Math.min.apply(null, xs);
+        var xmax = Math.max.apply(null, xs);
+        if (xmax - xmin < w * 0.4) {
+          drawVerdict.textContent = "Росчерк слишком короткий по горизонтали — веди мелодию через всё полотно!";
+          renderStars(drawStars, 0, 5);
+          return;
+        }
+        var norm = drawPts.map(function (p) {
+          return {
+            x: 20 + (p.x - xmin) / (xmax - xmin) * 180,
+            y: Math.max(2, Math.min(98, p.y / h * 100))
+          };
+        });
+        var ref = refPoints(drawTone);
+        var total = 0;
+        var n = 0;
+        ref.forEach(function (rp) {
+          var uy = userYAt(norm, rp.x);
+          if (uy !== null) {
+            total += Math.abs(uy - rp.y);
+            n++;
+          }
+        });
+        var dev = n ? total / n : 99;
+        var stars;
+        if (dev < 6) stars = 5;
+        else if (dev < 11) stars = 4;
+        else if (dev < 18) stars = 3;
+        else if (dev < 28) stars = 2;
+        else stars = 1;
+        renderStars(drawStars, stars, 5);
+        var verdicts = {
+          5: "Безупречно! Ты прирождённый заклинатель мелодий!",
+          4: "Почти идеально! Ещё капля магии — и будет пять звёзд.",
+          3: "Неплохо, но мелодия дрожит. Послушай кристалл и попробуй ещё!",
+          2: "Хм-м... заклинание вышло кривым. Ещё раз, слева направо!",
+          1: "Ой-ой! Такое заклинание превращает чай в лягушку. Сначала!"
+        };
+        drawVerdict.textContent = stars + " " + (stars === 1 ? "звезда" : stars < 5 ? "звезды" : "звёзд") + " из 5. " + verdicts[stars];
+        if (stars >= 4) {
+          sparkBurst(drawCanvas.parentNode, { count: 26, colors: [TONES[drawTone].color, "#ffd54f"] });
+          showReplica(TONES[drawTone].wizard);
+        }
+      }
+
+      function selectDrawTone(key) {
+        drawTone = key;
+        drawPts = [];
+        renderStars(drawStars, 0, 5);
+        drawVerdict.textContent = "Тон " + TONES[key].mark + ": " + TONES[key].analogy + ". Нарисуй его мелодию слева направо!";
+        document.querySelectorAll(".chip").forEach(function (chip) {
+          var on = chip.getAttribute("data-tone") === key;
+          chip.classList.toggle("active", on);
+          chip.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        redraw();
+      }
+      document.querySelectorAll(".chip").forEach(function (chip) {
+        chip.addEventListener("click", function () { selectDrawTone(chip.getAttribute("data-tone")); });
+      });
+      document.getElementById("draw-clear").addEventListener("click", function () {
+        drawPts = [];
+        renderStars(drawStars, 0, 5);
+        drawVerdict.textContent = "Полотно очищено. Нарисуй мелодию заново!";
+        redraw();
+      });
+      document.getElementById("draw-ref").addEventListener("click", function () {
+        refShown = !refShown;
+        this.setAttribute("aria-pressed", refShown ? "true" : "false");
+        this.textContent = refShown ? "Скрыть эталон" : "Показать эталон";
+        redraw();
+      });
+
+      var quiz = { round: 0, score: 0, seq: [], tone: null, locked: false, total: 6 };
+      var quizPlay = document.getElementById("quiz-play");
+      var quizFinal = document.getElementById("quiz-final");
+      var quizStartScreen = document.getElementById("quiz-start-screen");
+      var quizRound = document.getElementById("quiz-round");
+      var quizStars = document.getElementById("quiz-stars");
+      var quizFeedback = document.getElementById("quiz-feedback");
+      var quizNext = document.getElementById("quiz-next");
+
+      function quizResetButtons() {
+        document.querySelectorAll(".quiz-btn").forEach(function (b) {
+          b.disabled = false;
+          b.classList.remove("correct", "wrong");
+        });
+      }
+
+      function quizPlayTone() {
+        if (quiz.tone === null) return;
+        playToneAudio(quiz.tone);
+        animateSky(quiz.tone);
+      }
+
+      function quizNextRound() {
+        quiz.round++;
+        if (quiz.round > quiz.total) {
+          quizPlay.hidden = true;
+          quizFinal.hidden = false;
+          var result = document.getElementById("quiz-result");
+          renderStars(document.getElementById("quiz-final-stars"), quiz.score, quiz.total);
+          if (quiz.score >= 5) {
+            result.innerHTML = "<span class='badge'>Ты — Магистр тонов!</span><br>" + quiz.score + " из " + quiz.total + ". Волшебник снимает шляпу: мелодии покорились тебе!";
+          } else if (quiz.score >= 3) {
+            result.textContent = quiz.score + " из " + quiz.total + ". Неплохо! Волшебник хитро улыбается: ещё немного практики — и звёзды твои.";
+          } else {
+            result.textContent = quiz.score + " из " + quiz.total + ". Потренируйся у кристаллов тонов и возвращайся — магия любит упорных!";
+          }
+          showReplica("Испытание пройдено: " + quiz.score + " из " + quiz.total + "!");
+          return;
+        }
+        quiz.tone = quiz.seq[quiz.round - 1];
+        quiz.locked = false;
+        quizResetButtons();
+        quizRound.textContent = "Раунд " + quiz.round + " из " + quiz.total;
+        renderStars(quizStars, quiz.score, quiz.total);
+        quizFeedback.textContent = "";
+        quizNext.hidden = true;
+        setTimeout(quizPlayTone, 450);
+      }
+
+      function quizStart() {
+        quiz.round = 0;
+        quiz.score = 0;
+        quiz.seq = [];
+        var prev = null;
+        for (var i = 0; i < quiz.total; i++) {
+          var t = String(1 + Math.floor(Math.random() * 4));
+          while (t === prev) t = String(1 + Math.floor(Math.random() * 4));
+          quiz.seq.push(t);
+          prev = t;
+        }
+        quizStartScreen.hidden = true;
+        quizFinal.hidden = true;
+        quizPlay.hidden = false;
+        quizNextRound();
+      }
+
+      document.getElementById("quiz-start").addEventListener("click", quizStart);
+      document.getElementById("quiz-restart").addEventListener("click", quizStart);
+      document.getElementById("quiz-replay").addEventListener("click", quizPlayTone);
+      quizNext.addEventListener("click", quizNextRound);
+      document.querySelectorAll(".quiz-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          if (quiz.locked || quiz.tone === null) return;
+          quiz.locked = true;
+          var chosen = btn.getAttribute("data-tone");
+          var cfg = TONES[quiz.tone];
+          document.querySelectorAll(".quiz-btn").forEach(function (b) { b.disabled = true; });
+          document.querySelector('.quiz-btn[data-tone="' + quiz.tone + '"]').classList.add("correct");
+          if (chosen === quiz.tone) {
+            quiz.score++;
+            renderStars(quizStars, quiz.score, quiz.total);
+            quizFeedback.innerHTML = "<b>Верно!</b> " + cfg.name + " — " + cfg.analogy + ".";
+            sparkBurst(btn, { count: 26, colors: [cfg.color, "#ffd54f", "#e9edff"] });
+            showReplica(cfg.wizard);
+          } else {
+            btn.classList.add("wrong");
+            quizFeedback.innerHTML = "Хитрость не прошла! Это был <b>" + cfg.name + "</b> — " + cfg.analogy + ". Слушай мелодию внимательнее.";
+          }
+          quizNext.hidden = false;
+          quizNext.textContent = quiz.round >= quiz.total ? "К результатам" : "Дальше";
+        });
+      });
+
+      var lbEl = null;
+      function lbKey(e) { if (e.key === "Escape") closeLightbox(); }
+      function closeLightbox() {
+        if (!lbEl) return;
+        lbEl.remove();
+        lbEl = null;
+        document.removeEventListener("keydown", lbKey);
+      }
+      function openLightbox(src, caption) {
+        closeLightbox();
+        lbEl = document.createElement("div");
+        lbEl.className = "lb-overlay";
+        var img = document.createElement("img");
+        img.src = src;
+        img.alt = caption || "";
+        lbEl.appendChild(img);
+        if (caption) {
+          var cap = document.createElement("div");
+          cap.className = "lb-cap";
+          cap.textContent = caption;
+          lbEl.appendChild(cap);
+        }
+        lbEl.addEventListener("click", closeLightbox);
+        document.body.appendChild(lbEl);
+        document.addEventListener("keydown", lbKey);
+      }
+      document.querySelectorAll("[data-lightbox]").forEach(function (el) {
+        el.addEventListener("click", function () {
+          var img = el.querySelector("img");
+          if (!img) return;
+          openLightbox(img.getAttribute("src"), el.getAttribute("data-caption") || img.getAttribute("alt"));
+        });
+      });
+
+      var sandhiPlay = document.getElementById("sandhi-play");
+      var sandhiFirst = document.getElementById("sandhi-first");
+      var sandhiResult = document.getElementById("sandhi-result");
+      sandhiPlay.addEventListener("click", function () {
+        try {
+          audioEl.pause();
+          audioEl.onerror = null;
+          audioEl.src = "audio/nihao.mp3";
+          audioEl.currentTime = 0;
+        } catch (e) {}
+        var p = audioEl.play();
+        if (p && p.catch) p.catch(function () { speakZh("你好"); showVoiceTip(); });
+        sandhiFirst.classList.add("shifted");
+        sandhiResult.innerHTML = "Первый слог зазвучал как 2-й тон: [<b class='t2'>ní</b> <b class='t3'>hǎo</b>]";
+        sandhiPlay.classList.add("speaking");
+        setTimeout(function () { sandhiPlay.classList.remove("speaking"); }, 1200);
+        sparkBurst(sandhiFirst, { count: 20, colors: ["#e8862e", "#3b7dd8", "#ffd54f"] });
+      });
+
+      var resizeTimer = null;
+      window.addEventListener("resize", function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resizeDraw, 150);
+      });
+
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+          stopSky();
+          clearTimeout(heroTimer);
+          clearTimeout(scopeTimer);
+          clearTimeout(domeTimer);
+          heroButton.classList.remove("casting");
+          scopeButton.classList.remove("viewing");
+          domeEl.classList.remove("twinkle");
+        }
+      });
+
+      if ("speechSynthesis" in window && speechSynthesis.getVoices().length === 0) {
+        speechSynthesis.onvoiceschanged = function () {};
+      }
+
+      activateTone("1", false);
+      selectDrawTone("3");
+      resizeDraw();
+    });
+  </script>
+</body>
+</html>
