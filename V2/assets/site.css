@@ -129,6 +129,20 @@ body {
   color: var(--tone, inherit);
 }
 
+.tower-shell:is(.tone-4, :has(.pinyin-hero .tone-4)) .sound-crystal {
+  background: linear-gradient(90deg, #bcebdd 0 25%, #d8fff0 25% 50%, #f0fff8 50% 54%, #c8f4e5 54% 78%, #ace2d1 78%);
+  border-color: #e5fff5;
+  filter: drop-shadow(0 0 12px rgba(128, 229, 220, 0.65));
+}
+
+.tower-shell:is(.tone-4, :has(.pinyin-hero .tone-4)) .glyph-hero {
+  text-shadow: 1px 1px 0 #164b45, -1px -1px 0 #164b45, 1px -1px 0 #164b45, -1px 1px 0 #164b45, 0 0 16px rgba(128, 229, 220, 0.8);
+}
+
+.tower-shell:is(.tone-4, :has(.pinyin-hero .tone-4)) .pinyin-hero {
+  text-shadow: 0 1px 0 #f0fff8, 0 0 10px rgba(128, 229, 220, 0.7);
+}
+
 .meta-list {
   list-style: none;
   margin: 8px 0 0;

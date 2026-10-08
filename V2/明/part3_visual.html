@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e2318">
+  <title>明 — Визуальная ассоциация · Хижина Жаберта</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/tone.css">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/site-common.js" defer></script>
+  <style>
+    :root { --ink: #22301c; --bg: #0e2318; --panel: #dcebd0; --bubble-bg: #eaf5dd; --bubble-border: #2e4626; --accent: #4e9940; --accent-deep: #35682a; --btn-bg: #cfe3bd; }
+    body { font-family: "Nunito", "Noto Sans SC", sans-serif; background: radial-gradient(80% 60% at 80% 0%, #8de2ff1f, transparent 55%), linear-gradient(#0b1f14, #123321 55%, #0a2417); overflow-wrap: anywhere; }
+    button { font: inherit; touch-action: manipulation; cursor: pointer; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #fff19c; outline-offset: 5px; }
+    [hidden] { display: none !important; }
+    h1, h2, p { margin: 0; }
+    .hut-shell { max-width: 1140px; margin: auto; padding: max(24px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(28px, env(safe-area-inset-left)); }
+    .route { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: #c7d8b3; font-size: 12px; padding: 0 6px 18px; }
+    .route-name { display: flex; align-items: center; gap: 10px; }
+    .route-name::before { content: ""; width: 8px; height: 8px; background: #7fbf6a; box-shadow: 0 0 0 3px #2e4626; }
+    .chapter-track { display: flex; gap: 6px; }
+    .chapter-track span { width: 20px; height: 8px; background: #2e4626; border-bottom: 2px solid #0b1f14; }
+    .chapter-track .visited { background: #68875b; }
+    .chapter-track .current { background: #cfe3bd; }
+    .reed-roof { height: 52px; margin: 0 -8px; background: repeating-linear-gradient(90deg, #9c9b5f 0 8px, #566f3b 8px 12px, #78874a 12px 20px); border-top: 8px solid #b6b677; border-bottom: 8px solid #263e24; clip-path: polygon(24px 0, calc(100% - 24px) 0, calc(100% - 24px) 8px, calc(100% - 12px) 8px, calc(100% - 12px) 20px, 100% 20px, 100% 100%, 0 100%, 0 20px, 12px 20px, 12px 8px, 24px 8px); }
+    .hut-room { position: relative; isolation: isolate; background: repeating-linear-gradient(0deg, #263d2b 0 56px, #172d20 56px 60px); border: 6px solid #365038; box-shadow: inset 0 0 0 3px #112519, 6px 6px #07180f; }
+    .hut-room::before, .hut-room::after { content: ""; position: absolute; top: 0; bottom: 0; width: 16px; background: repeating-linear-gradient(90deg, #65744a 0 5px, #3d5234 5px 9px); border: 3px solid #192e1e; z-index: -1; pointer-events: none; }
+    .hut-room::before { left: 0; } .hut-room::after { right: 0; }
+    .hut-header { display: grid; grid-template-columns: 150px minmax(0, 1fr) 150px; gap: 30px; align-items: center; padding: 28px 42px 20px; }
+    .swamp-window { position: relative; height: 144px; border: 7px solid #75835c; background: linear-gradient(#142d2d 0 65%, #1f5044 65%); box-shadow: inset 0 0 0 3px #0b231c, 4px 4px #102418; }
+    .swamp-window::before { content: ""; position: absolute; width: 6px; left: calc(50% - 3px); top: 0; bottom: 0; background: #75835c; }
+    .swamp-window::after { content: ""; position: absolute; height: 6px; top: 56%; left: 0; right: 0; background: #75835c; }
+    .moon { position: absolute; right: 18px; top: 20px; width: 24px; height: 24px; background: #fdf6d8; box-shadow: 4px 0 #fdf6d8, -4px 0 #fdf6d8, 0 4px #fdf6d8, 0 -4px #fdf6d8, 0 0 24px #fdf6d826; }
+    .moon::after { content: ""; position: absolute; width: 8px; height: 4px; left: 4px; top: 12px; background: #d9d3a8; }
+    .window-reeds { position: absolute; bottom: 0; left: 12px; width: 4px; height: 40px; background: #507348; box-shadow: 16px 12px #507348, 70px 8px #507348, 88px -4px #507348; }
+    .hut-title { min-width: 0; text-align: center; padding: 18px; border: 4px solid #8c9868; background: #223a28; box-shadow: inset 0 0 0 3px #142a1b, 4px 4px #0a2014; }
+    .eyebrow { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: #b6c998; }
+    h1 { font: bold clamp(26px, 3.8vw, 38px)/1.15 "Courier New", monospace; color: #eaf5dd; margin: 10px 0; text-shadow: 3px 3px #102418; }
+    .hut-title p { color: #c7d8b3; font-size: 12px; line-height: 1.5; }
+    .herb-shelf { display: flex; justify-content: center; gap: 12px; align-items: end; height: 90px; border-bottom: 10px solid #75835c; box-shadow: 0 4px #142a1b; }
+    .jar { position: relative; width: 28px; height: 42px; background: #78925c; border: 4px solid #b6c998; box-shadow: inset 6px 0 #435d35; }
+    .jar::before { content: ""; position: absolute; top: -10px; left: -5px; right: -5px; height: 6px; background: #93a576; }
+    .jar:nth-child(2) { height: 56px; background: #b7b265; } .jar:nth-child(3) { height: 32px; }
+    .host-scene { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 26px; padding: 4px 48px 32px; align-items: center; }
+    .host { text-align: center; }
+    .host img { display: block; width: 164px; height: 164px; margin: auto; image-rendering: pixelated; filter: drop-shadow(4px 4px #102418); }
+    .host-name { display: inline-block; color: #eaf5dd; background: #2e4626; border: 2px solid #8caa6c; padding: 5px 16px; font-size: 13px; font-weight: 800; }
+    .dialogue { position: relative; min-width: 0; color: #22301c; background: var(--bubble-bg); border: 3px solid #8caa6c; padding: 20px 24px; box-shadow: 4px 0 #4c633b, -4px 0 #4c633b, 0 4px #4c633b, 0 -4px #4c633b, 7px 7px #102418; }
+    .dialogue::before { content: ""; position: absolute; width: 12px; height: 12px; left: -15px; top: 44px; background: #eaf5dd; border-left: 3px solid #8caa6c; border-bottom: 3px solid #8caa6c; }
+    .dialogue-label { color: #35682a; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; }
+    .dialogue p { font-size: 14px; line-height: 1.65; } .dialogue p + p { margin-top: 10px; }
+    .hut-workbench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 32px; padding: 0 42px 30px; align-items: start; }
+    .mirror-panel { min-width: 0; padding: 22px; border: 5px solid #75835c; background: #dcebd0; box-shadow: inset 0 0 0 3px #b7c69b, 5px 5px #102418; scroll-margin-top: 24px; }
+    .mirror-panel h2 { color: #2e4626; font-size: 20px; }
+    .mirror { display: grid; place-items: center; gap: 14px; margin: 18px 0; padding: 24px 12px; background: repeating-linear-gradient(0deg, #c3dac2 0 34px, #bfd6bd 34px 38px); border: 4px solid #8c9868; box-shadow: inset 0 0 0 3px #a5b78b; }
+    .glyph { font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 78px; font-weight: 400; line-height: 1; }
+    .reading { font-size: 24px; font-weight: 800; color: #b35c00; }
+    .mirror-symbol { text-align: center; }
+    .lantern { position: relative; display: grid; place-items: center; width: 140px; min-height: 96px; padding: 14px 10px; border: 5px solid #7a5a2e; background: #2c2416; box-shadow: 4px 4px #a6b993; } .lantern-core { width: 54px; height: 64px; background: #4d4030; border: 4px solid #6d5a3a; border-radius: 10px; transition: background .2s ease; } .lantern-glow { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, rgba(255, 213, 79, 0.35), transparent 60%); opacity: 0; transition: opacity .2s ease; } .lantern.awake .lantern-core { background: #ffd54f; box-shadow: 0 0 18px #fb8c00; } .lantern.awake .lantern-glow { opacity: 1; }
+
+
+
+    .mirror-panel button:focus-visible { outline-color: #35682a; }
+    .mouth-label { font-size: 13px; line-height: 1.6; text-align: center; }
+    .mouth-label b { color: #35682a; }
+    .gallery-panel { min-width: 0; }
+    .gallery-panel h2 { color: #d6f0c8; font-size: 18px; margin-bottom: 18px; }
+    .photos { display: grid; gap: 18px; }
+    .art-frame { display: block; min-width: 0; width: 100%; padding: 6px; border: 3px solid #8c9868; background: #354b2f; color: #eaf5dd; box-shadow: 4px 4px #102418; cursor: zoom-in; }
+    .art-frame img { display: block; width: 100%; height: 175px; object-fit: contain; background: #eaf5dd; }
+    .art-caption { display: block; font-size: 12px; line-height: 1.5; padding: 10px 6px 4px; }
+    .cricket-stage { display: grid; grid-template-columns: 70px minmax(0, 1fr) auto; gap: 20px; align-items: center; padding: 20px 24px; margin: 0 42px 28px; color: #d6f0c8; background: #173721; border: 4px solid #65744a; border-top: 8px solid #a0a96e; box-shadow: 4px 4px #102418; }
+    .cricket-stage h2 { font-size: 18px; margin-bottom: 6px; } .cricket-stage p { font-size: 13px; line-height: 1.5; }
+    .cricket-icon { position: relative; width: 40px; height: 24px; background: #7fbf6a; border: 4px solid #35682a; margin: 12px auto; box-shadow: 8px -8px #5d974d; }
+    .cricket-icon::before { content: ""; position: absolute; width: 4px; height: 24px; left: 2px; bottom: -20px; background: #7fbf6a; box-shadow: 24px 0 #7fbf6a; transform: skew(-20deg); }
+    .cricket-icon::after { content: ""; position: absolute; width: 4px; height: 20px; right: -10px; top: -20px; background: #a6d88b; box-shadow: 8px 4px #a6d88b; }
+    .action-button { min-height: 48px; padding: 10px 14px; border: 2px solid #7fbf6a; color: #22301c; background: var(--btn-bg); box-shadow: 0 4px #0a2014; font-size: 13px; font-weight: 800; transition: transform .12s ease; }
+    .action-button:hover { background: #eaf5dd; } .action-button:active { transform: translateY(3px); box-shadow: 0 1px #0a2014; }
+    .action-button[aria-pressed="true"] { background: #a4d190; }
+    .sound-status { grid-column: 2 / -1; color: #cfe3bd; font-size: 12px; min-height: 1.5em; }
+    #voice-tip { display: none; background: #eaf5dd; color: #22301c; border: 2px solid #7fbf6a; padding: 12px; margin: 0 42px 24px; font-size: 13px; }
+    .deck { height: 24px; background: repeating-linear-gradient(90deg, #75835c 0 90px, #365038 90px 94px); border-top: 5px solid #172d20; }
+    .water { position: relative; height: 46px; background: repeating-linear-gradient(0deg, #123b31 0 14px, #205042 14px 18px, #143c33 18px 26px); border-top: 4px solid #0b231c; }
+    .water::before, .water::after { content: ""; position: absolute; width: 12px; height: 38px; top: 0; background: #65744a; border-left: 4px solid #365038; }
+    .water::before { left: 48px; } .water::after { right: 48px; }
+    .lily-hit { position: absolute; display: grid; place-items: center; width: 48px; height: 46px; padding: 0; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
+    .lily-hit.pad-a { top: 4px; left: calc(28% - 24px); }
+    .lily-hit.pad-b { top: -6px; left: calc(72% - 24px); }
+    .lily-pad { display: block; width: 36px; height: 8px; background: #679952; box-shadow: 6px 4px #35682a, -6px 0 #679952; }
+    .ripple { position: absolute; left: calc(50% - 7px); bottom: 4px; width: 14px; height: 14px; border: 3px solid #8fd8c0; opacity: 0; pointer-events: none; }
+    .ripple.r2 { border-width: 2px; border-color: #6fbfa4; }
+    .lily-hit.splash .ripple { animation: rippleGrow .8s steps(4) forwards; }
+    .lily-hit.splash .ripple.r2 { animation-delay: .15s; }
+    @keyframes rippleGrow { 0% { opacity: .9; transform: scale(.4); } 100% { opacity: 0; transform: scale(2.6); } }
+    .froggy { position: absolute; left: calc(50% - 8px); bottom: 10px; width: 16px; height: 12px; background: #7fbf6a; border: 3px solid #35682a; opacity: 0; pointer-events: none; }
+    .froggy::before { content: ""; position: absolute; top: -6px; left: 2px; width: 4px; height: 4px; background: #eaf5dd; box-shadow: 8px 0 #eaf5dd, 2px 2px #22301c, 6px 2px #22301c; }
+    .lily-hit.splash .froggy { animation: frogHop .85s steps(5) forwards; }
+    @keyframes frogHop { 0% { opacity: 0; transform: translateY(2px); } 25% { opacity: 1; transform: translateY(-24px); } 55% { opacity: 1; transform: translateY(-2px); } 75% { opacity: 1; transform: translateY(-10px); } 100% { opacity: 0; transform: translateY(4px); } }
+    .hero-button { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
+    .hero-replica { position: absolute; left: 50%; bottom: calc(100% - 2px); transform: translateX(-50%); z-index: 6; padding: 6px 10px; background: #2e4626; border: 2px solid #8caa6c; color: #eaf5dd; font-size: 12px; font-weight: 800; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 3px 3px #102418; }
+    .hero-replica.show { opacity: 1; animation: replicaPop 1.6s steps(4) forwards; }
+    @keyframes replicaPop { 0% { opacity: 0; transform: translateX(-50%) translateY(6px); } 12% { opacity: 1; transform: translateX(-50%) translateY(0); } 82% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(0); } }
+    .hero-fly { position: absolute; right: -16px; top: 36px; width: 10px; height: 8px; background: #3a4a2f; border: 2px solid #1c2a16; opacity: 0; pointer-events: none; }
+    .hero-fly::before { content: ""; position: absolute; top: -5px; left: -4px; width: 8px; height: 5px; background: #dcebd0cc; box-shadow: 10px 0 #dcebd0cc; }
+    .hero-tongue { position: absolute; left: 58%; top: 42px; width: 46%; height: 9px; background: #e2708b; border: 2px solid #f299ad; transform-origin: left center; transform: scaleX(0); opacity: 0; pointer-events: none; }
+    .hero-button.casting .hero-fly { animation: flyBuzz .45s steps(2), flyGone .08s .45s steps(1) forwards; }
+    @keyframes flyBuzz { 0% { opacity: 1; transform: translate(0, 0); } 25% { transform: translate(-8px, -10px); } 50% { transform: translate(4px, -4px); } 75% { transform: translate(-5px, -12px); } 100% { opacity: 1; transform: translate(0, -6px); } }
+    @keyframes flyGone { to { opacity: 0; transform: scale(.4); } }
+    .hero-button.casting .hero-tongue { animation: tongueSnap .7s steps(4) forwards; }
+    @keyframes tongueSnap { 0% { opacity: 0; transform: scaleX(0); } 10% { opacity: 1; } 30% { transform: scaleX(1); } 65% { opacity: 1; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(0); } }
+    .hero-button.casting img { animation: heroGulp .45s .6s steps(3); }
+    @keyframes heroGulp { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+    .lesson-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; color: #c7d8b3; padding: 16px 24px; background: #0b1f14; font-size: 11px; }
+    .skip-link { position: fixed; top: -150px; left: 14px; z-index: 100; max-width: calc(100% - 28px); background: #eaf5dd; color: #22301c; border: 3px solid #7fbf6a; padding: 12px; } .skip-link:focus { top: 14px; }
+    @media (max-width: 1000px) {
+      .hut-header { grid-template-columns: 110px minmax(0, 1fr) 100px; padding: 28px 30px 20px; gap: 20px; }
+      .host-scene { padding-left: 34px; padding-right: 34px; gap: 22px; grid-template-columns: 144px minmax(0, 1fr); }
+      .host img { width: 140px; height: 140px; }
+      .hut-workbench { padding-left: 30px; padding-right: 30px; gap: 26px; }
+      .mirror-panel { padding: 18px; } .cricket-stage { margin-left: 30px; margin-right: 30px; grid-template-columns: 54px minmax(0, 1fr); gap: 14px; }
+      .cricket-stage .action-button { grid-column: 2; justify-self: start; }
+    }
+    @media (max-width: 760px) {
+      .hut-shell { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
+      .hut-header { grid-template-columns: 80px minmax(0, 1fr); padding: 24px; gap: 20px; }
+      .herb-shelf { display: none; } .swamp-window { height: 130px; border-width: 5px; } .moon { width: 16px; height: 16px; right: 10px; }
+      .host-scene { grid-template-columns: 112px minmax(0, 1fr); padding: 0 28px 30px; gap: 18px; } .host img { width: 108px; height: 108px; }
+      .dialogue { padding: 16px; } .hut-workbench { grid-template-columns: minmax(0, 1fr); padding: 0 28px 28px; gap: 28px; }
+      .photos { grid-template-columns: minmax(0, 1fr); gap: 12px; } .art-frame img { height: 155px; }
+      .mirror { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .lantern { justify-self: center; }
+      .cricket-stage { margin: 0 28px 28px; padding: 18px; }
+    }
+    @media (max-width: 480px) {
+      .hut-shell { padding-top: max(16px, env(safe-area-inset-top)); padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+      .route { font-size: 10px; gap: 8px; padding: 0 4px 14px; } .chapter-track { gap: 4px; } .chapter-track span { width: 12px; height: 6px; }
+      .reed-roof { height: 42px; } .hut-room { border-width: 4px; box-shadow: 4px 4px #07180f; }
+      .hut-room::before, .hut-room::after { width: 10px; border-width: 2px; }
+      .hut-header { grid-template-columns: minmax(0, 1fr); padding: 22px 20px; position: relative; }
+      .swamp-window { position: absolute; width: 68px; height: 90px; top: 232px; right: 26px; pointer-events: none; }
+      .hut-title { padding: 16px 10px; } h1 { font-size: clamp(26px, 7vw, 34px); } .eyebrow { font-size: 9px; }
+      .host-scene { grid-template-columns: minmax(0, 1fr); gap: 22px; padding: 0 24px 30px; } .host { justify-self: center; } .host img { width: 148px; height: 148px; }
+      .dialogue { padding: 16px 14px; } .dialogue::before { left: 24px; top: -15px; border-bottom: 0; border-top: 3px solid #8caa6c; } .dialogue p { font-size: 13px; }
+      .hut-workbench { padding: 0 20px 26px; } .mirror-panel { padding: 18px 14px; border-width: 4px; } .mirror-panel h2 { font-size: 18px; }
+      .mirror { grid-template-columns: minmax(0, 1fr); padding: 20px 10px; }
+      .photos { grid-template-columns: minmax(0, 1fr); gap: 18px; } .art-frame img { height: 190px; }
+      .cricket-stage { margin: 0 20px 24px; padding: 18px 14px; grid-template-columns: minmax(0, 1fr); text-align: center; gap: 16px; }
+      .cricket-stage .action-button { grid-column: auto; justify-self: center; } .sound-status { grid-column: auto; }
+      .cricket-stage h2 { font-size: 18px; } .lesson-footer { padding: 14px 20px; font-size: 10px; } #voice-tip { margin-left: 20px; margin-right: 20px; } .hero-replica { font-size: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mirror-zone">Перейти к фонарю с двумя светилами</a>
+  <main class="hut-shell tone-2">
+    <header class="route"><span class="route-name">Путь иероглифа · Урок 20</span><div class="chapter-track" role="img" aria-label="Часть 3 из 5"><span class="visited"></span><span class="visited"></span><span class="current"></span><span></span><span></span></div></header>
+    <div class="reed-roof" aria-hidden="true"></div>
+    <div class="hut-room">
+      <section class="hut-header" aria-labelledby="hut-title"><div class="swamp-window" aria-hidden="true"><span class="moon"></span><span class="window-reeds"></span></div><div class="hut-title"><span class="eyebrow">Третья остановка · тихое болото</span><h1 id="hut-title">Хижина<br>Жаберта</h1><p>Смотри внимательнее. Знакомый образ совсем рядом.</p></div><div class="herb-shelf" aria-hidden="true"><i class="jar"></i><i class="jar"></i><i class="jar"></i></div></section>
+      <section class="host-scene" aria-label="Встреча с Жабертом"><div class="host"><button class="hero-button" id="hero-btn" type="button" data-glyph="明" data-spell="Ква!" aria-label="Лягушка Жаберт в очках с флейтой — нажми, чтобы увидеть трюк с мухой"><img src="../assets/characters/zhabert.svg" alt="" width="164" height="164"><span class="hero-replica" aria-live="polite"></span><span class="hero-fly" aria-hidden="true"></span><span class="hero-tongue" aria-hidden="true"></span></button><span class="host-name">Жаберт</span></div><div class="dialogue"><div class="dialogue-label">Жаберт · лягушка-флейтист</div><p><b>Ква-а!</b> Приветствую на моём болоте, путник. Я Жаберт — лягушка-флейтист. Сверчки уже настроили инструменты, начнём!</p><p>Смотри на иероглиф <b lang="zh-CN">明</b>. Из чего он сложен? Слева — <b>日</b>, солнце, справа — <b>月</b>, луна. Два светила в одном знаке: <b lang="zh-CN">明</b> — «яркий, светлый»!</p></div></section>
+      <div class="hut-workbench">
+        <section class="mirror-panel" id="mirror-zone" tabindex="-1" aria-labelledby="mirror-title"><h2 id="mirror-title">Солнце и луна рядом</h2><div class="mirror"><div class="mirror-symbol"><div class="glyph" lang="zh-CN">明</div><div class="reading">míng</div></div><button class="lantern" id="lantern-btn" type="button" aria-label="Зажги фонарь с 明 и послушай míng" aria-pressed="false"><span class="lantern-glow" aria-hidden="true"></span><span class="lantern-core" aria-hidden="true"></span></button></div><p class="mouth-label"><b>Нажми на фонарь</b> — он вспыхнет, как <span lang="zh-CN">明</span>, и ты услышишь <b>míng</b>! Сверчок подсказывает: <i>«пропой míng, как я!»</i></p></section>
+        <section class="gallery-panel" aria-labelledby="gallery-title"><h2 id="gallery-title">Образы на стене хижины</h2><div class="photos"><button class="art-frame" type="button" data-lightbox data-caption="日 + 月 = два светила рядом" aria-label="Увеличить образ с солнцем и луной"><img src="img/visual_1.jpg" alt="Солнце и луна — визуальная ассоциация для 明" width="480" height="320"><span class="art-caption">Солнце и луна вместе — почти <span lang="zh-CN">明</span>! Нажми, чтобы рассмотреть.</span></button></div></section>
+      </div>
+      <section class="cricket-stage" aria-labelledby="cricket-title"><div class="cricket-icon" aria-hidden="true"></div><div><h2 id="cricket-title">Оркестр сверчков</h2><p>Сверчки болота исполняют серенаду для иероглифа <span lang="zh-CN">明</span>.</p></div><button class="action-button" id="cricket-btn" type="button" aria-pressed="false">Послушать сверчков</button><p class="sound-status" id="cricket-status" role="status">Три короткие трели — музыка тихого болота.</p></section>
+      <p id="voice-tip" role="status">Не удалось воспроизвести аудио. Проверь подключение и попробуй снова.</p>
+      <div class="deck" aria-hidden="true"></div><div class="water"><button class="lily-hit pad-a" type="button" aria-label="Коснуться кувшинки на болоте"><span class="lily-pad" aria-hidden="true"></span><span class="ripple r1" aria-hidden="true"></span><span class="ripple r2" aria-hidden="true"></span><span class="froggy" aria-hidden="true"></span></button><button class="lily-hit pad-b" type="button" aria-label="Коснуться кувшинки на болоте"><span class="lily-pad" aria-hidden="true"></span><span class="ripple r1" aria-hidden="true"></span><span class="ripple r2" aria-hidden="true"></span><span class="froggy" aria-hidden="true"></span></button></div>
+      <footer class="lesson-footer"><span>Хижина Жаберта · болото</span><span>明 · míng · часть 3 из 5</span></footer>
+    </div>
+  </main>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var lantern = document.getElementById("lantern-btn");
+      var lanternTimer = null;
+      var cricketButton = document.getElementById("cricket-btn");
+      var cricketStatus = document.getElementById("cricket-status");
+      var cricketContext = null;
+      var cricketTimer = null;
+      var cricketVersion = 0;
+      function calmLantern() { lantern.classList.remove("awake"); lantern.setAttribute("aria-pressed", "false"); }
+      lantern.addEventListener("click", function () {
+        clearTimeout(lanternTimer);
+        lantern.classList.add("awake");
+        lantern.setAttribute("aria-pressed", "true");
+        HanziSite.playAudio("audio/ming.mp3", 0.9);
+        lanternTimer = setTimeout(calmLantern, 900);
+      });
+      function stopCrickets() {
+        cricketVersion++;
+        clearTimeout(cricketTimer);
+        if (cricketContext) { cricketContext.close().catch(function () {}); cricketContext = null; }
+        cricketButton.setAttribute("aria-pressed", "false");
+      }
+      cricketButton.addEventListener("click", async function () {
+        stopCrickets();
+        var version = cricketVersion;
+        try {
+          var Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) throw new Error("AudioContext unavailable");
+          var ctx = new Ctx();
+          cricketContext = ctx;
+          if (ctx.state === "suspended") await ctx.resume();
+          if (version !== cricketVersion) return;
+          var t0 = ctx.currentTime;
+          function chirp(start, base) {
+            for (var n = 0; n < 3; n++) {
+              var oscillator = ctx.createOscillator();
+              var gain = ctx.createGain();
+              var ts = start + n * 0.09;
+              oscillator.type = "sine";
+              oscillator.frequency.value = base + Math.random() * 300;
+              gain.gain.setValueAtTime(0, ts);
+              gain.gain.linearRampToValueAtTime(0.12, ts + 0.015);
+              gain.gain.exponentialRampToValueAtTime(0.0001, ts + 0.07);
+              oscillator.connect(gain);
+              gain.connect(ctx.destination);
+              oscillator.start(ts);
+              oscillator.stop(ts + 0.09);
+            }
+          }
+          chirp(t0 + 0.05, 4300);
+          chirp(t0 + 0.5, 3900);
+          chirp(t0 + 1.0, 4600);
+          cricketButton.setAttribute("aria-pressed", "true");
+          cricketStatus.textContent = "Сверчки исполняют серенаду...";
+          cricketTimer = setTimeout(function () {
+            if (version !== cricketVersion) return;
+            stopCrickets();
+            cricketStatus.textContent = "Серенада завершена. Сверчки готовы сыграть ещё раз.";
+          }, 2200);
+        } catch (error) {
+          if (version !== cricketVersion) return;
+          stopCrickets();
+          cricketStatus.textContent = "Звук сверчков недоступен в этом браузере. Попробуй снова.";
+        }
+      });
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) return;
+        clearTimeout(lanternTimer);
+        calmLantern();
+        stopCrickets();
+        cricketStatus.textContent = "Три короткие трели — музыка тихого болота.";
+        clearTimeout(heroTimer);
+        heroButton.classList.remove("casting");
+      });
+
+      var heroButton = document.getElementById("hero-btn");
+      var heroReplica = heroButton.querySelector(".hero-replica");
+      var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var heroTimer = null;
+      var replicaTimer = null;
+      function showReplica(text) {
+        clearTimeout(replicaTimer);
+        heroReplica.textContent = text;
+        heroReplica.classList.remove("show");
+        void heroReplica.offsetWidth;
+        heroReplica.classList.add("show");
+        replicaTimer = setTimeout(function () { heroReplica.classList.remove("show"); heroReplica.textContent = ""; }, 1700);
+      }
+      function croak() {
+        try {
+          var Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          var ctx = new Ctx();
+          var oscillator = ctx.createOscillator();
+          var gain = ctx.createGain();
+          var start = ctx.currentTime;
+          oscillator.type = "sawtooth";
+          oscillator.frequency.setValueAtTime(150, start);
+          oscillator.frequency.exponentialRampToValueAtTime(80, start + 0.18);
+          gain.gain.setValueAtTime(0.0001, start);
+          gain.gain.exponentialRampToValueAtTime(0.06, start + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.22);
+          oscillator.connect(gain);
+          gain.connect(ctx.destination);
+          oscillator.start(start);
+          oscillator.stop(start + 0.24);
+          oscillator.onended = function () { ctx.close().catch(function () {}); };
+        } catch (error) {}
+      }
+      heroButton.addEventListener("click", function () {
+        showReplica(heroButton.getAttribute("data-spell"));
+        croak();
+        if (motionQuery.matches) return;
+        clearTimeout(heroTimer);
+        heroButton.classList.remove("casting");
+        void heroButton.offsetWidth;
+        heroButton.classList.add("casting");
+        heroTimer = setTimeout(function () { heroButton.classList.remove("casting"); }, 1300);
+      });
+      document.querySelectorAll(".lily-hit").forEach(function (pad) {
+        pad.addEventListener("click", function () {
+          if (motionQuery.matches) return;
+          pad.classList.remove("splash");
+          void pad.offsetWidth;
+          pad.classList.add("splash");
+          setTimeout(function () { pad.classList.remove("splash"); }, 1000);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

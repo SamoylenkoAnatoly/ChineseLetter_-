@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171329">
+  <title>月 · yuè — пять встреч</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #171329; --ink: #f5e8d3; --accent: #cbb1fb; --menu: #241e35; --selected: #514064; --line: #795c8e; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Nunito", "Noto Sans SC", sans-serif; color: var(--ink); background: var(--bg); overflow-wrap: anywhere; }
+    body[data-section="sound"] { --bg: #241243; --ink: #f3ecff; --accent: #cbb2f2; --menu: #1b0e35; --selected: #57377b; --line: #9b6fd8; }
+    body[data-section="visual"] { --bg: #0e2318; --ink: #eaf5dd; --accent: #cfe3bd; --menu: #142a1b; --selected: #365038; --line: #7fbf6a; }
+    body[data-section="reference"] { --bg: #101a26; --ink: #dfeaf5; --accent: #9fd8e6; --menu: #0b121b; --selected: #243d50; --line: #35c0d8; }
+    body[data-section="facts"] { --bg: #0f1c10; --ink: #f8f1dd; --accent: #dfe3b8; --menu: #1f2617; --selected: #3b4f2a; --line: #8fae4f; }
+    [hidden] { display: none !important; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; cursor: pointer; touch-action: manipulation; }
+    button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px solid #ffe28a; outline-offset: 4px; }
+    .course-shell { max-width: 1180px; margin: auto; padding: max(16px, env(safe-area-inset-top)) 0 calc(var(--nav-height, 108px) + 24px); }
+    .course-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 0 max(28px, env(safe-area-inset-right)) 14px max(28px, env(safe-area-inset-left)); }
+    .lesson-name { display: flex; align-items: center; gap: 12px; }
+    .lesson-glyph { font-family: "Noto Sans SC", sans-serif; font-size: 34px; line-height: 1; color: #8e24aa; border: 2px solid var(--line); padding: 8px; background: var(--menu); box-shadow: 3px 3px #070b15; }
+    h1 { font-size: 18px; line-height: 1.3; margin: 0; }
+    .course-header p { font-size: 12px; line-height: 1.5; margin: 4px 0 0; color: var(--accent); }
+    .open-page { color: var(--accent); font-size: 12px; font-weight: 800; min-height: 44px; display: inline-flex; align-items: center; padding: 8px 12px; border: 2px solid var(--line); text-decoration: none; background: var(--menu); }
+    .lesson-panel { position: relative; }
+    #lesson-frame { display: block; width: 100%; height: 850px; border: 0; background: var(--bg); }
+    .loading { margin: 10px 28px; padding: 14px; background: var(--menu); border: 2px solid var(--line); font-size: 13px; }
+    .page-controls { display: flex; justify-content: space-between; gap: 14px; margin: 8px max(28px, env(safe-area-inset-right)) 0 max(28px, env(safe-area-inset-left)); }
+    .page-button { min-height: 48px; padding: 10px 16px; background: var(--menu); border: 2px solid var(--line); color: var(--ink); font-size: 13px; font-weight: 800; box-shadow: 0 4px #070b15; }
+    .page-button.primary { background: var(--selected); }
+    .page-button:disabled { opacity: .45; cursor: default; }
+    .page-button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px #070b15; }
+    .section-counter { text-align: center; color: var(--accent); font-size: 12px; margin: 16px 20px 0; }
+    .character-menu { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 8px max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); background: var(--menu); border-top: 3px solid var(--line); box-shadow: 0 -4px #070b15; }
+    .menu-inner { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 760px; margin: auto; gap: 6px; }
+    .character-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 82px; border: 2px solid transparent; background: transparent; padding: 5px 2px; color: var(--ink); font-size: 11px; font-weight: 800; }
+    .character-tab img { width: 42px; height: 42px; object-fit: contain; image-rendering: pixelated; }
+    .character-tab[aria-selected="true"] { background: var(--selected); border-color: var(--accent); }
+    .character-tab:focus-visible { outline-offset: -3px; }
+    .skip-link { position: fixed; top: -150px; left: 14px; z-index: 30; max-width: calc(100% - 28px); padding: 12px; background: var(--menu); color: var(--ink); border: 3px solid var(--line); }
+    .skip-link:focus { top: 14px; }
+    .course-lightbox { position: fixed; inset: 0; z-index: 100; background: #080612ed; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
+    .course-lightbox img { display: block; max-width: 92vw; max-height: 72vh; object-fit: contain; border: 4px solid #cbb2f2; background: #fff; }
+    .course-lightbox p { color: #f3ecff; text-align: center; font-size: 14px; line-height: 1.5; margin: 0; }
+    .close-lightbox { min-height: 44px; padding: 10px 16px; color: #f3ecff; background: #3a2069; border: 2px solid #cbb2f2; font-weight: 800; }
+    .no-script { margin: 20px 28px; padding: 20px; background: var(--menu); border: 2px solid var(--line); line-height: 1.6; }
+    .no-script a { color: var(--accent); display: inline-block; min-height: 44px; padding: 8px 0; }
+    @media (max-width: 480px) {
+      .course-header { padding: 0 max(16px, env(safe-area-inset-right)) 12px max(16px, env(safe-area-inset-left)); gap: 10px; flex-wrap: wrap; }
+      h1 { font-size: 16px; } .course-header p { font-size: 11px; }
+      .open-page { font-size: 11px; padding: 7px 8px; }
+      .page-controls { margin-left: 16px; margin-right: 16px; gap: 10px; }
+      .page-button { padding: 10px 12px; font-size: 12px; }
+      .menu-inner { gap: 4px; } .character-tab { font-size: 10px; min-height: 78px; }
+      .character-tab img { width: 36px; height: 36px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body data-section="glyph">
+  <a class="skip-link" href="#lesson-content">Перейти к уроку</a>
+  <main class="course-shell">
+    <header class="course-header"><div class="lesson-name"><span class="lesson-glyph" lang="zh-CN">月</span><div><h1>Луна; месяц · yuè</h1><p id="location-name">Трактир «Наливай и плач»</p></div></div><a class="open-page" id="open-page" href="part1_glyph.html" target="_blank" rel="noopener">Открыть отдельно</a></header>
+    <noscript><div class="no-script"><p>Для переключения локаций включи JavaScript или открой нужную страницу:</p><ul><li><a href="part1_glyph.html">Трактир Синнабона</a></li><li><a href="part2_sound.html">Звуковая башня</a></li><li><a href="part3_visual.html">Хижина Жаберта</a></li><li><a href="part4_reference.html">Лаборатория робота</a></li><li><a href="part5_facts.html">Библиотека Шуршика</a></li></ul></div><style>.character-menu,.page-controls,.section-counter{display:none}</style></noscript>
+    <section class="lesson-panel" id="lesson-content" role="tabpanel" aria-labelledby="tab-glyph" tabindex="-1">
+      <p class="loading" id="loading-status" role="status" hidden>Загружаем локацию...</p>
+      <iframe id="lesson-frame" src="part1_glyph.html" title="Знакомство — трактир Синнабона" allow="autoplay" aria-label="Интерактивная страница урока"></iframe>
+    </section>
+    <div class="page-controls" aria-label="Переход между локациями"><button class="page-button" id="previous-btn" type="button" disabled>Назад</button><button class="page-button primary" id="next-btn" type="button">Далее: башня</button></div>
+    <p class="section-counter" id="section-counter" aria-live="polite">Встреча 1 из 5 · знакомство</p>
+  </main>
+  <nav class="character-menu" aria-label="Локации урока"><div class="menu-inner" role="tablist" aria-label="Выбери персонажа">
+    <button class="character-tab" id="tab-glyph" type="button" role="tab" aria-selected="true" aria-controls="lesson-content" tabindex="0" data-section="glyph" data-page="part1_glyph.html" title="Синнабон: знакомство"><img src="../assets/characters/cinnabon.svg" alt="Синнабон"><span>Трактир</span></button>
+    <button class="character-tab" id="tab-sound" type="button" role="tab" aria-selected="false" aria-controls="lesson-content" tabindex="-1" data-section="sound" data-page="part2_sound.html" title="Магистр Коко: звук и тон"><img src="../assets/characters/wizard.svg" alt="Магистр Коко"><span>Башня</span></button>
+    <button class="character-tab" id="tab-visual" type="button" role="tab" aria-selected="false" aria-controls="lesson-content" tabindex="-1" data-section="visual" data-page="part3_visual.html" title="Жаберт: визуальный образ"><img src="../assets/characters/zhabert.svg" alt="Жаберт"><span>Хижина</span></button>
+    <button class="character-tab" id="tab-reference" type="button" role="tab" aria-selected="false" aria-controls="lesson-content" tabindex="-1" data-section="reference" data-page="part4_reference.html" title="РОБ-ОТ-3000: справка и примеры"><img src="../assets/characters/robot.svg" alt="РОБ-ОТ-3000"><span>Лаборатория</span></button>
+    <button class="character-tab" id="tab-facts" type="button" role="tab" aria-selected="false" aria-controls="lesson-content" tabindex="-1" data-section="facts" data-page="part5_facts.html" title="Шуршик: интересные факты"><img src="../assets/characters/raccoon.svg" alt="Шуршик"><span>Библиотека</span></button>
+  </div></nav>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var tabs = Array.from(document.querySelectorAll(".character-tab"));
+      var frame = document.getElementById("lesson-frame");
+      var panel = document.getElementById("lesson-content");
+      var loading = document.getElementById("loading-status");
+      var previous = document.getElementById("previous-btn");
+      var next = document.getElementById("next-btn");
+      var locations = ["Трактир «Наливай и плач»", "Звуковая башня Магистра Коко", "Хижина Жаберта", "Лаборатория РОБ-ОТ-3000", "Тайная библиотека Шуршика"];
+      var subjects = ["знакомство", "звук и тон", "визуальный образ", "справка и примеры", "интересные факты"];
+      var nextLabels = ["Далее: башня", "Далее: хижина", "Далее: лаборатория", "Далее: библиотека", "К началу урока"];
+      var index = -1;
+      var observer = null;
+      var resizeFrame = null;
+      var loadTimer = null;
+      var lightbox = null;
+      var lightboxFocus = null;
+      var lightboxOverflow = "";
+      function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.remove();
+        lightbox = null;
+        document.body.style.overflow = lightboxOverflow;
+        document.querySelector(".course-shell").inert = false;
+        document.querySelector(".character-menu").inert = false;
+        if (lightboxFocus && lightboxFocus.isConnected) lightboxFocus.focus({ preventScroll: true });
+        lightboxFocus = null;
+      }
+      function openLightbox(src, caption) {
+        closeLightbox();
+        lightboxFocus = frame.contentDocument.activeElement;
+        lightboxOverflow = document.body.style.overflow;
+        lightbox = document.createElement("div");
+        lightbox.className = "course-lightbox";
+        lightbox.setAttribute("role", "dialog");
+        lightbox.setAttribute("aria-modal", "true");
+        lightbox.setAttribute("aria-label", caption || "Просмотр изображения");
+        var image = document.createElement("img");
+        image.src = src;
+        image.alt = caption || "";
+        var text = document.createElement("p");
+        text.textContent = caption || "";
+        var close = document.createElement("button");
+        close.type = "button";
+        close.className = "close-lightbox";
+        close.textContent = "Закрыть изображение";
+        close.addEventListener("click", closeLightbox);
+        lightbox.addEventListener("click", function (event) { if (event.target === lightbox) closeLightbox(); });
+        lightbox.append(image, text, close);
+        document.body.appendChild(lightbox);
+        document.body.style.overflow = "hidden";
+        document.querySelector(".course-shell").inert = true;
+        document.querySelector(".character-menu").inert = true;
+        close.focus();
+      }
+      document.addEventListener("keydown", function (event) {
+        if (!lightbox) return;
+        if (event.key === "Escape") { event.preventDefault(); closeLightbox(); }
+        else if (event.key === "Tab") { event.preventDefault(); lightbox.querySelector("button").focus(); }
+      });
+      function fitFrame() {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(function () {
+          try {
+            var doc = frame.contentDocument;
+            if (!doc || !doc.body) return;
+            var height = Math.ceil(doc.body.getBoundingClientRect().height);
+            if (height > 0) frame.style.height = height + "px";
+          } catch (error) { frame.style.height = "calc(100vh - 180px)"; }
+        });
+      }
+      function onLoad() {
+        clearTimeout(loadTimer);
+        loading.hidden = true;
+        panel.setAttribute("aria-busy", "false");
+        if (observer) observer.disconnect();
+        try {
+          var doc = frame.contentDocument;
+          if (!doc || !doc.body) throw new Error("Document unavailable");
+          doc.body.style.minHeight = "0";
+          doc.documentElement.style.scrollPaddingBottom = "12px";
+          var site = frame.contentWindow.HanziSite;
+          if (site) {
+            site.lightbox = function (src, caption) { openLightbox(new URL(src, doc.baseURI).href, caption); };
+            site.closeOverlays = closeLightbox;
+          }
+          observer = new ResizeObserver(fitFrame);
+          observer.observe(doc.body);
+          if (doc.fonts) doc.fonts.ready.then(fitFrame);
+          fitFrame();
+        } catch (error) { frame.style.height = "calc(100vh - 180px)"; }
+      }
+      function showPanel(target, updateHash, moveFocus) {
+        if (target < 0 || target >= tabs.length) target = 0;
+        var changed = target !== index;
+        index = target;
+        var tab = tabs[index];
+        var section = tab.getAttribute("data-section");
+        tabs.forEach(function (item, i) { item.setAttribute("aria-selected", String(i === index)); item.tabIndex = i === index ? 0 : -1; });
+        document.body.setAttribute("data-section", section);
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", getComputedStyle(document.body).getPropertyValue("--bg").trim());
+        document.getElementById("location-name").textContent = locations[index];
+        document.getElementById("open-page").href = tab.getAttribute("data-page");
+        document.getElementById("section-counter").textContent = "Встреча " + (index + 1) + " из 5 · " + subjects[index];
+        panel.setAttribute("aria-labelledby", tab.id);
+        frame.title = subjects[index] + " — " + locations[index];
+        previous.disabled = index === 0;
+        next.textContent = nextLabels[index];
+        if (updateHash && location.hash !== "#" + section) history.pushState(null, "", "#" + section);
+        if (changed) {
+          closeLightbox();
+          if (observer) observer.disconnect();
+          clearTimeout(loadTimer);
+          loading.textContent = "Загружаем: " + locations[index] + "...";
+          loading.hidden = false;
+          panel.setAttribute("aria-busy", "true");
+          frame.style.height = "850px";
+          try { frame.contentWindow.location.replace(new URL(tab.getAttribute("data-page"), location.href).href); }
+          catch (error) { frame.src = tab.getAttribute("data-page"); }
+          loadTimer = setTimeout(function () { loading.textContent = "Если локация не загрузилась, воспользуйся ссылкой «Открыть отдельно»."; }, 15000);
+          window.scrollTo({ top: 0, behavior: "auto" });
+        }
+        if (moveFocus) panel.focus({ preventScroll: true });
+      }
+      function openHash() {
+        var target = tabs.findIndex(function (tab) { return "#" + tab.getAttribute("data-section") === location.hash; });
+        showPanel(target < 0 ? 0 : target, false, false);
+      }
+      frame.addEventListener("load", onLoad);
+      tabs.forEach(function (tab, i) {
+        tab.addEventListener("click", function () { showPanel(i, true, false); });
+        tab.addEventListener("keydown", function (event) {
+          var target = i;
+          if (event.key === "ArrowRight") target = (i + 1) % tabs.length;
+          else if (event.key === "ArrowLeft") target = (i + tabs.length - 1) % tabs.length;
+          else if (event.key === "Home") target = 0;
+          else if (event.key === "End") target = tabs.length - 1;
+          else return;
+          event.preventDefault();
+          showPanel(target, true, false);
+          tabs[target].focus();
+        });
+      });
+      previous.addEventListener("click", function () { showPanel(index - 1, true, true); });
+      next.addEventListener("click", function () { showPanel((index + 1) % tabs.length, true, true); });
+      window.addEventListener("hashchange", openHash);
+      window.addEventListener("popstate", openHash);
+      window.addEventListener("resize", fitFrame);
+      var navigation = document.querySelector(".character-menu");
+      new ResizeObserver(function () { document.documentElement.style.setProperty("--nav-height", Math.ceil(navigation.getBoundingClientRect().height) + "px"); }).observe(navigation);
+      openHash();
+    });
+  </script>
+</body>
+</html>

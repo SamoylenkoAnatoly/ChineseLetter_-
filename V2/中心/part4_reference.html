@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="ru"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101a26">
+  <title>中心 · zhōng xīn — центр</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/tone.css">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/site-common.js" defer=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js" defer=""></script>
+  <style>
+    :root { --ink: #dfeaf5; --bg: #101a26; --panel: rgba(23, 36, 52, 0.92); --bubble-bg: #dfeaf5; --bubble-border: #0b121b; --accent: #35c0d8; --accent-deep: #1a7f95; --btn-bg: #9fd8e6; }
+    body { font-family: "Nunito", "Noto Sans SC", sans-serif; background: repeating-linear-gradient(0deg, transparent 0 39px, #35c0d81f 39px 40px), repeating-linear-gradient(90deg, transparent 0 39px, #35c0d81f 39px 40px), linear-gradient(#0d1620, #101a26 60%, #0a111a); overflow-wrap: anywhere; }
+    button { font: inherit; cursor: pointer; touch-action: manipulation; } button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #ffe28a; outline-offset: 5px; }
+    button:disabled { opacity: .55; cursor: default; }
+    h1, h2, p { margin: 0; }
+    .lab-shell { max-width: 1180px; margin: auto; padding: max(24px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(28px, env(safe-area-inset-left)); }
+    .route { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: #9fbccc; font-size: 12px; padding: 0 6px 18px; }
+    .route-name { display: flex; align-items: center; gap: 10px; } .route-name::before { content: ""; width: 8px; height: 8px; background: #35c0d8; box-shadow: 0 0 0 3px #1a7f95; }
+    .chapter-track { display: flex; gap: 6px; } .chapter-track span { width: 20px; height: 8px; background: #243d50; border-bottom: 2px solid #04121c; } .chapter-track .visited { background: #497386; } .chapter-track .current { background: #35c0d8; }
+    .lab-room { position: relative; isolation: isolate; background: repeating-linear-gradient(0deg, #172434 0 76px, #0b1825 76px 80px); border: 6px solid #3a586b; box-shadow: inset 0 0 0 3px #0b121b, 7px 7px #060e17; }
+    .lab-room::before, .lab-room::after { content: ""; position: absolute; width: 16px; top: 0; bottom: 36px; background: repeating-linear-gradient(0deg, #4c6a7b 0 24px, #253d4f 24px 28px); border-left: 4px solid #7d9aa9; border-right: 4px solid #0b121b; z-index: -1; pointer-events: none; } .lab-room::before { left: 0; } .lab-room::after { right: 0; }
+    .cable-rail { height: 26px; border-top: 5px solid #7d9aa9; border-bottom: 5px solid #0b121b; background: repeating-linear-gradient(90deg, #35c0d8 0 8px, #243d50 8px 28px); box-shadow: 0 4px #1a7f95; }
+    .lab-header { display: grid; grid-template-columns: 110px minmax(0, 1fr) 110px; gap: 24px; align-items: center; padding: 28px 42px 24px; }
+    .power-bank { display: grid; gap: 10px; padding: 16px; border: 4px solid #4c6a7b; background: #0b1825; box-shadow: 4px 4px #0b121b; }
+    .power-bank i { display: block; height: 12px; background: #1a7f95; border: 2px solid #35c0d8; box-shadow: inset 12px 0 #9fd8e6; } .power-bank i:nth-child(2) { box-shadow: inset 30px 0 #9fd8e6; }
+    .lab-title { min-width: 0; text-align: center; } .eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #9fd8e6; }
+    h1 { font: bold clamp(26px, 4vw, 40px)/1.15 "Courier New", monospace; color: #dfeaf5; margin: 10px 0; text-shadow: 3px 3px #04121c; } .lab-title p { font-size: 12px; color: #9fbccc; line-height: 1.5; }
+    .robot-scene { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 26px; padding: 0 48px 28px; align-items: center; }
+    .robot { text-align: center; } .robot img { display: block; width: 164px; height: 164px; margin: auto; image-rendering: pixelated; filter: drop-shadow(4px 4px #04121c); }
+    .robot-name { display: inline-block; padding: 5px 10px; border: 2px solid #35c0d8; background: #0b1825; font-size: 12px; font-weight: 800; color: #9fd8e6; }
+    .platform { height: 12px; width: 120px; margin: 6px auto 0; background: #4c6a7b; border-top: 4px solid #9fbccc; box-shadow: 0 4px #0b121b; }
+    .robot-dialogue { min-width: 0; background: #dfeaf5; color: #0b121b; border: 3px solid #35c0d8; padding: 20px 24px; box-shadow: 4px 0 #1a7f95, -4px 0 #1a7f95, 0 4px #1a7f95, 0 -4px #1a7f95, 7px 7px #04121c; }
+    .dialogue-label { font-size: 10px; font-weight: 800; letter-spacing: .1em; color: #1a7f95; margin-bottom: 10px; text-transform: uppercase; } .robot-dialogue p { font-size: 14px; line-height: 1.65; }
+    .terminal { margin: 0 42px 28px; background: #04121c; color: #7ef2c5; border: 4px solid #1a7f95; padding: 18px 22px; box-shadow: 4px 4px #0b121b; font-family: "Courier New", "Noto Sans SC", monospace; font-size: 13px; line-height: 1.6; } .terminal p + p { margin-top: 5px; }
+    .terminal-label { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 10px; color: #9fd8e6; letter-spacing: .1em; margin-bottom: 12px; }
+    .terminal-led { width: 8px; height: 8px; background: #7ef2c5; box-shadow: 0 0 0 3px #1a483f; }
+    .lab-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 30px; padding: 0 42px 30px; align-items: start; }
+    .lab-column { display: grid; gap: 26px; min-width: 0; }
+    .instrument { position: relative; min-width: 0; padding: 22px; border: 4px solid #4c6a7b; border-top: 8px solid #7d9aa9; background: var(--panel); box-shadow: inset 0 0 0 3px #0b1825, 5px 5px #060e17; }
+    .instrument::before { content: ""; position: absolute; right: 8px; top: -6px; width: 4px; height: 4px; background: #dfeaf5; box-shadow: -12px 0 #dfeaf5; pointer-events: none; }
+    .section-title { font-size: 18px; color: #35c0d8; margin-bottom: 14px; } .section-note { font-size: 12px; line-height: 1.5; color: #9fbccc; margin-bottom: 16px; }
+    .examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .ex-card { min-width: 0; min-height: 44px; padding: 14px 8px; color: #dfeaf5; background: #0a1a26; border: 2px solid #2a5a6e; box-shadow: 0 3px #04121c; text-align: center; transition: border-color .12s ease, background .12s ease; }
+    .ex-card:hover { border-color: #35c0d8; background: #15313e; } .ex-card[aria-pressed="true"] { border-color: #35c0d8; box-shadow: inset 0 0 0 2px #1a7f95, 0 3px #04121c; }
+    .ex-card.speaking { outline: 2px solid #9fd8e6; outline-offset: 2px; } .ex-card span { display: block; }
+    .ex-card .big { font-family: "Noto Sans SC", sans-serif; font-size: 34px; line-height: 1.3; font-weight: 400; }
+    .ex-card .py { font-size: 15px; font-weight: 800; margin: 5px 0; color: var(--tone, #dfeaf5); } .ex-card .py .tone-text { display: inline; }
+    .ex-card .tr { font-size: 12px; line-height: 1.5; color: #c2d6df; } .ex-card .hint { font-size: 10px; line-height: 1.4; color: #35c0d8; margin-top: 6px; }
+    .scan-monitor { padding: 14px; border: 4px solid #1a7f95; background: #04121c; box-shadow: inset 0 0 0 2px #123546; }
+    #lab-viewer { width: min(100%, 260px); aspect-ratio: 1; margin: auto; background: repeating-linear-gradient(0deg, #0b2532 0 1px, transparent 1px 28px), repeating-linear-gradient(90deg, #0b2532 0 1px, transparent 1px 28px); }
+    #lab-viewer svg { display: block; } .viewer-empty { display: grid; height: 100%; place-items: center; color: #2a5a6e; font: 40px/1 monospace; }
+    .viewer-card canvas { max-width: 100%; }
+    #viewer-status { color: #9fd8e6; font-size: 13px; line-height: 1.5; text-align: center; min-height: 3em; margin: 16px 0; }
+    .action-button { display: block; width: 100%; min-height: 48px; padding: 10px 12px; color: #0b121b; background: #9fd8e6; border: 2px solid #35c0d8; box-shadow: 0 4px #04121c; font-size: 13px; font-weight: 800; } .action-button:not(:disabled):hover { background: #dfeaf5; }
+    .screen { position: relative; display: block; width: 100%; min-height: 44px; padding: 6px; border: 3px solid #1a7f95; background: #04121c; color: #9fd8e6; cursor: zoom-in; }
+    .screen img { display: block; width: 100%; height: 230px; object-fit: contain; } .scanlines { position: absolute; inset: 6px; background: repeating-linear-gradient(0deg, #35c0d812 0 2px, transparent 2px 4px); pointer-events: none; }
+    .mon-cap { display: block; font-size: 12px; line-height: 1.5; padding: 10px 4px 4px; }
+    .compare { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; } .compare .cell { min-width: 0; padding: 14px 10px; border: 2px solid #2a5a6e; background: #0a1a26; font-size: 12px; line-height: 1.6; text-align: center; }
+    .compare .glyph { font: 54px/1.2 "Noto Sans SC", sans-serif; color: #dfeaf5; margin-bottom: 10px; } .compare b { color: #9fd8e6; }
+    #voice-tip { display: none; margin: 0 42px 24px; padding: 12px; border: 2px solid #1a7f95; background: #04121c; color: #9fd8e6; font-size: 13px; }
+    .lab-floor { height: 24px; background: repeating-linear-gradient(90deg, #4c6a7b 0 80px, #253d4f 80px 84px); border-top: 5px solid #0b121b; }
+    .lesson-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; background: #0b121b; color: #9fbccc; padding: 16px 24px; font-size: 11px; }
+    .skip-link { position: fixed; top: -150px; left: 14px; z-index: 100; max-width: calc(100% - 28px); background: #dfeaf5; color: #0b121b; border: 3px solid #35c0d8; padding: 12px; } .skip-link:focus { top: 14px; }
+    .cable-rail { position: relative; }
+    .cable-rail.zap::after { content: ""; position: absolute; top: 7px; left: -14px; width: 14px; height: 12px; background: #ffe28a; box-shadow: 0 0 10px #ffe28a99; animation: zapRun .5s steps(7) forwards; }
+    @keyframes zapRun { 0% { left: -14px; } 100% { left: 100%; } }
+    .hero-button { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
+    .power-line { color: #ffe28a; }
+    .hero-button.casting img { animation: powerFlash .8s steps(4); }
+    @keyframes powerFlash { 0%, 100% { transform: translateX(0); filter: drop-shadow(4px 4px #04121c) brightness(1); } 20% { transform: translateX(-2px); filter: drop-shadow(4px 4px #04121c) brightness(1.9); } 45% { transform: translateX(2px); filter: drop-shadow(4px 4px #04121c) brightness(1.3); } 70% { transform: translateX(-1px); filter: drop-shadow(4px 4px #04121c) brightness(1.7); } }
+    .power-bank { cursor: pointer; font: inherit; }
+    .power-bank.surge i { animation: powerStep .6s steps(1); }
+    .power-bank.surge i:nth-child(2) { animation-delay: .12s; }
+    .power-bank.surge i:nth-child(3) { animation-delay: .24s; }
+    @keyframes powerStep { 0% { box-shadow: inset 0 0 #9fd8e6; background: #1a7f95; } 50% { box-shadow: inset 40px 0 #ffe28a; background: #35c0d8; } 100% { box-shadow: inset 0 0 #9fd8e6; background: #1a7f95; } }
+    @media (max-width: 1000px) { .lab-header { padding: 28px 30px 24px; grid-template-columns: 80px minmax(0, 1fr) 80px; gap: 18px; } .power-bank { padding: 10px; } .robot-scene { padding-left: 34px; padding-right: 34px; grid-template-columns: 144px minmax(0, 1fr); gap: 20px; } .robot img { width: 140px; height: 140px; } .terminal { margin-left: 30px; margin-right: 30px; } .lab-layout { padding-left: 30px; padding-right: 30px; gap: 24px; } .instrument { padding: 18px; } }
+    @media (max-width: 760px) { .lab-shell { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); } .lab-header { grid-template-columns: minmax(0, 1fr); padding: 28px; } .power-bank { display: none; } .robot-scene { grid-template-columns: 116px minmax(0, 1fr); padding: 0 28px 28px; gap: 20px; } .robot img { width: 112px; height: 112px; } .robot-dialogue { padding: 16px; } .lab-layout { grid-template-columns: minmax(0, 1fr); padding: 0 28px 28px; } .terminal { margin: 0 28px 28px; } .examples { grid-template-columns: repeat(3, minmax(0, 1fr)); } .screen img { height: 280px; } }
+    @media (max-width: 480px) { .lab-shell { padding-top: max(16px, env(safe-area-inset-top)); padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); } .route { font-size: 10px; gap: 8px; padding: 0 4px 14px; } .chapter-track { gap: 4px; } .chapter-track span { width: 12px; height: 6px; } .lab-room { border-width: 4px; box-shadow: 4px 4px #060e17; } .lab-room::before, .lab-room::after { width: 10px; border-width: 2px; } .lab-header { padding: 24px 20px; } h1 { font-size: clamp(26px, 7vw, 34px); } .eyebrow { font-size: 9px; } .robot-scene { grid-template-columns: minmax(0, 1fr); padding: 0 24px 28px; gap: 20px; } .robot { justify-self: center; } .robot img { width: 148px; height: 148px; } .robot-dialogue { padding: 16px 14px; } .robot-dialogue p { font-size: 13px; } .terminal { margin: 0 20px 24px; padding: 14px 12px; font-size: 12px; } .lab-layout { padding: 0 20px 26px; gap: 24px; } .instrument { padding: 18px 12px; } .section-title { font-size: 17px; } .examples { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .ex-card { padding: 12px 6px; } .ex-card .big { font-size: 30px; } .ex-card .py { font-size: 14px; } .compare { grid-template-columns: minmax(0, 1fr); } .scan-monitor { padding: 10px; } .screen img { height: 230px; } .lesson-footer { padding: 14px 20px; font-size: 10px; } #voice-tip { margin-left: 20px; margin-right: 20px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+  </style>
+<style>.word-selector { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; } .word-char[aria-pressed="true"] { outline:3px solid #ffe082; } .word-char.complete { background:#28634a; } .stroke-dots { flex-wrap:wrap; } .word-assembly { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px; width:140px; min-height:96px; padding:12px 6px; font-size:24px; color:#f5e8d3; border:5px solid #75835c; background:#1f5044; justify-self:center; } .word-assembly.awake { background:#477055; box-shadow:0 0 14px #e8e3c8; } .word-reference { overflow-wrap:anywhere; } .glyph, .glyph-hero { font-size:clamp(34px,7vw,64px); overflow-wrap:anywhere; } .pinyin-hero, .reading { overflow-wrap:anywhere; } .compare { grid-template-columns:repeat(auto-fit,minmax(80px,1fr)); }</style></head>
+<body>
+  <a class="skip-link" href="#samples">Перейти к образцам</a>
+  <main class="lab-shell tone-1">
+    <header class="route"><span class="route-name">Путь слов · Урок 32</span><div class="chapter-track" role="img" aria-label="Часть 4 из 5"><span class="visited"></span><span class="visited"></span><span class="visited"></span><span class="current"></span><span></span></div></header>
+    <div class="lab-room"><div class="cable-rail" aria-hidden="true"></div>
+      <section class="lab-header" aria-labelledby="lab-title"><button class="power-bank" type="button" aria-label="Щёлкнуть тумблерами питания"><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i></button><div class="lab-title"><span class="eyebrow">Четвёртая остановка · научный модуль</span><h1 id="lab-title">Лаборатория<br>РОБ-ОТ-3000</h1><p>Образцы загружены. Исследуем устройство иероглифов.</p></div><button class="power-bank" type="button" aria-label="Щёлкнуть тумблерами питания"><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i></button></section>
+      <section class="robot-scene" aria-label="Доклад робота"><div class="robot"><button class="hero-button" id="hero-btn" type="button" data-glyph="中心" data-spell="> БИП-БУП! ПИТАНИЕ ВОССТАНОВЛЕНО. СКАНЕР ГОТОВ." aria-label="Пиксельный робот-лаборант с одним жёлтым глазом — нажми, чтобы включить питание"><img src="../assets/characters/robot.svg" alt="" width="164" height="164"></button><span class="robot-name">РОБ-ОТ-3000</span><div class="platform" aria-hidden="true"></div></div><div class="robot-dialogue"><div class="dialogue-label">РОБ-ОТ-3000 · датчики подключены</div><p>БИП-БУП. Объект 中心: центр. Изучаем состав и примеры.</p></div></section>
+      <section class="terminal" aria-label="Результат анализа"><div class="terminal-label">ОБЪЕКТ 中心</div><div class="word-reference">
+
+
+			<p><strong>中 (zhōng)</strong> — 4 черт, ключ №2 丨 «вертикаль». Состав: 口 квадрат + 丨 стрела в центр (урок 3.2).</p>
+
+<p><strong>心 (xīn)</strong> — 4 черт, ключ №61 心 «сердце». Живое сердце из четырёх черт (урок 3.4).</p>
+
+<p><strong>Важно:</strong> не путай с перевёртышем 心中 [xīnzhōng] «в сердце, в мыслях»: одинаковые знаки в другом порядке дают другой смысл!</p>
+
+<p>中心 — «центр; сердцевина». У города, торгового центра и даже спора есть свой 中心.</p>
+
+<p>Примеры:</p>
+<ul>
+<li><strong>市<span>中心</span> (shì <span>zhōng</span><span>xīn</span>)</strong> — центр города.</li>
+<li><strong>购物<span>中心</span> (gòuwù <span>zhōng</span><span>xīn</span>)</strong> — торговый центр.</li>
+<li><strong>他在争论的<span>中心</span>。 (Tā zài zhēnglùn de <span>zhōng</span><span>xīn</span>)</strong> — Он в центре спора.</li>
+</ul>
+
+<p>Слова-родственники (в них один новый иероглиф — <strong>购 (gòu) «покупать»</strong>):</p>
+<ul>
+<li><strong>购物 (gòuwù)</strong> — покупки, шопинг.</li>
+<li><strong>心中 (xīnzhōng)</strong> — в сердце, в мыслях (перевёртыш!).</li>
+</ul>
+			</div><p id="power-line" class="power-line" hidden=""></p></section>
+      <div class="lab-layout">
+        <div class="lab-column">
+          <section class="instrument" id="samples" tabindex="-1" aria-labelledby="samples-title"><h2 class="section-title" id="samples-title">Шкаф образцов</h2><p class="section-note">Знаки слова: выбери любой для сканирования порядка черт.</p><div class="examples"><button class="ex-card" type="button" data-char="中" aria-pressed="false"><span class="big" lang="zh-CN">中</span><span class="py tone-1">zhōng</span><span class="tr">4 черт</span><span class="hint">Скан знака 中</span></button><button class="ex-card" type="button" data-char="心" aria-pressed="false"><span class="big" lang="zh-CN">心</span><span class="py tone-1">xīn</span><span class="tr">4 черт</span><span class="hint">Скан знака 心</span></button></div></section>
+          <section class="instrument" aria-labelledby="archive-title"><h2 class="section-title" id="archive-title">Архив сканов</h2><button class="screen" type="button" data-lightbox="" data-caption="Состав слова 中心" aria-label="Увеличить схему слова 中心"><img src="img/ref_word.svg" alt="Состав слова 中心" width="480" height="480"><span class="scanlines" aria-hidden="true"></span><span class="mon-cap">Состав слова 中心</span></button></section>
+        </div>
+        <div class="lab-column">
+          <section class="instrument viewer-card" aria-labelledby="scanner-title"><h2 class="section-title" id="scanner-title">Сканер черт</h2><div class="scan-monitor"><div id="lab-viewer" aria-label="Экран порядка черт"><div class="viewer-empty" aria-hidden="true">[ + ]</div></div></div><p id="viewer-status" role="status">Выбери образец из шкафа</p><button class="action-button" id="replay-btn" type="button" disabled="">Повторить скан</button></section>
+          <section class="instrument" aria-labelledby="compare-title"><h2 class="section-title" id="compare-title">Порядок знаков</h2><div class="compare"><div class="cell"><div class="glyph" lang="zh-CN">中</div><p>1-й знак · zhōng</p><p>4 черт</p></div><div class="cell"><div class="glyph" lang="zh-CN">心</div><p>2-й знак · xīn</p><p>4 черт</p></div></div></section>
+        </div>
+      </div>
+      <p id="voice-tip" role="status">Не удалось воспроизвести аудио. Проверь подключение и попробуй снова.</p><div class="lab-floor" aria-hidden="true"></div><footer class="lesson-footer"><span>Лаборатория РОБ-ОТ-3000</span><span>中心 · zhōng xīn · часть 4 из 5</span></footer>
+    </div>
+  </main>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var currentChar = null;
+      var writer = null;
+      var writerSize = 0;
+      var version = 0;
+      var resizeTimer = null;
+      var holder = document.getElementById("lab-viewer");
+      var replayBtn = document.getElementById("replay-btn");
+      var viewerStatus = document.getElementById("viewer-status");
+      var motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      function scan(char) {
+        currentChar = char;
+        var request = ++version;
+        replayBtn.disabled = false;
+        if (writer) { writer.pauseAnimation(); writer.cancelQuiz(); writer = null; }
+        holder.replaceChildren();
+        document.querySelectorAll(".ex-card[data-char]").forEach(function (card) { card.setAttribute("aria-pressed", String(card.getAttribute("data-char") === char)); });
+        if (!window.HanziWriter) { viewerStatus.textContent = "Сканер не загрузился. Проверь интернет и обнови страницу."; return; }
+        viewerStatus.textContent = "Сканирование: " + char;
+        var size = holder.clientWidth;
+        writerSize = size;
+        var div = document.createElement("div");
+        holder.appendChild(div);
+        writer = HanziWriter.create(div, char, {
+          width: size,
+          height: size,
+          padding: 10,
+          showOutline: true,
+          strokeColor: "#35c0d8",
+          outlineColor: "#2a5a6e",
+          highlightColor: "#9fe8f5",
+          highlightCompleteColor: "#35c0d8",
+          onLoadCharDataError: function () { if (request === version) viewerStatus.textContent = "Не удалось загрузить черты. Проверь интернет и повтори скан."; }
+        });
+        writer.animateCharacter({ onComplete: function () {
+          if (request !== version) return;
+          viewerStatus.textContent = "Скан завершён: " + char;
+          if (!motion.matches && window.HanziSite) HanziSite.sparkBurst(document.querySelector(".viewer-card"), { count: 30, colors: ["#35c0d8", "#9fe8f5", "#ffffff"] });
+        } });
+      }
+      document.querySelectorAll(".ex-card[data-char]").forEach(function (card) { card.addEventListener("click", function () { scan(card.getAttribute("data-char")); }); });
+      replayBtn.addEventListener("click", function () { if (currentChar) scan(currentChar); });
+      window.addEventListener("resize", function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () { if (currentChar && Math.abs(holder.clientWidth - writerSize) > 1) scan(currentChar); }, 150);
+      });
+      document.addEventListener("visibilitychange", function () { if (!writer) return; if (document.hidden) writer.pauseAnimation(); else writer.resumeAnimation(); });
+
+      var heroButton = document.getElementById("hero-btn");
+      var powerLine = document.getElementById("power-line");
+      var typeTimer = null;
+      var heroTimer = null;
+      var zapTimer = null;
+      heroButton.addEventListener("click", function () {
+        var text = heroButton.getAttribute("data-spell");
+        clearInterval(typeTimer);
+        powerLine.hidden = false;
+        if (motion.matches) { powerLine.textContent = text; return; }
+        powerLine.textContent = "";
+        clearTimeout(heroTimer);
+        heroButton.classList.remove("casting");
+        void heroButton.offsetWidth;
+        heroButton.classList.add("casting");
+        if (window.HanziSite) HanziSite.sparkBurst(document.querySelector(".robot"), { count: 24, colors: ["#35c0d8", "#9fd8e6", "#ffe28a"] });
+        heroTimer = setTimeout(function () { heroButton.classList.remove("casting"); }, 900);
+        var shown = 0;
+        typeTimer = setInterval(function () {
+          shown++;
+          powerLine.textContent = text.slice(0, shown);
+          if (shown >= text.length) clearInterval(typeTimer);
+        }, 24);
+      });
+      document.querySelectorAll(".power-bank").forEach(function (bank) {
+        bank.addEventListener("click", function () {
+          if (motion.matches) return;
+          bank.classList.remove("surge");
+          void bank.offsetWidth;
+          bank.classList.add("surge");
+          var rail = document.querySelector(".cable-rail");
+          rail.classList.remove("zap");
+          void rail.offsetWidth;
+          rail.classList.add("zap");
+          clearTimeout(zapTimer);
+          zapTimer = setTimeout(function () { rail.classList.remove("zap"); bank.classList.remove("surge"); }, 700);
+        });
+      });
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) { clearInterval(typeTimer); clearTimeout(heroTimer); clearTimeout(zapTimer); heroButton.classList.remove("casting"); }
+      });
+    });
+  </script>
+
+
+</body></html>
