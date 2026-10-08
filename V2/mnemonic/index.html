@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6e6c8">
+  <title>Студия Жаберта · Техника запоминания иероглифов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <script src="../assets/site-common.js" defer></script>
+  <style>
+    :root {
+      --ink: #4a3a26; --ink-soft: #8a6b45; --wall: #fdf3dd; --wood: #b5793f; --wood-deep: #8a5a2e;
+      --frame: #b5793f; --frame-soft: #d9c49a; --panel: #fffdf6; --panel-shadow: #d9bd8d;
+      --paint-red: #e2574c; --paint-yellow: #f2b134; --paint-blue: #4a90d9; --paint-green: #63b463; --paint-purple: #9b6fd8;
+      --bubble-bg: #fffdf6; --bubble-border: #b5793f; --btn-bg: #f6e7c6;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Nunito", "Noto Sans SC", sans-serif; color: var(--ink);
+      background: radial-gradient(70% 50% at 15% 0%, #ffe9b81f, transparent 60%), radial-gradient(60% 45% at 90% 10%, #ff9d8026, transparent 55%), linear-gradient(#fdf4df, #f6e6c8 60%, #eed8ab);
+      min-height: 100vh; overflow-wrap: anywhere;
+    }
+    button { font: inherit; touch-action: manipulation; cursor: pointer; color: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible { outline: 3px solid var(--paint-red); outline-offset: 4px; }
+    [hidden] { display: none !important; }
+    h1, h2, p { margin: 0; }
+    .kai { font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; }
+    .skip-link { position: fixed; top: -150px; left: 14px; z-index: 100; max-width: calc(100% - 28px); background: var(--panel); color: var(--ink); border: 3px solid var(--paint-red); padding: 12px; }
+    .skip-link:focus { top: 14px; }
+
+    .studio-shell { max-width: 1020px; margin: auto; padding: max(18px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left)); }
+    .route { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--ink-soft); font-size: 12px; padding: 0 6px 10px; }
+    .route-name { display: flex; align-items: center; gap: 10px; }
+    .route-name::before { content: ""; width: 8px; height: 8px; background: var(--paint-red); box-shadow: 0 0 0 3px #f0dcb4; }
+    .chapter-track { display: flex; gap: 6px; }
+    .chapter-track span { width: 20px; height: 8px; background: #eadbbd; border-bottom: 2px solid #dcc794; }
+    .chapter-track .visited { background: #d9b98a; }
+    .chapter-track .current { background: var(--paint-red); }
+
+    .ceiling { height: 26px; margin: 0 -8px; background: repeating-linear-gradient(90deg, #c98d5a 0 34px, #b5793f 34px 38px, #d9a267 38px 72px); border-top: 8px solid #8a5a2e; border-bottom: 8px solid #8a5a2e; }
+
+    .studio-room { position: relative; isolation: isolate; background: repeating-linear-gradient(0deg, var(--wall) 0 56px, #f7ecd2 56px 60px); border: 6px solid var(--frame); border-top: 0; box-shadow: inset 0 0 0 3px #fff4dc, 8px 8px var(--panel-shadow); }
+    .splat { position: absolute; z-index: -1; opacity: .3; pointer-events: none; border-radius: 46% 54% 52% 48%; }
+    .splat.s1 { width: 90px; height: 60px; background: var(--paint-blue); top: 320px; left: -24px; transform: rotate(-18deg); }
+    .splat.s2 { width: 70px; height: 54px; background: var(--paint-purple); top: 760px; right: -20px; transform: rotate(24deg); }
+    .splat.s3 { width: 110px; height: 60px; background: var(--paint-green); bottom: 420px; left: -30px; transform: rotate(10deg); }
+    .lamp { position: absolute; top: 0; width: 34px; height: 40px; pointer-events: none; z-index: 5; }
+    .lamp::before { content: ""; position: absolute; left: calc(50% - 2px); top: 0; width: 4px; height: 16px; background: var(--wood-deep); }
+    .lamp::after { content: ""; position: absolute; left: 0; bottom: 0; width: 34px; height: 20px; border: 3px solid var(--wood-deep); border-bottom-width: 5px; background: var(--lamp-c, var(--paint-yellow)); box-shadow: 0 6px 0 #f0dcb4; }
+    .lamp.l1 { left: 14%; --lamp-c: var(--paint-red); }
+    .lamp.l2 { right: 14%; --lamp-c: var(--paint-blue); }
+
+    .studio-header { display: grid; grid-template-columns: 128px minmax(0, 1fr) 128px; gap: 22px; align-items: center; padding: 20px 30px 12px; }
+    .studio-window { position: relative; height: 120px; border: 8px solid #e9d9b5; background: linear-gradient(#a7ddf7 0 58%, #ffe9c4 78%, #9fd08a 78%); box-shadow: inset 0 0 0 3px #fff, 5px 5px var(--panel-shadow); }
+    .studio-window::before { content: ""; position: absolute; width: 8px; left: calc(50% - 4px); top: 0; bottom: 0; background: #e9d9b5; }
+    .studio-window::after { content: ""; position: absolute; height: 8px; top: 54%; left: 0; right: 0; background: #e9d9b5; }
+    .sun { position: absolute; right: 12px; top: 12px; width: 26px; height: 26px; background: #ffd93d; box-shadow: 0 0 18px #ffd93d88, 4px 4px #ffb347; }
+    .cloud { position: absolute; left: 14px; top: 26px; width: 36px; height: 12px; background: #ffffff; box-shadow: 44px 16px 0 -2px #ffffff; }
+    .cloud::before { content: ""; position: absolute; left: 8px; top: -8px; width: 18px; height: 10px; background: #ffffff; }
+    .house { position: absolute; left: 20px; bottom: 8px; width: 18px; height: 14px; background: #f3e2c4; border: 2px solid #8a5a2e; }
+    .house::before { content: ""; position: absolute; left: -4px; top: -9px; border-left: 13px solid transparent; border-right: 13px solid transparent; border-bottom: 9px solid var(--paint-red); }
+    .studio-title { min-width: 0; text-align: center; padding: 12px 14px; border: 4px solid var(--frame); background: var(--panel); box-shadow: inset 0 0 0 3px #f0e2c4, 5px 5px var(--panel-shadow); }
+    .eyebrow { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: #b3542e; }
+    h1 { font: bold clamp(22px, 3.2vw, 32px)/1.15 "Courier New", monospace; color: var(--ink); margin: 8px 0; text-shadow: 3px 3px #eadbbd; }
+    .studio-title p { color: var(--ink-soft); font-size: 12px; line-height: 1.5; }
+    .paint-shelf { display: flex; justify-content: center; align-items: end; gap: 12px; height: 72px; border-bottom: 10px solid var(--frame); box-shadow: 0 4px var(--wood-deep); }
+    .jar { position: relative; width: 30px; height: 36px; background: #dceefb; border: 4px solid #9db8cc; box-shadow: inset 5px 0 #c2dcef; transition: transform .15s ease; padding: 0; }
+    .jar::before { content: ""; position: absolute; top: -11px; left: -5px; right: -5px; height: 7px; background: var(--lid, var(--paint-red)); border: 2px solid #8a5a2e; }
+    .jar:nth-child(1) { --lid: var(--paint-red); }
+    .jar:nth-child(2) { --lid: var(--paint-yellow); height: 48px; }
+    .jar:nth-child(3) { --lid: var(--paint-blue); height: 28px; }
+    .jar:nth-child(4) { --lid: var(--paint-green); height: 40px; }
+    .jar.squish { transform: scaleY(.8) translateY(6px); }
+    .brush-cup { position: relative; width: 36px; height: 32px; background: #c98d5a; border: 4px solid var(--wood-deep); }
+    .brush-cup::before, .brush-cup::after { content: ""; position: absolute; bottom: 10px; width: 4px; height: 26px; background: #e0b34c; border: 1px solid #8a5a2e; }
+    .brush-cup::before { left: 7px; transform: rotate(-8deg); }
+    .brush-cup::after { right: 7px; transform: rotate(8deg); background: var(--paint-purple); }
+
+    .host-scene { display: grid; grid-template-columns: 134px minmax(0, 1fr); gap: 22px; padding: 6px 32px 22px; align-items: center; }
+    .host { text-align: center; }
+    .hero-button { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; }
+    .hero-button img { display: block; width: 128px; height: 128px; margin: auto; image-rendering: pixelated; filter: drop-shadow(4px 4px var(--panel-shadow)); }
+    .hero-replica { position: absolute; left: 50%; bottom: calc(100% - 4px); transform: translateX(-50%); z-index: 6; padding: 6px 10px; background: var(--ink); border: 2px solid var(--frame); color: #fff8ea; font-size: 12px; font-weight: 800; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 3px 3px var(--panel-shadow); }
+    .hero-replica.show { opacity: 1; animation: replicaPop 1.7s steps(4) forwards; }
+    @keyframes replicaPop { 0% { opacity: 0; transform: translateX(-50%) translateY(6px); } 12% { opacity: 1; transform: translateX(-50%) translateY(0); } 82% { opacity: 1; } 100% { opacity: 0; } }
+    .swoosh { position: absolute; right: 4px; top: 34px; width: 54px; height: 12px; border: 2px solid #00000026; transform-origin: left center; pointer-events: none; animation: swooshWipe .8s steps(5) forwards; }
+    @keyframes swooshWipe { 0% { transform: rotate(-26deg) scaleX(0); opacity: 1; } 55% { transform: rotate(-26deg) scaleX(1); opacity: 1; } 100% { transform: rotate(-26deg) scaleX(1); opacity: 0; } }
+    .host-name { display: inline-block; margin-top: 8px; color: #ffffff; background: #4e9940; border: 2px solid #35682a; padding: 5px 16px; font-size: 13px; font-weight: 800; }
+    .dialogue { position: relative; min-width: 0; color: var(--ink); background: var(--bubble-bg); border: 3px solid var(--bubble-border); padding: 14px 18px; box-shadow: 4px 0 var(--panel-shadow), -4px 0 var(--panel-shadow), 0 4px var(--panel-shadow), 0 -4px var(--panel-shadow), 7px 7px var(--panel-shadow); }
+    .dialogue::before { content: ""; position: absolute; width: 12px; height: 12px; left: -15px; top: 36px; background: var(--bubble-bg); border-left: 3px solid var(--bubble-border); border-bottom: 3px solid var(--bubble-border); }
+    .dialogue-label { color: #b3542e; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+    .dialogue p { font-size: 13px; line-height: 1.55; }
+    .dialogue p + p { margin-top: 8px; }
+
+    .zone-title { padding: 0 32px 10px; }
+    .zone-title h2 { font-size: 20px; color: var(--ink); }
+    .zone-title p { margin-top: 6px; font-size: 13px; line-height: 1.6; color: var(--ink-soft); max-width: 720px; }
+
+    .problem-zone { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 24px; padding: 4px 32px 22px; align-items: start; }
+    .wood-panel { min-width: 0; padding: 16px; border: 5px solid var(--frame); background: var(--panel); box-shadow: inset 0 0 0 3px #f0e2c4, 5px 5px var(--panel-shadow); }
+    .wood-panel h2 { color: var(--ink); font-size: 20px; margin-bottom: 10px; }
+    .wood-panel p { font-size: 13px; line-height: 1.6; }
+    .mode-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+    .mode-btn { min-height: 42px; padding: 8px; border: 3px solid var(--frame); background: var(--btn-bg); box-shadow: 0 4px var(--wood-deep); font-size: 13px; font-weight: 800; transition: transform .12s ease; }
+    .mode-btn:active { transform: translateY(3px); box-shadow: 0 1px var(--wood-deep); }
+    .mode-btn[aria-pressed="true"] { background: var(--paint-yellow); }
+    .mode-screen { display: grid; place-items: center; gap: 8px; min-height: 118px; padding: 12px; border: 3px solid var(--frame-soft); background: #ffffff; }
+    .mode-glyph { font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 54px; line-height: 1; color: var(--paint-red); }
+    .mode-glyph.abc { font-family: "Nunito", sans-serif; font-weight: 800; color: var(--paint-blue); }
+    .mode-note { font-size: 13px; line-height: 1.55; text-align: center; }
+
+    .art-frame { display: block; width: 100%; min-width: 0; padding: 6px; border: 3px solid var(--frame); background: var(--panel); color: var(--ink); box-shadow: 4px 4px var(--panel-shadow); cursor: zoom-in; text-align: center; }
+    .art-frame img { display: block; width: 100%; object-fit: contain; background: #ffffff; }
+    .problem-zone .art-frame img { max-width: 340px; margin: 0 auto; }
+    .art-caption { display: block; font-size: 12px; line-height: 1.5; padding: 7px 6px 3px; }
+    .taped { position: relative; }
+    .taped::before { content: ""; position: absolute; top: -9px; left: calc(50% - 34px); width: 68px; height: 18px; background: var(--paint-yellow); opacity: .85; transform: rotate(-3deg); border: 1px solid #00000014; }
+
+    .orders-zone { padding: 4px 32px 26px; scroll-margin-top: 24px; }
+    .order-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 14px; }
+    .order-tab { position: relative; width: 78px; padding: 8px 4px 6px; border: 3px solid var(--frame-soft); background: var(--panel); box-shadow: 3px 3px var(--panel-shadow); text-align: center; }
+    .order-tab::before, .order-tab::after { content: ""; position: absolute; top: -7px; width: 22px; height: 14px; background: var(--paint-yellow); opacity: .8; }
+    .order-tab::before { left: 8px; transform: rotate(-6deg); }
+    .order-tab::after { right: 8px; transform: rotate(5deg); }
+    .t-glyph { display: block; font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 26px; line-height: 1.1; color: var(--ink); }
+    .t-pinyin { display: block; font-size: 11px; font-weight: 800; color: #b3542e; margin-top: 2px; }
+    .t-check { display: none; position: absolute; right: -8px; top: -8px; width: 22px; height: 22px; background: var(--paint-green); border: 3px solid #ffffff; color: #ffffff; font-size: 12px; font-weight: 800; line-height: 16px; text-align: center; }
+    .order-tab[aria-pressed="true"] { border-color: var(--paint-red); box-shadow: 3px 3px var(--paint-red); }
+    .order-tab.done .t-check { display: block; }
+
+    .easel { max-width: 780px; margin: 0 auto; }
+    .easel-canvas { position: relative; padding: 14px 16px 16px; background: var(--panel); border: 8px solid var(--frame); box-shadow: inset 0 0 0 3px var(--wood-deep), 7px 7px var(--panel-shadow); }
+    .easel-legs { position: relative; height: 40px; }
+    .easel-legs i { position: absolute; top: -6px; width: 14px; height: 42px; background: var(--wood-deep); border: 3px solid #6e4522; }
+    .easel-legs i:first-child { left: 10%; transform: skewX(14deg); }
+    .easel-legs i:last-child { right: 10%; transform: skewX(-14deg); }
+    .order-status { text-align: center; font-size: 13px; font-weight: 700; color: var(--ink-soft); min-height: 1.6em; }
+    .slots-row { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 12px 0; flex-wrap: wrap; }
+    .slot { width: 70px; height: 70px; display: grid; place-items: center; border: 3px dashed #c9b48a; background: #fbf4e2; }
+    .slot .slot-glyph { font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 38px; line-height: 1; color: transparent; }
+    .slot.filled { border-style: solid; border-color: var(--frame); background: #ffffff; }
+    .slot.filled .slot-glyph { color: var(--ink); animation: popIn .3s steps(3); }
+    .op { font-size: 24px; font-weight: 800; color: var(--frame); }
+    .result-slot { width: 96px; height: 96px; display: grid; place-items: center; border: 4px solid var(--frame); background: #ffffff; box-shadow: inset 0 0 0 3px #f0e2c4; }
+    .result-slot .slot-glyph { font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 62px; line-height: 1; color: #dcc794; }
+    .result-slot.filled .slot-glyph { animation: popIn .35s steps(4); }
+    @keyframes popIn { 0% { transform: scale(.3); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+    .chips-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+    .chip { display: grid; gap: 2px; justify-items: center; min-width: 108px; padding: 8px 12px; border: 3px solid var(--frame); background: #ffffff; box-shadow: 0 4px var(--wood-deep); transition: transform .12s ease; }
+    .chip:active { transform: translateY(3px); box-shadow: 0 1px var(--wood-deep); }
+    .c-glyph { font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 32px; line-height: 1.1; }
+    .c-label { font-size: 12px; font-weight: 800; color: var(--ink-soft); }
+    .chip[disabled] { opacity: .4; cursor: default; }
+    .story-box { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 16px; align-items: start; margin-top: 12px; padding-top: 12px; border-top: 3px dashed #e5d3ae; }
+    .pinyin-chip { display: inline-block; padding: 3px 12px; color: #ffffff; font-size: 13px; font-weight: 800; border: 2px solid #00000022; }
+    .story-text p { margin-top: 8px; font-size: 13px; line-height: 1.55; }
+    .story-art img { height: 150px; }
+    .order-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
+    .action-button { min-height: 48px; padding: 10px 14px; border: 3px solid var(--frame); background: var(--btn-bg); box-shadow: 0 4px var(--wood-deep); font-size: 13px; font-weight: 800; transition: transform .12s ease; }
+    .action-button:hover { background: #fff3d8; }
+    .action-button:active { transform: translateY(3px); box-shadow: 0 1px var(--wood-deep); }
+    .action-button.primary { background: var(--paint-yellow); }
+    .action-button:disabled { opacity: .4; cursor: default; }
+    .dots { display: flex; gap: 6px; }
+    .dots span { width: 16px; height: 10px; background: #eadbbd; border-bottom: 2px solid #dcc794; }
+    .dots span.done { background: var(--paint-green); }
+    .dots span.cur { background: var(--paint-red); }
+    .fly-glyph { position: fixed; z-index: 95; width: 48px; height: 48px; display: grid; place-items: center; font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 40px; line-height: 1; color: var(--ink); pointer-events: none; transition: transform .55s ease, opacity .55s ease; }
+
+    .gallery-zone { padding: 4px 32px 24px; }
+    .gallery-wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 12px; }
+    .gallery-wall .art-frame img { height: 150px; }
+
+    .finale-zone { padding: 4px 32px 26px; }
+    .checklist { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+    .checklist li { position: relative; padding-left: 34px; font-size: 14px; line-height: 1.6; }
+    .checklist li::before { content: ""; position: absolute; left: 2px; top: 5px; width: 14px; height: 14px; border-radius: 50%; background: var(--c, var(--paint-red)); border: 3px solid var(--wood-deep); }
+    .checklist li:nth-child(1) { --c: var(--paint-red); }
+    .checklist li:nth-child(2) { --c: var(--paint-yellow); }
+    .checklist li:nth-child(3) { --c: var(--paint-blue); }
+    .signature { margin-top: 18px; font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 20px; color: var(--paint-purple); }
+    .glyph-row { margin-top: 8px; font-family: "KaiTi", "STKaiti", "Noto Sans SC", serif; font-size: 22px; letter-spacing: 10px; color: var(--ink-soft); }
+
+    .studio-floor { position: relative; height: 64px; background: repeating-linear-gradient(90deg, #c98d5a 0 90px, #b5793f 90px 94px); border-top: 5px solid var(--wood-deep); overflow: hidden; }
+    .blob { position: absolute; top: 16px; width: 48px; height: 28px; border: 3px solid #00000026; border-radius: 46% 54% 60% 40%; padding: 0; transition: transform .15s ease; }
+    .blob.b1 { left: 12%; background: var(--paint-red); transform: rotate(-8deg); }
+    .blob.b2 { left: 46%; background: var(--paint-yellow); transform: rotate(6deg); }
+    .blob.b3 { right: 14%; background: var(--paint-blue); transform: rotate(-4deg); }
+    .blob.squish { transform: scale(.82, .6) rotate(0deg); }
+    .ripple { position: absolute; width: 22px; height: 22px; border: 3px solid #ffffff; border-radius: 50%; opacity: 0; pointer-events: none; }
+    .ripple.go { animation: rippleGrow .7s steps(4) forwards; }
+    @keyframes rippleGrow { 0% { opacity: .9; transform: scale(.4); } 100% { opacity: 0; transform: scale(3); } }
+
+    .lesson-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; color: #fff4dc; padding: 16px 24px; background: var(--frame); font-size: 11px; }
+    .no-script { margin: 20px 28px; padding: 18px; border: 3px solid var(--frame); background: var(--panel); font-size: 13px; line-height: 1.6; }
+
+    @media (max-width: 1000px) {
+      .studio-header { grid-template-columns: 100px minmax(0, 1fr) 100px; padding: 16px 24px 10px; gap: 16px; }
+      .host-scene { padding: 4px 26px 18px; gap: 18px; grid-template-columns: 118px minmax(0, 1fr); }
+      .hero-button img { width: 112px; height: 112px; }
+      .problem-zone { padding: 4px 26px 18px; gap: 20px; }
+      .zone-title, .orders-zone, .gallery-zone { padding-left: 26px; padding-right: 26px; }
+      .finale-zone { padding: 4px 26px 22px; }
+      .story-box { grid-template-columns: minmax(0, 1fr) 200px; }
+    }
+    @media (max-width: 760px) {
+      .studio-shell { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+      .studio-header { grid-template-columns: 84px minmax(0, 1fr); padding: 16px 20px 12px; gap: 16px; }
+      .paint-shelf { display: none; }
+      .studio-window { height: 104px; border-width: 6px; }
+      .lamp.l2 { display: none; }
+      .host-scene { grid-template-columns: 96px minmax(0, 1fr); padding: 4px 22px 18px; gap: 14px; }
+      .hero-button img { width: 92px; height: 92px; }
+      .dialogue { padding: 12px; }
+      .problem-zone { grid-template-columns: minmax(0, 1fr); padding: 4px 22px 18px; gap: 20px; }
+      .zone-title, .orders-zone, .gallery-zone { padding-left: 22px; padding-right: 22px; }
+      .gallery-wall { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .story-box { grid-template-columns: minmax(0, 1fr); }
+      .story-art img { height: 170px; }
+      .finale-zone { padding: 4px 22px 20px; }
+      .order-tab { width: 68px; }
+    }
+    @media (max-width: 480px) {
+      .studio-shell { padding-top: max(16px, env(safe-area-inset-top)); padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+      .route { font-size: 10px; gap: 8px; padding: 0 4px 8px; }
+      .chapter-track { gap: 4px; }
+      .chapter-track span { width: 12px; height: 6px; }
+      .ceiling { height: 20px; border-width: 6px; }
+      .studio-room { border-width: 4px; box-shadow: inset 0 0 0 2px #fff4dc, 5px 5px var(--panel-shadow); }
+      .studio-header { grid-template-columns: minmax(0, 1fr); padding: 16px 16px 12px; position: relative; }
+      .studio-window { position: absolute; width: 72px; height: 96px; top: 190px; right: 20px; pointer-events: none; }
+      .lamp.l1 { left: 6%; }
+      .studio-title { padding: 12px 10px; }
+      .host-scene { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 0 18px 18px; }
+      .host { justify-self: center; }
+      .hero-button img { width: 120px; height: 120px; }
+      .dialogue::before { left: 24px; top: -15px; border-bottom: 0; border-left: 3px solid var(--bubble-border); border-right: 3px solid transparent; border-top: 3px solid var(--bubble-border); }
+      .zone-title, .orders-zone, .gallery-zone { padding-left: 18px; padding-right: 18px; }
+      .finale-zone { padding: 4px 18px 20px; }
+      .wood-panel { padding: 14px 12px; border-width: 4px; }
+      .mode-glyph { font-size: 44px; }
+      .slot { width: 58px; height: 58px; }
+      .slot .slot-glyph { font-size: 32px; }
+      .result-slot { width: 82px; height: 82px; }
+      .result-slot .slot-glyph { font-size: 52px; }
+      .gallery-wall { grid-template-columns: minmax(0, 1fr); }
+      .order-nav { flex-wrap: wrap; justify-content: center; }
+      .order-nav .action-button { flex: 1 1 40%; }
+      .lesson-footer { padding: 14px 20px; font-size: 10px; }
+      .no-script { margin: 16px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#orders-zone">Перейти к мастерской заказов</a>
+  <main class="studio-shell">
+    <header class="route"><span class="route-name">Путь иероглифа · Мастерская памяти</span><div class="chapter-track" role="img" aria-label="Прогресс по разделам"><span class="current"></span><span></span><span></span><span></span><span></span></div></header>
+    <div class="ceiling" aria-hidden="true"></div>
+    <div class="studio-room">
+      <span class="splat s1" aria-hidden="true"></span><span class="splat s2" aria-hidden="true"></span><span class="splat s3" aria-hidden="true"></span>
+      <span class="lamp l1" aria-hidden="true"></span><span class="lamp l2" aria-hidden="true"></span>
+      <section class="studio-header" aria-labelledby="studio-title">
+        <div class="studio-window" aria-hidden="true"><span class="sun"></span><span class="cloud"></span><span class="house"></span></div>
+        <div class="studio-title"><span class="eyebrow">Мастерская памяти · техника запоминания</span><h1 id="studio-title">Студия<br>Жаберта</h1><p>Каждый иероглиф — картина. Смотри, собирай, запоминай!</p></div>
+        <div class="paint-shelf"><button class="jar" type="button" aria-label="Банка с красной краской"></button><button class="jar" type="button" aria-label="Банка с жёлтой краской"></button><button class="jar" type="button" aria-label="Банка с синей краской"></button><button class="jar" type="button" aria-label="Банка с зелёной краской"></button><span class="brush-cup" aria-hidden="true"></span></div>
+      </section>
+      <section class="host-scene" data-track="0" aria-label="Встреча с Жабертом">
+        <div class="host"><button class="hero-button" id="hero-btn" type="button" aria-label="Лягушка Жаберт в берете с палитрой — нажми, чтобы получить совет"><img src="assets/zhabert-artist.svg" alt="" width="164" height="164"><span class="hero-replica" aria-live="polite"></span></button><span class="host-name">Жаберт · художник</span></div>
+        <div class="dialogue"><div class="dialogue-label">Жаберт · лягушка-художник</div>
+          <p><b>Ква-а!</b> Добро пожаловать в мою светлую студию, путник. Здесь я пишу не натюрморты, а <b>картины-истории</b> для иероглифов.</p>
+          <p>Дело в том, что в русской азбуке буква — это всего лишь <b>звук</b>. А китайский иероглиф — сразу <b>целое слово-образ</b>! Мозг не привык запоминать тысячи абстрактных значков прописыванием. Поэтому мы будем <b>рисовать в воображении</b>. Начнём?</p>
+        </div>
+      </section>
+      <section class="problem-zone" data-track="1" aria-labelledby="problem-title">
+        <div class="wood-panel"><h2 id="problem-title">Почему зубрёжка не работает</h2>
+          <p>Проверь сам: нажимай кнопки и сравни, как устроены две системы письма.</p>
+          <div class="mode-btns"><button class="mode-btn" id="mode-abc" type="button" aria-pressed="false">Азбука</button><button class="mode-btn" id="mode-hanzi" type="button" aria-pressed="true">Иероглифы</button></div>
+          <div class="mode-screen" aria-live="polite"><span class="mode-glyph kai" id="mode-glyph" lang="zh-CN">猫</span><p class="mode-note" id="mode-note"><b lang="zh-CN">猫</b> = māo — «кошка». Один знак — целое слово, а таких знаков — тысячи!</p></div>
+          <p id="mode-status" role="status">Многократное прописывание почти не оставляет следа: мозгу не за что «зацепиться».</p>
+        </div>
+        <div class="wood-panel"><h2>Так выглядит «просто выучить»</h2>
+          <button class="art-frame taped" type="button" data-lightbox data-caption="Кот и иероглиф 猫: хроника зубрёжки"><img src="img/comic_cat.jpg" alt="Комикс: кот прописывает иероглиф 猫 день за днём и срывается" width="603" height="603"><span class="art-caption">День 1 → День 15 → День 40. «ПРОКЛЯТЫЙ МАО!» Знакомо? Нажми, чтобы рассмотреть.</span></button>
+        </div>
+      </section>
+      <section class="orders-zone" id="orders-zone" data-track="2" aria-labelledby="orders-title" tabindex="-1">
+        <div class="zone-title"><h2 id="orders-title">Мастерская принимает заказы</h2><p>Пять иероглифов ждут своей картины. Собери каждый из <b>деталей-образов</b> — и Жаберт расскажет историю, которая засядет в памяти.</p></div>
+        <div class="order-tabs" id="order-tabs" aria-label="Заказы-иероглифы"></div>
+        <div class="easel">
+          <div class="easel-canvas" id="easel-canvas">
+            <p class="order-status" id="order-status" role="status"></p>
+            <div class="slots-row">
+              <div class="slot" id="slot-0"><span class="slot-glyph" id="slot-glyph-0"></span></div>
+              <span class="op" aria-hidden="true">+</span>
+              <div class="slot" id="slot-1"><span class="slot-glyph" id="slot-glyph-1"></span></div>
+              <span class="op" aria-hidden="true">=</span>
+              <div class="result-slot" id="result-slot"><span class="slot-glyph" id="result-glyph">?</span></div>
+            </div>
+            <div class="chips-row" id="chips-row"></div>
+            <div class="story-box" id="story-box" hidden>
+              <div class="story-text"><span class="pinyin-chip" id="pinyin-chip"></span><p id="story-text"></p></div>
+              <button class="art-frame taped story-art" type="button" id="story-art" data-lightbox data-caption="Ассоциация"><img id="story-img" src="img/hao_family.jpg" alt="" width="480" height="320"><span class="art-caption" id="story-cap"></span></button>
+            </div>
+            <div class="order-nav"><button class="action-button" id="prev-btn" type="button">← Прошлый</button><div class="dots" id="order-dots" aria-hidden="true"></div><button class="action-button primary" id="next-btn" type="button">Следующий →</button></div>
+          </div>
+          <div class="easel-legs" aria-hidden="true"><i></i><i></i></div>
+        </div>
+      </section>
+      <section class="gallery-zone" data-track="3" aria-labelledby="gallery-title">
+        <div class="zone-title"><h2 id="gallery-title">Выставка абсурда · <span lang="zh-CN">子</span> (zǐ — ребёнок)</h2><p>Чем <b>ярче и абсурднее</b> история, тем прочнее след в памяти: работает правое полушарие — творчество и образы. Вот что нарисовали ученики студии для иероглифа <b lang="zh-CN">子</b>. Нажимай на картины!</p></div>
+        <div class="gallery-wall">
+          <button class="art-frame taped" type="button" data-lightbox data-caption="子 как кресло геймера: Quest — Level up!"><img src="img/zi_gamer.jpg" alt="Мальчик-геймер в кресле, похожем на иероглиф 子" width="480" height="320"><span class="art-caption"><span lang="zh-CN">子</span> — кресло геймера. Quest: Level up!</span></button>
+          <button class="art-frame taped" type="button" data-lightbox data-caption="子 как детская площадка"><img src="img/zi_playground.jpg" alt="Детская площадка, где качели и горки складываются в иероглиф 子" width="480" height="320"><span class="art-caption"><span lang="zh-CN">子</span> — иероглиф-площадка: качели и горки!</span></button>
+          <button class="art-frame taped" type="button" data-lightbox data-caption="子 — ребёнок в костюмчике"><img src="img/zi_baby.jpg" alt="Малыш в жёлтом костюме в форме иероглифа 子" width="480" height="320"><span class="art-caption">Самый честный образ: <span lang="zh-CN">子</span> — просто <b>ребёнок</b>.</span></button>
+        </div>
+      </section>
+      <section class="finale-zone" data-track="4" aria-labelledby="finale-title">
+        <div class="wood-panel"><h2 id="finale-title">Метод Жаберта — 3 шага</h2>
+          <ol class="checklist">
+            <li><b>Разбей иероглиф</b> на знакомые детали-образы: 女 + 子, 手 + 目, 日 + 一.</li>
+            <li><b>Придумай яркую, даже абсурдную историю</b> — картинку, где детали играют роли.</li>
+            <li><b>Свяжи картинку со смыслом</b> и оживи её в воображении — хотя бы раз в день.</li>
+          </ol>
+          <p class="signature">Твой художник — Жаберт. Ква!</p>
+          <p class="glyph-row" lang="zh-CN">好看旦囚打</p>
+        </div>
+      </section>
+      <div class="studio-floor"><button class="blob b1" type="button" aria-label="Пятно краски на полу"></button><button class="blob b2" type="button" aria-label="Пятно краски на полу"></button><button class="blob b3" type="button" aria-label="Пятно краски на полу"></button></div>
+      <footer class="lesson-footer"><span>Студия Жаберта · мастерская памяти</span><span>好 · 看 · 旦 · 囚 · 打 — техника запоминания</span></footer>
+    </div>
+    <noscript><div class="no-script"><p>Интерактивные виджеты требуют JavaScript. Включи его в браузере — или читай текст урока: он доступен и так.</p></div></noscript>
+  </main>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var toneColors = (window.HanziSite && HanziSite.toneColors) || { 1: "#e53935", 2: "#fb8c00", 3: "#29b6f6", 4: "#8e24aa", 0: "#9e9e9e" };
+
+      var ORDERS = [
+        { glyph: "好", pinyin: "hǎo", tone: 3, meaning: "хороший", parts: [{ g: "女", label: "женщина" }, { g: "子", label: "ребёнок" }], story: "ЖЕНЩИНА с РЕБЁНКОМ на руках — классическая картина добра и гармонии. Так рождается 好!", img: "img/hao_family.jpg", caption: "好 = женщина + ребёнок" },
+        { glyph: "看", pinyin: "kàn", tone: 4, meaning: "смотреть, видеть", parts: [{ g: "手", label: "рука" }, { g: "目", label: "глаз" }], story: "РУКА козырьком у ГЛАЗ: пират-кот вглядывается вдаль. Логичная связь — и ты её больше не забудешь!", img: "img/kan_pirate.jpg", caption: "看 = рука + глаз" },
+        { glyph: "旦", pinyin: "dàn", tone: 4, meaning: "рассвет, утро", parts: [{ g: "日", label: "солнце" }, { g: "一", label: "горизонт" }], story: "СОЛНЦЕ поднимается над ГОРИЗОНТОМ. Шесть утра, «эх, снова на работу!» — это и есть 旦.", img: "img/dan_dawn.jpg", caption: "旦 = солнце + горизонт" },
+        { glyph: "囚", pinyin: "qiú", tone: 2, meaning: "пленник, заключённый", parts: [{ g: "人", label: "человек" }, { g: "囗", label: "клетка" }], story: "ЧЕЛОВЕК внутри КЛЕТКИ — заключённый. И даже плазменный телевизор не дали!", img: "img/qiu_prisoner.jpg", caption: "囚 = человек + клетка" },
+        { glyph: "打", pinyin: "dǎ", tone: 3, meaning: "бить, ударять; делать", parts: [{ g: "手", label: "рука" }, { g: "丁", label: "гвоздь" }], story: "РУКА бьёт молотком по ГВОЗДЮ: кот-мастер чинит дом. 打 — бить и делать!", img: "img/da_nail.jpg", caption: "打 = рука + гвоздь" }
+      ];
+      var placed = ORDERS.map(function () { return [false, false]; });
+      var done = ORDERS.map(function () { return false; });
+      var cur = 0;
+
+      var tabsWrap = document.getElementById("order-tabs");
+      var chipsRow = document.getElementById("chips-row");
+      var statusEl = document.getElementById("order-status");
+      var resultSlot = document.getElementById("result-slot");
+      var resultGlyph = document.getElementById("result-glyph");
+      var storyBox = document.getElementById("story-box");
+      var pinyinChip = document.getElementById("pinyin-chip");
+      var storyText = document.getElementById("story-text");
+      var storyImg = document.getElementById("story-img");
+      var storyCap = document.getElementById("story-cap");
+      var storyArt = document.getElementById("story-art");
+      var dotsWrap = document.getElementById("order-dots");
+      var prevBtn = document.getElementById("prev-btn");
+      var nextBtn = document.getElementById("next-btn");
+
+      var tabEls = ORDERS.map(function (o, i) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "order-tab";
+        b.setAttribute("aria-pressed", "false");
+        b.setAttribute("aria-label", "Заказ " + (i + 1) + ": " + o.glyph + " (" + o.pinyin + " — " + o.meaning + ")");
+        b.innerHTML = '<span class="t-glyph" lang="zh-CN"></span><span class="t-pinyin"></span><span class="t-check" aria-hidden="true">✓</span>';
+        b.querySelector(".t-glyph").textContent = o.glyph;
+        b.querySelector(".t-pinyin").textContent = o.pinyin;
+        b.addEventListener("click", function () { cur = i; render(); });
+        tabsWrap.appendChild(b);
+        return b;
+      });
+      for (var d = 0; d < ORDERS.length; d++) { dotsWrap.appendChild(document.createElement("span")); }
+      var dotEls = dotsWrap.children;
+
+      function flyGlyph(fromEl, toEl, text, onDone) {
+        if (motionQuery.matches || !fromEl || !toEl) { onDone(); return; }
+        var r1 = fromEl.getBoundingClientRect();
+        var r2 = toEl.getBoundingClientRect();
+        var fly = document.createElement("span");
+        fly.className = "fly-glyph";
+        fly.setAttribute("lang", "zh-CN");
+        fly.textContent = text;
+        fly.style.left = (r1.left + r1.width / 2 - 24) + "px";
+        fly.style.top = (r1.top + r1.height / 2 - 24) + "px";
+        document.body.appendChild(fly);
+        void fly.offsetWidth;
+        var dx = (r2.left + r2.width / 2) - (r1.left + r1.width / 2);
+        var dy = (r2.top + r2.height / 2) - (r1.top + r1.height / 2);
+        fly.style.transform = "translate(" + dx + "px," + dy + "px) scale(.9)";
+        fly.style.opacity = ".2";
+        setTimeout(function () { if (fly.parentNode) fly.parentNode.removeChild(fly); onDone(); }, 560);
+      }
+
+      function completeOrder(i) {
+        if (done[i]) return;
+        done[i] = true;
+        var o = ORDERS[i];
+        resultGlyph.textContent = o.glyph;
+        resultGlyph.style.color = toneColors[o.tone] || "#4a3a26";
+        resultSlot.classList.add("filled");
+        pinyinChip.textContent = o.pinyin + " · " + o.meaning;
+        pinyinChip.style.background = toneColors[o.tone] || "#4a3a26";
+        storyText.innerHTML = "";
+        var strong = document.createElement("b");
+        strong.setAttribute("lang", "zh-CN");
+        strong.textContent = o.glyph;
+        storyText.appendChild(strong);
+        storyText.appendChild(document.createTextNode(" " + o.story));
+        storyImg.src = o.img;
+        storyImg.alt = o.caption + " — ассоциация из урока";
+        storyCap.textContent = o.caption + ". Нажми, чтобы рассмотреть.";
+        storyArt.setAttribute("data-caption", o.caption);
+        storyBox.hidden = false;
+        tabEls[i].classList.add("done");
+        if (window.HanziSite && HanziSite.sparkBurst && !motionQuery.matches) HanziSite.sparkBurst(resultSlot);
+        render();
+      }
+
+      function placePart(i, partIdx, fromEl) {
+        if (done[i] || placed[i][partIdx]) return;
+        var slot = document.getElementById("slot-" + partIdx);
+        var slotGlyph = document.getElementById("slot-glyph-" + partIdx);
+        flyGlyph(fromEl, slot, ORDERS[i].parts[partIdx].g, function () {
+          if (done[i] || placed[i][partIdx]) return;
+          placed[i][partIdx] = true;
+          slotGlyph.textContent = ORDERS[i].parts[partIdx].g;
+          slot.classList.add("filled");
+          render();
+          if (placed[i][0] && placed[i][1]) setTimeout(function () { completeOrder(i); }, motionQuery.matches ? 0 : 250);
+        });
+      }
+
+      function render() {
+        var o = ORDERS[cur];
+        tabEls.forEach(function (t, i) {
+          t.setAttribute("aria-pressed", i === cur ? "true" : "false");
+          t.classList.toggle("done", done[i]);
+        });
+        for (var k = 0; k < 2; k++) {
+          var slot = document.getElementById("slot-" + k);
+          var slotGlyph = document.getElementById("slot-glyph-" + k);
+          slotGlyph.textContent = placed[cur][k] ? o.parts[k].g : "";
+          slot.classList.toggle("filled", placed[cur][k]);
+        }
+        if (done[cur]) {
+          resultGlyph.textContent = o.glyph;
+          resultGlyph.style.color = toneColors[o.tone] || "#4a3a26";
+          resultSlot.classList.add("filled");
+          pinyinChip.textContent = o.pinyin + " · " + o.meaning;
+          pinyinChip.style.background = toneColors[o.tone] || "#4a3a26";
+          storyText.innerHTML = "";
+          var strong = document.createElement("b");
+          strong.setAttribute("lang", "zh-CN");
+          strong.textContent = o.glyph;
+          storyText.appendChild(strong);
+          storyText.appendChild(document.createTextNode(" " + o.story));
+          storyImg.src = o.img;
+          storyImg.alt = o.caption + " — ассоциация из урока";
+          storyCap.textContent = o.caption + ". Нажми, чтобы рассмотреть.";
+          storyArt.setAttribute("data-caption", o.caption);
+          storyBox.hidden = false;
+        } else {
+          resultGlyph.textContent = "?";
+          resultGlyph.style.color = "#dcc794";
+          resultSlot.classList.remove("filled");
+          storyBox.hidden = true;
+        }
+        chipsRow.innerHTML = "";
+        o.parts.forEach(function (p, pi) {
+          var chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "chip";
+          if (done[cur] || placed[cur][pi]) chip.disabled = true;
+          chip.setAttribute("aria-label", "Деталь " + p.g + " — " + p.label);
+          chip.innerHTML = '<span class="c-glyph" lang="zh-CN"></span><span class="c-label"></span>';
+          chip.querySelector(".c-glyph").textContent = p.g;
+          chip.querySelector(".c-label").textContent = p.label;
+          chip.addEventListener("click", function () {
+            if (chip.disabled) return;
+            chip.disabled = true;
+            placePart(cur, pi, chip);
+          });
+          chipsRow.appendChild(chip);
+        });
+        var totalDone = done.filter(Boolean).length;
+        var placedCount = (placed[cur][0] ? 1 : 0) + (placed[cur][1] ? 1 : 0);
+        if (done[cur]) statusEl.textContent = "«" + o.glyph + "» (" + o.pinyin + ") готов! История на холсте.";
+        else if (placedCount === 1) statusEl.textContent = "Заказ " + (cur + 1) + " из " + ORDERS.length + ": " + o.glyph + " (" + o.pinyin + "). Осталась одна деталь!";
+        else statusEl.textContent = "Заказ " + (cur + 1) + " из " + ORDERS.length + ": " + o.glyph + " (" + o.pinyin + " — " + o.meaning + "). Нажимай на детали!";
+        if (totalDone === ORDERS.length) statusEl.textContent = "Все заказы выполнены! Жаберт подписывает картины. Ква!";
+        for (var n = 0; n < dotEls.length; n++) {
+          dotEls[n].className = done[n] ? "done" : (n === cur ? "cur" : "");
+        }
+        prevBtn.disabled = cur === 0;
+        nextBtn.textContent = cur === ORDERS.length - 1 ? "К выставке ↓" : "Следующий →";
+      }
+
+      prevBtn.addEventListener("click", function () { if (cur > 0) { cur--; render(); } });
+      nextBtn.addEventListener("click", function () {
+        if (cur < ORDERS.length - 1) { cur++; render(); }
+        else { var g = document.querySelector(".gallery-zone"); if (g) g.scrollIntoView({ behavior: motionQuery.matches ? "auto" : "smooth" }); }
+      });
+      render();
+
+      var MODES = {
+        abc: { glyph: "М", cls: "mode-glyph abc", note: "Буква — это ЗВУК. Из 33 букв складываются слова: М-А-М-А." },
+        hanzi: { glyph: "猫", cls: "mode-glyph kai", note: "猫 = māo — «кошка». Один знак — целое слово, а таких знаков — тысячи!" }
+      };
+      var modeGlyph = document.getElementById("mode-glyph");
+      var modeNote = document.getElementById("mode-note");
+      var modeStatus = document.getElementById("mode-status");
+      var modeBtns = { abc: document.getElementById("mode-abc"), hanzi: document.getElementById("mode-hanzi") };
+      function setMode(key) {
+        modeGlyph.textContent = MODES[key].glyph;
+        modeGlyph.className = MODES[key].cls;
+        if (key === "abc") modeGlyph.removeAttribute("lang"); else modeGlyph.setAttribute("lang", "zh-CN");
+        modeNote.textContent = MODES[key].note;
+        modeBtns.abc.setAttribute("aria-pressed", key === "abc" ? "true" : "false");
+        modeBtns.hanzi.setAttribute("aria-pressed", key === "hanzi" ? "true" : "false");
+        modeStatus.textContent = key === "abc" ? "Алфавитное письмо: звук спрятан в букве, букв мало." : "Логографическое письмо: знак — это морфема или слово, знаков — тысячи. Вот главный барьер!";
+      }
+      modeBtns.abc.addEventListener("click", function () { setMode("abc"); });
+      modeBtns.hanzi.addEventListener("click", function () { setMode("hanzi"); });
+      setMode("hanzi");
+
+      var heroButton = document.getElementById("hero-btn");
+      var heroReplica = heroButton.querySelector(".hero-replica");
+      var replicaTimer = null;
+      var phrases = ["Ква! Иероглиф — это картина!", "Абсурд — лучший друг памяти!", "Каждой детали — своя история!", "Смотри на стены — тут всюду подсказки!", "Нарисуй это в воображении. Ква!", "Разбей знак — собери историю!"];
+      var phraseIdx = 0;
+      function showReplica(text) {
+        clearTimeout(replicaTimer);
+        heroReplica.textContent = text;
+        heroReplica.classList.remove("show");
+        void heroReplica.offsetWidth;
+        heroReplica.classList.add("show");
+        replicaTimer = setTimeout(function () { heroReplica.classList.remove("show"); heroReplica.textContent = ""; }, 1800);
+      }
+      function croak() {
+        try {
+          var Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          var ctx = new Ctx();
+          var osc = ctx.createOscillator();
+          var gain = ctx.createGain();
+          var start = ctx.currentTime;
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(150, start);
+          osc.frequency.exponentialRampToValueAtTime(80, start + 0.18);
+          gain.gain.setValueAtTime(0.0001, start);
+          gain.gain.exponentialRampToValueAtTime(0.06, start + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(start);
+          osc.stop(start + 0.24);
+          osc.onended = function () { ctx.close().catch(function () {}); };
+        } catch (error) {}
+      }
+      var swooshColors = ["#e2574c", "#f2b134", "#4a90d9", "#63b463", "#9b6fd8"];
+      heroButton.addEventListener("click", function () {
+        showReplica(phrases[phraseIdx++ % phrases.length]);
+        croak();
+        if (motionQuery.matches) return;
+        var sw = document.createElement("span");
+        sw.className = "swoosh";
+        sw.style.background = swooshColors[Math.floor(Math.random() * swooshColors.length)];
+        sw.style.top = (24 + Math.floor(Math.random() * 40)) + "px";
+        heroButton.appendChild(sw);
+        setTimeout(function () { if (sw.parentNode) sw.parentNode.removeChild(sw); }, 900);
+      });
+
+      Array.prototype.forEach.call(document.querySelectorAll(".jar"), function (jar) {
+        jar.addEventListener("click", function () {
+          jar.classList.add("squish");
+          setTimeout(function () { jar.classList.remove("squish"); }, 350);
+        });
+      });
+      Array.prototype.forEach.call(document.querySelectorAll(".blob"), function (blob) {
+        blob.addEventListener("click", function () {
+          blob.classList.add("squish");
+          setTimeout(function () { blob.classList.remove("squish"); }, 300);
+          if (motionQuery.matches) return;
+          var ripple = document.createElement("span");
+          ripple.className = "ripple go";
+          var fr = blob.getBoundingClientRect();
+          var pr = blob.parentNode.getBoundingClientRect();
+          ripple.style.left = (fr.left - pr.left + fr.width / 2 - 11) + "px";
+          ripple.style.top = (fr.top - pr.top + fr.height / 2 - 11) + "px";
+          blob.parentNode.appendChild(ripple);
+          setTimeout(function () { if (ripple.parentNode) ripple.parentNode.removeChild(ripple); }, 800);
+        });
+      });
+
+      var trackSpans = Array.prototype.slice.call(document.querySelectorAll(".chapter-track span"));
+      var tracked = Array.prototype.slice.call(document.querySelectorAll("[data-track]"));
+      function setTrack(idx) {
+        trackSpans.forEach(function (s, i) {
+          s.className = i < idx ? "visited" : (i === idx ? "current" : "");
+        });
+      }
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) setTrack(parseInt(e.target.getAttribute("data-track"), 10));
+          });
+        }, { rootMargin: "-30% 0px -30% 0px", threshold: 0 });
+        tracked.forEach(function (sec) { io.observe(sec); });
+      } else {
+        setTrack(0);
+      }
+    });
+  </script>
+</body>
+</html>
