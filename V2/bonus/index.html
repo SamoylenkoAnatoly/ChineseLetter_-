@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101326">
+  <title>Осада замка — бонус про иероглифы</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Noto+Sans+SC:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="vendor/hanzi-writer.min.js" defer></script>
+  <script src="char-data.js" defer></script>
+  <script src="sprites.js" defer></script>
+  <script src="game-core.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs id="sprite-defs"></defs>
+  </svg>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="../口/index.html" aria-label="Китайский курс с Синнабоном"><span class="brand-glyph" lang="zh-CN">城</span><span>Китайский курс<small>иероглифы с Синнабоном</small></span></a>
+      <span class="mode-label"><i></i>Бонус · оборона замка</span>
+    </header>
+    <main>
+      <div class="title-row"><div><p class="eyebrow">Бонус · четыре волны осады</p><h1>Осада замка Синнабона</h1></div><span class="chapter-badge"><span class="zh-glyph" lang="zh-CN">守</span> <small>обороняй знания!</small></span></div>
+      <ol class="trail" id="trail" aria-label="Волны осады">
+        <li aria-current="step"><span>01</span><div>Разведка<small>гоблины у стен</small></div></li>
+        <li><span>02</span><div>Штурм стены<small>волчья кавалерия</small></div></li>
+        <li><span>03</span><div>Осадные башни<small>тролли по памяти</small></div></li>
+        <li><span>04</span><div>Владыка орды<small>ярость и рассеивание</small></div></li>
+      </ol>
+      <div class="game-layout" id="game-area">
+        <section class="battle-field" aria-label="Поле осады">
+          <div class="scene" id="scene" data-wave="goblin">
+            <svg class="castle-view" viewBox="0 0 900 570" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges" aria-hidden="true">
+              <rect width="900" height="150" fill="#101326"/>
+              <rect y="150" width="900" height="120" fill="#171b38"/>
+              <rect y="270" width="900" height="100" fill="#20264c"/>
+              <rect y="370" width="900" height="70" fill="#2a3161"/>
+              <g class="stars" fill="#c9d4ef">
+                <rect x="90" y="60" width="6" height="6"/><rect x="92" y="56" width="2" height="14"/><rect x="86" y="62" width="14" height="2"/>
+                <rect x="250" y="110" width="6" height="6"/>
+                <rect x="420" y="70" width="8" height="8"/><rect x="423" y="64" width="2" height="18"/>
+                <rect x="540" y="150" width="6" height="6"/>
+                <rect x="820" y="90" width="8" height="8"/>
+                <rect x="170" y="200" width="6" height="6"/>
+                <rect x="880" y="30" width="6" height="6"/>
+              </g>
+              <g>
+                <rect x="616" y="36" width="148" height="148" fill="#f4ecc8" opacity=".07"/>
+                <rect x="628" y="48" width="124" height="124" fill="#f4ecc8" opacity=".12"/>
+                <rect x="640" y="60" width="100" height="100" fill="#f0e6c0"/>
+                <rect x="664" y="84" width="20" height="20" fill="#d9cd9f"/>
+                <rect x="702" y="120" width="12" height="12" fill="#d9cd9f"/>
+                <rect x="654" y="130" width="10" height="10" fill="#d9cd9f"/>
+              </g>
+              <g fill="#1b2140">
+                <rect x="500" y="340" width="240" height="30"/>
+                <rect x="530" y="310" width="180" height="30"/>
+                <rect x="560" y="280" width="120" height="30"/>
+                <rect x="590" y="250" width="60" height="30"/>
+              </g>
+              <g fill="#cdd4e4"><rect x="590" y="250" width="60" height="8"/><rect x="604" y="258" width="32" height="8"/></g>
+              <g fill="#232a4d">
+                <rect x="740" y="350" width="160" height="20"/>
+                <rect x="770" y="326" width="100" height="24"/>
+                <rect x="796" y="306" width="48" height="20"/>
+              </g>
+              <rect y="370" width="900" height="200" fill="#26203a"/>
+              <rect y="370" width="900" height="16" fill="#33503c"/>
+              <rect y="386" width="900" height="12" fill="#2a4232"/>
+              <rect y="470" width="900" height="40" fill="#2f2742"/>
+              <g>
+                <g fill="#3a3226">
+                  <rect x="660" y="330" width="24" height="8"/><rect x="668" y="322" width="8" height="8"/>
+                  <rect x="650" y="338" width="44" height="34"/><rect x="664" y="346" width="16" height="26" fill="#1c1725"/>
+                </g>
+                <g fill="#3a3226">
+                  <rect x="790" y="336" width="18" height="6"/><rect x="796" y="330" width="6" height="6"/>
+                  <rect x="782" y="342" width="34" height="30"/><rect x="792" y="350" width="13" height="22" fill="#1c1725"/>
+                </g>
+                <g class="px-fire"><rect x="708" y="336" width="12" height="16" fill="#ff9c4a"/><rect x="712" y="330" width="5" height="10" fill="#ffd76a"/></g>
+                <rect x="702" y="352" width="24" height="8" fill="#5d3a1f"/>
+                <g class="px-fire"><rect x="756" y="342" width="10" height="13" fill="#ff9c4a"/><rect x="759" y="337" width="4" height="8" fill="#ffd76a"/></g>
+                <rect x="751" y="355" width="20" height="7" fill="#5d3a1f"/>
+              </g>
+              <g class="castle" id="castle">
+                <rect x="112" y="96" width="5" height="58" fill="#2e3554"/>
+                <g class="px-flag"><rect x="117" y="100" width="36" height="24" fill="#b5443a"/><rect x="145" y="106" width="8" height="12" fill="#8a2f2c"/></g>
+                <g>
+                  <rect x="70" y="150" width="90" height="280" fill="#3f4870"/>
+                  <rect x="70" y="150" width="8" height="280" fill="#2e3554"/>
+                  <rect x="152" y="150" width="8" height="280" fill="#2e3554"/>
+                  <rect x="70" y="128" width="20" height="22" fill="#3f4870"/><rect x="106" y="128" width="20" height="22" fill="#3f4870"/><rect x="142" y="128" width="18" height="22" fill="#3f4870"/>
+                  <rect x="104" y="208" width="20" height="30" fill="#ffd76a" class="px-glow"/>
+                  <rect x="108" y="216" width="12" height="22" fill="#1a2036"/>
+                  <rect x="70" y="300" width="90" height="4" fill="#2e3554"/><rect x="70" y="370" width="90" height="4" fill="#2e3554"/>
+                </g>
+                <g>
+                  <rect x="150" y="290" width="280" height="140" fill="#4a5382"/>
+                  <rect x="150" y="288" width="280" height="10" fill="#5a6494"/>
+                  <rect x="150" y="270" width="22" height="20" fill="#3f4870"/><rect x="186" y="270" width="22" height="20" fill="#3f4870"/><rect x="222" y="270" width="22" height="20" fill="#3f4870"/><rect x="258" y="270" width="22" height="20" fill="#3f4870"/><rect x="294" y="270" width="22" height="20" fill="#3f4870"/><rect x="330" y="270" width="22" height="20" fill="#3f4870"/><rect x="366" y="270" width="22" height="20" fill="#3f4870"/><rect x="402" y="270" width="28" height="20" fill="#3f4870"/>
+                  <rect x="150" y="330" width="280" height="4" fill="#3f4870"/><rect x="150" y="392" width="280" height="4" fill="#3f4870"/>
+                  <rect x="176" y="312" width="7" height="24" fill="#232a4d"/><rect x="262" y="312" width="7" height="24" fill="#232a4d"/><rect x="352" y="312" width="7" height="24" fill="#232a4d"/>
+                  <g>
+                    <rect x="200" y="300" width="26" height="48" fill="#7c3a44"/><rect x="209" y="312" width="8" height="8" fill="#c9a45a"/>
+                    <rect x="318" y="300" width="26" height="48" fill="#7c3a44"/><rect x="327" y="312" width="8" height="8" fill="#c9a45a"/>
+                  </g>
+                </g>
+                <g>
+                  <rect x="235" y="368" width="90" height="62" fill="#1a2036"/>
+                  <rect x="243" y="360" width="74" height="8" fill="#1a2036"/>
+                  <rect x="251" y="352" width="58" height="8" fill="#1a2036"/>
+                  <g fill="#707c9c">
+                    <rect x="247" y="364" width="7" height="66"/><rect x="268" y="364" width="7" height="66"/><rect x="289" y="364" width="7" height="66"/><rect x="310" y="364" width="7" height="66"/>
+                    <rect x="243" y="382" width="74" height="6"/><rect x="243" y="410" width="74" height="6"/>
+                  </g>
+                  <rect x="233" y="350" width="94" height="6" fill="#c9a45a"/>
+                </g>
+                <g>
+                  <rect x="350" y="196" width="80" height="234" fill="#434c78"/>
+                  <rect x="350" y="196" width="8" height="234" fill="#323a5e"/>
+                  <rect x="422" y="196" width="8" height="234" fill="#323a5e"/>
+                  <rect x="350" y="176" width="20" height="20" fill="#434c78"/><rect x="384" y="176" width="20" height="20" fill="#434c78"/><rect x="418" y="176" width="12" height="20" fill="#434c78"/>
+                  <rect x="378" y="240" width="20" height="28" fill="#ffd76a" class="px-glow"/>
+                  <rect x="382" y="248" width="12" height="20" fill="#1a2036"/>
+                  <rect x="350" y="310" width="80" height="4" fill="#323a5e"/>
+                </g>
+                <g>
+                  <rect x="180" y="248" width="8" height="14" fill="#2e3554"/>
+                  <g class="px-torch"><rect x="176" y="228" width="16" height="20" fill="#ff9c4a"/><rect x="181" y="220" width="6" height="14" fill="#ffd76a"/></g>
+                  <rect x="306" y="248" width="8" height="14" fill="#2e3554"/>
+                  <g class="px-torch"><rect x="302" y="228" width="16" height="20" fill="#ff9c4a"/><rect x="307" y="220" width="6" height="14" fill="#ffd76a"/></g>
+                </g>
+              </g>
+              <rect y="544" width="900" height="26" fill="#101326" opacity=".55"/>
+              <rect x="0" y="0" width="26" height="570" fill="#101326" opacity=".45"/>
+              <rect x="874" y="0" width="26" height="570" fill="#101326" opacity=".45"/>
+            </svg>
+            <div class="scene-shade"></div>
+            <div class="wave-event" id="wave-event" hidden></div>
+            <div class="location"><span class="location-dot"></span><span id="location">Передовой лагерь</span><small id="encounter">Волна 1 · Монстр 1 / 5</small></div>
+            <div class="fighter hero" id="hero"><div class="fighter-label">Стена замка<span id="hero-hp-text">10 / 10</span></div><div class="hp-track"><div id="hero-hp"></div></div><img src="../assets/characters/cinnabon.svg" alt="Синнабон — храбрый защитник замка" draggable="false"><span class="shield-aura" id="shield-aura" hidden>щит</span><span class="ground-shadow"></span></div>
+            <div class="fighter enemy" id="enemy"><div class="fighter-label"><span id="enemy-name">Гоблины-разведчики</span><span id="enemy-hp-text">2 / 2</span></div><div class="hp-track enemy-track"><div id="enemy-hp"></div></div><span class="enemy-badge" id="enemy-badge" hidden></span><svg class="monster" viewBox="0 0 16 16" role="img" aria-label="Гоблин-разведчик"><use id="monster-use" href="#goblin"/></svg><span class="ground-shadow"></span></div>
+            <span class="spell" id="spell" lang="zh-CN" aria-hidden="true">守</span>
+            <span class="damage-number" id="damage-number" aria-hidden="true"></span>
+            <div class="scene-caption"><span>Ночь перед штурмом</span><p>Орда у стен. Синнабон выходит на защиту замка.</p></div>
+          </div>
+          <div class="encounter-info"><span class="intent-icon" aria-hidden="true">!</span><div><p class="eyebrow">Нрав монстров</p><p id="intention">Робкие: бьют по стене только после 2 ошибок в одном задании.</p></div></div>
+        </section>
+        <aside class="battle-side" aria-label="Боевое задание">
+          <div class="panel-heading"><span class="eyebrow">Свиток обороны</span><span class="ink-label"><span lang="zh-CN">人 口 日 木 目 众 林 品 相</span></span></div>
+          <h2 id="task-heading">Отбей атаку знанием</h2>
+          <p class="panel-intro" id="task-intro">Каждое задание — один монстр. Ошибка — удар по стене замка.</p>
+          <div class="write-target" id="write-target" hidden><span class="write-target-glyph zh-glyph" id="write-target-char" lang="zh-CN"></span><span class="write-target-py" id="write-target-py"></span></div>
+          <div class="writer-frame" id="writer-frame" hidden>
+            <div class="writer-grid" id="writer-target" role="application" aria-label="Поле письма иероглифа" aria-describedby="writer-status"></div>
+            <div class="writer-cover" id="writer-cover"><span class="zh-glyph" lang="zh-CN">守</span><small id="cover-label">Нажми «В бой», чтобы начать оборону</small></div>
+            <span class="corner top-left"></span><span class="corner bottom-right"></span>
+          </div>
+          <div class="choice-panel" id="choice-panel" hidden>
+            <p class="choice-question" id="choice-question"></p>
+            <div class="choice-target-frame" id="choice-target-frame" hidden><span class="choice-target zh-glyph" id="choice-target" lang="zh-CN"></span></div>
+            <button class="sound-replay" id="sound-replay" type="button" hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Z"/></svg><span>Прослушать ещё раз</span></button>
+            <div class="choice-options" id="choice-options" role="group" aria-label="Варианты ответа"></div>
+            <p class="choice-feedback" id="choice-feedback" role="status"></p>
+          </div>
+          <div class="stroke-progress" id="stroke-progress" aria-label="Прогресс написания" hidden><span id="stroke-count">0 / 2 черт</span><div id="stroke-dots"></div></div>
+          <div class="phase-dots" id="phase-dots" aria-label="Фазы задания" hidden></div>
+          <div class="quiz-timer" id="quiz-timer" hidden><span class="timer-label">Время</span><div class="timer-bar" role="progressbar" aria-label="Оставшееся время на ответ"><div id="timer-fill"></div></div><span class="timer-text" id="timer-text">12 с</span></div>
+          <p class="writer-status" id="writer-status" role="status" aria-live="polite">Нажми «Встать на стену», чтобы начать оборону.</p>
+          <div class="writer-controls">
+            <button id="help-button" type="button" disabled>Показать знак</button>
+            <button id="sound-button" type="button" aria-pressed="true">Звук: вкл.</button>
+          </div>
+          <div class="abilities">
+            <div class="mana-row"><span class="mana-label">Мана</span><div class="mana-track" role="progressbar" aria-label="Мана способностей"><div id="mana-fill"></div></div><b id="mana-text">0/10</b></div>
+            <div class="ability-buttons">
+              <button class="ability-button" id="volley-button" type="button"><span>Град стрел<small>гасит 2 варианта · 4 маны</small></span></button>
+              <button class="ability-button" id="salvo-button" type="button"><span>Залп<small>+5 секунд · 3 маны</small></span></button>
+            </div>
+          </div>
+          <button class="potion-button" id="potion-button" type="button" disabled><svg viewBox="0 0 24 28" width="24" height="28" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 12h16v4H4Zm2 4h12v6H6Zm2-8h8v4H8Z"/><path fill="currentColor" opacity=".55" d="M6 16h12v6H6Z"/></svg><span>Ремонтные леса<small>латает стену на 3 удара</small></span><b id="potion-count">×2</b></button>
+        </aside>
+        <section class="battle-extras" aria-label="Сводка осады">
+          <div class="hero-stats">
+            <div><span class="stat-title">Комбо обороны</span><strong id="combo-value">×1</strong><div class="combo-dots" id="combo-dots"><i></i><i></i><i></i></div><small>×1.5 после 2 чистых, ×2 после 4; каждые 3 — стена +1</small></div>
+            <div><span class="stat-title">Щит стены</span><strong id="shield-text">Не заряжен</strong><small>Чистое задание даёт щит от 1 удара</small></div>
+            <div><span class="stat-title">Гнев монстра</span><strong id="danger-text">0 / 2 ошибок</strong><small>После порога — удар по стене</small></div>
+            <div><span class="stat-title">Очки обороны</span><strong id="score-value">0</strong><small>Монстр +100 · чисто +50 · без потерь +150</small></div>
+          </div>
+          <details class="extra-block dialogue" open><summary>Голос Синнабона</summary><div class="dialogue"><img src="../assets/characters/cinnabon.svg" alt="" width="44" height="44"><p id="dialogue">&lt;В этом замке слова — оружие. Отбиваем волну за волной!&gt;</p></div></details>
+          <details class="extra-block" open><summary>Словарь обороны</summary><p class="vocab-note"><b lang="zh-CN">人</b> rén — человек · <b lang="zh-CN">口</b> kǒu — рот · <b lang="zh-CN">日</b> rì — солнце, день</p><p class="vocab-note"><b lang="zh-CN">木</b> mù — дерево · <b lang="zh-CN">目</b> mù — глаз · <b lang="zh-CN">众</b> zhòng — толпа</p><p class="vocab-note"><b lang="zh-CN">林</b> lín — лес · <b lang="zh-CN">品</b> pǐn — предмет · <b lang="zh-CN">相</b> xiāng — взаимно</p></details>
+          <details class="extra-block journal" open><summary>Журнал осады <span id="attack-count">0 отбито</span></summary><ol id="journal-list"><li>Орда собирается у горизонта. Стены проверены, факелы зажжены.</li></ol></details>
+        </section>
+      </div>
+      <noscript><p class="noscript">Для игры нужен JavaScript. Включи его в настройках и обнови страницу.</p></noscript>
+    </main>
+    <footer><span>Бонусная осада. Пиши чисто — и стены устоят.</span><a href="../口/index.html">Вернуться к главе 口</a></footer>
+  </div>
+  <div class="overlay" id="overlay" hidden>
+    <section class="story-card" role="dialog" aria-modal="true" aria-labelledby="story-title" aria-describedby="story-text" tabindex="-1">
+      <div class="story-art" id="story-art"><img src="../assets/characters/cinnabon.svg" alt="Синнабон" width="110" height="100"><span class="zh-glyph" lang="zh-CN">守</span></div>
+      <p class="eyebrow" id="story-eyebrow">Осадный договор</p>
+      <h2 id="story-title">Замок под осадой</h2>
+      <p id="story-text"></p>
+      <div class="story-rules" id="story-rules"><p><b>01</b><span>Каждое задание отбивает одного монстра: письмо, перевод, пиньинь, знак на слух или тон. Элита требует два ответа подряд, финал — три испытания.</span></p><p><b>02</b><span>Ошибки копятся: после порога монстр бьёт по стене. Стена держит 10 ударов. Чистые задания дают щит, ману и комбо-множитель.</span></p><p><b>03</b><span>«Град стрел» гасит два неверных варианта (4 маны), «Залп» добавляет 5 секунд (3 маны). Каждые 3 чистых подряд латают стену.</span></p><p><b>04</b><span>Волны несут события: туман, ливень, дезертиры или рать. После каждой волны — код, в финале — все 16 цифр.</span></p></div>
+      <div class="review" id="review" hidden><span class="review-label">Разбор промахов</span><div class="review-list" id="review-list"></div></div>
+      <div class="reward" id="reward" hidden><span id="reward-label">Код волны</span><strong id="reward-code"></strong><div class="codes-list" id="codes-list" hidden></div><p id="story-rank" class="story-rank" hidden></p><p id="reward-stats"></p></div>
+      <div class="story-actions"><button class="primary-button" id="story-primary" type="button">Встать на стену</button><button class="secondary-button" id="story-secondary" type="button" hidden></button><button class="ghost-button" id="story-sound" type="button" aria-pressed="true">Звук: вкл.</button></div>
+      <p class="story-footnote" id="story-footnote">4 волны осады и 4 кода. Записывай — коды пригодятся после игры.</p>
+    </section>
+  </div>
+</body>
+</html>
