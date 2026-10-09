@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101e24">
+  <meta name="description" content="Башня хитрого мага: слушай китайские тоны и отражай заклинания четырёх пиксельных монстров.">
+  <title>Башня хитрого мага · Битва тонов</title>
+  <link rel="icon" href="assets/wizard.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="data.js" defer></script>
+  <script src="game-core.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#adventure">Перейти к битве</a>
+  <div class="world" aria-hidden="true"><div class="world-moon"></div><div class="mountains far"></div><div class="mountains near"></div></div>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-sigil" aria-hidden="true">◇</span><div><p class="eyebrow">Коко / битва тонов</p><h1>Башня хитрого мага</h1></div></div>
+      <div class="top-actions"><span class="quest-count" id="quest-count">0 / 30</span><button class="quiet" id="help" type="button">Свиток тонов</button></div>
+    </header>
+    <section id="start-page" class="start-page" aria-label="Подготовка к приключению">
+      <div class="start-scene">
+        <div class="start-sky">
+          <span class="start-moon" aria-hidden="true"></span>
+          <div class="start-gate" aria-hidden="true"><div class="gate-arch"><div class="gate-darkness"></div></div><div class="gate-door left"></div><div class="gate-door right"></div><div class="gate-torch left"></div><div class="gate-torch right"></div><div class="gate-ground"></div></div>
+          <div class="start-hero"><img src="assets/wizard.svg" width="128" height="116" alt="Магистр Коко — хитрый пиксельный маг в фиолетовой шляпе с посохом у ворот башни"><span class="actor-name">МАГИСТР КОКО</span></div>
+          <p class="start-quote">«Хе-хе! Стражи ждут грубой силы. А мы обойдём их слухом!»</p>
+        </div>
+        <div class="start-cta">
+          <div class="readiness" id="readiness"><span class="eyebrow">Готовность</span><span class="readiness-pips" aria-hidden="true"><i></i><i></i><i></i></span><span id="readiness-value">0 / 3</span></div>
+          <button id="start" class="primary" type="button" disabled>Начать путешествие →</button>
+          <span id="start-hint">Сначала послушай все четыре мелодии</span>
+        </div>
+      </div>
+      <div class="start-panel">
+        <div class="start-brief"><p class="eyebrow">Подготовка к приключению</p><p class="start-copy">Стражи атакуют китайскими слогами — узнавай тон на слух и отражай его руной. 4 этажа · 30 атак · финальный код.</p></div>
+        <div class="prep-grid">
+          <ol class="start-steps">
+          <li class="start-step" id="step-sound">
+            <div class="step-head"><span class="step-rune" aria-hidden="true">1</span><div><b>Проверь звук</b><small id="sound-check">Послушано: 0 из 4 — обязательный шаг</small></div><span class="step-state" aria-hidden="true"></span></div>
+            <div class="step-body"><div id="intro-tones" class="tone-cards"></div></div>
+          </li>
+          <li class="start-step" id="step-rules">
+            <div class="step-head"><span class="step-rune" aria-hidden="true">2</span><div><b>Правила боя</b><small>Как работают щит и урон</small></div><span class="step-state" aria-hidden="true"></span></div>
+            <div class="step-body">
+              <div class="rules-row"><span class="rules-shield" aria-hidden="true"><i class="charged"></i><i class="charged"></i><i class="charged"></i></span><span>Щит: 3 заряда. Ошибка — минус, верная руна — плюс. Пустой щит — не проигрыш.</span></div>
+              <div class="rules-row"><span class="rules-hp" aria-hidden="true"><div class="rules-hp-bar"><i></i><i></i><i class="lost"></i></div></span><span>Здоровье стража: −1 сегмент за каждую впервые отражённую атаку. Всего 30.</span></div>
+              <button class="quiet step-done" id="rules-ok" type="button">Понятно</button>
+            </div>
+          </li>
+          <li class="start-step" id="step-warmup">
+            <div class="step-head"><span class="step-rune" aria-hidden="true">3</span><div><b>Разминка</b><small>Пробная атака без риска — по желанию</small></div><span class="step-state" aria-hidden="true"></span></div>
+            <div class="step-body">
+              <p class="step-note" id="warmup-note">Хе-хе, попробуй хитрый план на пробном страже! Это не влияет на приключение.</p>
+              <div class="warmup-box">
+                <button class="listen-button" id="warmup-listen" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4ZM15 8q6 4 0 8M18 5q10 7 0 14" fill="none" stroke="currentColor" stroke-width="2"/></svg><span id="warmup-listen-label">Услышать пробную атаку</span></button>
+                <div id="warmup-runes" class="tone-cards" aria-label="Руны разминки"></div>
+                <div id="warmup-feedback" class="feedback" hidden aria-live="polite"></div>
+                <div class="warmup-actions"><button class="quiet" id="warmup-retry" type="button" hidden>Попробовать ещё</button><button class="quiet" id="warmup-skip" type="button">Пропустить разминку</button></div>
+              </div>
+            </div>
+          </li>
+          </ol>
+          <div class="start-step gallery-cell" aria-label="Стражи башни">
+            <div class="step-head"><span class="step-rune" aria-hidden="true">◆</span><div><b>Стражи башни</b><small>Четверо противников</small></div></div>
+            <div class="step-body"><div id="enemy-gallery" class="enemy-gallery"></div></div>
+          </div>
+        </div>
+        <p class="footnote">Наушники предпочтительнее · записи синтезированы · таймера нет</p>
+      </div>
+    </section>
+    <div class="journey-progress" id="journey" hidden><span id="quest-label">Четыре стража между нами и сокровищем</span><div class="progress-track" role="progressbar" aria-label="Освоенные упражнения" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0" id="quest-progress"><div id="progress-fill"></div></div></div>
+    <div class="layout" id="battle-layout" hidden>
+      <aside class="tower-map" aria-label="Разрез башни: путь снизу вверх">
+        <div class="map-caption"><p class="eyebrow">Путь к вершине</p><span>4 этажа · 4 стража</span></div>
+        <div class="tower-roof" aria-hidden="true"><span></span></div>
+        <ol id="room-map" class="room-map"></ol>
+        <div class="tower-door" aria-hidden="true"><div></div></div><div class="tower-rock" aria-hidden="true"></div>
+        <button class="quiet reset" id="reset" type="button" hidden>Начать заново</button>
+        <p class="map-note">Побеждаем слухом,<br>а не скоростью.</p>
+      </aside>
+      <section class="adventure" id="adventure" tabindex="-1" aria-label="Битва китайских тонов">
+        <div class="arena-frame">
+          <div class="arena-header"><div><p class="eyebrow" id="arena-kicker">Приключение начинается</p><h2 id="arena-title">Подземные ворота</h2></div><span class="arena-stage" id="arena-stage">Этаж 01</span></div>
+          <div class="battle-hud">
+            <div class="hero-hud"><div class="hud-label"><b>Магистр Коко</b><span id="shield-value">Щит 3 / 3</span></div><div class="shield-bar" id="shield-bar" role="progressbar" aria-label="Заряды щита" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3"><i></i><i></i><i></i></div></div>
+            <div class="combo-hud"><span>Серия</span><b id="streak-value">0</b><small id="best-streak-label">Рекорд: 0</small></div>
+            <div class="enemy-hud"><div class="hud-label"><b id="enemy-name">Каменный голем</b><span id="enemy-hp">8 / 8</span></div><div class="enemy-bar" id="enemy-bar" role="progressbar" aria-label="Здоровье противника" aria-valuemin="0" aria-valuemax="8" aria-valuenow="8"><div id="enemy-hp-fill"></div></div></div>
+          </div>
+          <div class="arena" id="arena" data-theme="gate">
+            <div class="arena-scenery" aria-hidden="true"><div class="scene-arch"></div><div class="scene-rune">◇</div><div class="scene-column left"></div><div class="scene-column right"></div><div class="scene-chain left"></div><div class="scene-chain right"></div><div class="scene-lamp left"></div><div class="scene-lamp right"></div></div>
+            <span class="arena-banner" id="arena-banner">Хитрость против грубой силы</span>
+            <div class="hero-actor" id="hero-actor"><div class="hero-shield" aria-hidden="true"></div><button class="wizard" id="wizard" type="button" aria-label="Хитрый совет Магистра Коко"><img src="assets/wizard.svg" width="192" height="174" alt="Магистр Коко — исходный пиксельный маг в фиолетовой шляпе с посохом"></button><span class="actor-name">КОКО</span></div>
+            <div class="enemy-actor" id="enemy-actor"><img id="enemy-sprite" src="assets/golem.svg" width="192" height="192" alt="Каменный голем"><span class="actor-name" id="enemy-caption">СТРАЖ ВОРОТ</span></div>
+            <div class="projectile" aria-hidden="true"></div><div class="impact" aria-hidden="true"></div><span class="damage-number" id="damage-number" aria-hidden="true"></span>
+            <div class="arena-platform" aria-hidden="true"></div>
+          </div>
+          <div class="battle-log" id="battle-log" role="status">Слушай атаку. Выбирай тон. Отражай магию.</div>
+        </div>
+        <div class="speech"><span class="speaker">КОКО <span aria-hidden="true">›</span></span><p id="dialogue">Хе-хе! Стражи рассчитывают на силу. А мы поднимемся на вершину с помощью слуха. Хитро, правда?</p></div>
+        <section id="room-screen" class="screen" hidden>
+          <p class="eyebrow" id="room-kicker"></p><h2 id="room-heading" tabindex="-1"></h2><p class="body-copy" id="room-description"></p><div class="scroll-note" id="room-note"></div><button class="primary" id="enter-room" type="button">Вступить в бой →</button>
+        </section>
+        <section id="question-screen" class="screen battle-console" hidden>
+          <div class="question-top"><p class="eyebrow" id="question-counter"></p><span class="tag" id="repeat-tag" hidden>Повторная атака</span></div><h2 id="question-heading" tabindex="-1">Выбери контрзаклинание</h2>
+          <div class="audio-actions" id="altar"><button id="listen" class="listen-button" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4ZM15 8q6 4 0 8M18 5q10 7 0 14" fill="none" stroke="currentColor" stroke-width="2"/></svg><span id="listen-label">Услышать атаку</span></button><button id="slow" class="quiet" type="button">Медленнее</button></div>
+          <p id="listen-status" class="listen-status" role="status">Сначала прослушай атаку до конца.</p><p id="pair-note" class="footnote" hidden>Два отдельных слога с паузой. Выбери тон каждой атаки по порядку.</p>
+          <div id="answers"></div><button id="submit-pair" class="primary" type="button" hidden disabled>Отразить двойное заклинание</button>
+          <div id="feedback" class="feedback" hidden aria-live="polite"><h3 id="feedback-heading"></h3><div id="revealed-words"></div><p id="feedback-note"></p><div class="compare"><span>Сравни мелодии:</span><div id="compare-tones"></div></div></div>
+          <button id="next" class="primary" type="button" hidden>Следующий ход →</button><p class="keyboard-hint">1–4 — руны · пробел вне кнопок — повтор атаки</p>
+        </section>
+        <section id="reward-screen" class="screen reward" hidden>
+          <p class="eyebrow">Четыре стража побеждены</p><h2 tabindex="-1">Сокровищница открыта!</h2><div class="reward-art" aria-hidden="true"><div class="chest open"></div></div><p class="body-copy">Все 30 заклинаний освоены, повторные атаки отражены. Хитрый план Коко сработал! Твой код завершения:</p>
+          <output id="final-code" class="final-code" aria-label="Код завершения"></output><button id="copy-code" class="primary" type="button">Скопировать код</button><p id="copy-status" role="status"></p>
+          <div class="mission-grid reward-stats"><div><b id="accuracy"></b><span>первые ответы</span></div><div><b id="repeats"></b><span>повторных ходов</span></div><div><b id="best-streak"></b><span>лучшая серия</span></div></div><button id="again" class="quiet" type="button">Новое приключение</button>
+        </section>
+        <p id="storage-notice" class="footnote" role="status"></p>
+      </section>
+    </div>
+    <p id="audio-error" class="error" role="alert" hidden></p>
+    <footer><span>Битва тонов · Магистр Коко</span><span>Победа начинается с внимательного слуха.</span></footer>
+  </main>
+  <dialog id="tone-scroll" aria-labelledby="scroll-heading"><div class="dialog-head"><h2 id="scroll-heading">Свиток четырёх тонов</h2><button class="quiet" id="close-help" type="button">Закрыть</button></div><p class="body-copy">Слушай движение голоса. Эти четыре мелодии — твои контрзаклинания.</p><div id="help-tones" class="tone-cards"></div><p class="footnote">У третьего тона важна низкая часть: подъём не всегда слышен. Нейтральный тон и изменения тонов в словах в эти битвы не входят.</p></dialog>
+  <noscript><p class="error">Для игры нужен JavaScript. Включи его и обнови страницу.</p></noscript>
+</body>
+</html>
