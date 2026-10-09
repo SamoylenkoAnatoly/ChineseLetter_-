@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1f2b1e">
+  <title>fight_林 · Синнабон и бамбуковый лабиринт</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="game-core.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="prop" viewBox="0 0 140 280"><path fill="currentColor" d="M58 280v-40h-8v-36h8v-40h-8v-36h8v-40h-8V52h8V20h24v32h-8v36h8v40h-8v36h8v40h-8v40Z"/></symbol>
+      <symbol id="shooter" viewBox="0 0 160 160"><path fill="#5e8f45" d="M64 28h32v108H64Z"/>
+<path fill="#8fbc72" d="M70 36h20v92H70Z"/>
+<path fill="#c2e3a2" d="M66 60h28v6H66Z"/>
+<path fill="#c2e3a2" d="M66 92h28v6H66Z"/>
+<path fill="#20211c" d="M72 68h8v10H72Z"/><path fill="#20211c" d="M86 68h8v10H86Z"/><path fill="#f4eecf" d="M74 64h4v4H74Z"/><path fill="#f4eecf" d="M88 64h4v4H88Z"/>
+<path fill="#5e8f45" d="M74 104h12v4H74Z"/>
+<path fill="#c2e3a2" d="M96 40h32v10H96Z"/>
+<path fill="#c2e3a2" d="M96 32h10v20H96Z"/>
+<path fill="#c2e3a2" d="M32 72h28v10H32Z"/>
+<path fill="#c2e3a2" d="M52 64h10v20H52Z"/>
+<path fill="#8fbc72" d="M58 136h44v8H58Z"/></symbol>
+      <symbol id="panda" viewBox="0 0 160 160"><path fill="#b5b09a" d="M40 64h80v68H40Z"/>
+<path fill="#e8e4d2" d="M48 72h64v52H48Z"/>
+<path fill="#1c1c1c" d="M48 52h20v20H48Z"/>
+<path fill="#1c1c1c" d="M92 52h20v20H92Z"/>
+<path fill="#1c1c1c" d="M56 80h16v20H56Z"/>
+<path fill="#1c1c1c" d="M88 80h16v20H88Z"/>
+<path fill="#f4eecf" d="M60 84h8v8H60Z"/>
+<path fill="#f4eecf" d="M92 84h8v8H92Z"/>
+<path fill="#1c1c1c" d="M70 100h20v8H70Z"/>
+<path fill="#f7f5ea" d="M56 112h48v8H56Z"/>
+<path fill="#e8e4d2" d="M30 100h10v24H30Z"/>
+<path fill="#e8e4d2" d="M120 100h10v24H120Z"/></symbol>
+      <symbol id="rustle" viewBox="0 0 160 160"><path fill="#719e45" d="M48 52h64v80H48Z"/>
+<path fill="#a8d977" d="M56 60h48v64H56Z"/>
+<path fill="#20211c" d="M62 74h8v10H62Z"/><path fill="#20211c" d="M88 74h8v10H88Z"/><path fill="#f4eecf" d="M64 70h4v4H64Z"/><path fill="#f4eecf" d="M90 70h4v4H90Z"/>
+<path fill="#719e45" d="M70 98h20v4H70Z"/>
+<path fill="#a8d977" d="M36 60h12v36H36Z"/>
+<path fill="#a8d977" d="M112 60h12v36H112Z"/>
+<path fill="#719e45" d="M44 132h72v8H44Z"/>
+<path fill="#d5f0ae" d="M56 40h48v12H56Z"/>
+<path fill="#d5f0ae" d="M64 32h8v12H64Z"/>
+<path fill="#d5f0ae" d="M88 32h8v12H88Z"/></symbol>
+      <symbol id="maiden" viewBox="0 0 160 160"><path fill="#c9e3a5" d="M60 32h40v40H60Z"/>
+<path fill="#20211c" d="M66 46h8v10H66Z"/><path fill="#20211c" d="M90 46h8v10H90Z"/><path fill="#f4eecf" d="M68 42h4v4H68Z"/><path fill="#f4eecf" d="M92 42h4v4H92Z"/>
+<path fill="#93b56e" d="M74 62h12v4H74Z"/>
+<path fill="#93b56e" d="M68 72h24v44H68Z"/>
+<path fill="#e8f5cf" d="M48 80h20v8H48Z"/>
+<path fill="#e8f5cf" d="M92 80h20v8H92Z"/>
+<path fill="#93b56e" d="M62 116h12v26H62Z"/>
+<path fill="#93b56e" d="M86 116h12v26H86Z"/>
+<path fill="#e8f5cf" d="M50 30h8v44H50Z"/>
+<path fill="#e8f5cf" d="M102 30h8v44H102Z"/>
+<path fill="#d5e8a0" d="M72 22h16v10H72Z"/></symbol>
+      <symbol id="bambooKing" viewBox="0 0 160 160"><path fill="#9ebd68" d="M60 24h40v120H60Z"/>
+<path fill="#d5e8a0" d="M66 32h28v104H66Z"/>
+<path fill="#eef7c9" d="M60 56h40v8H60Z"/>
+<path fill="#eef7c9" d="M60 88h40v8H60Z"/>
+<path fill="#eef7c9" d="M60 120h40v8H60Z"/>
+<path fill="#20211c" d="M70 64h8v10H70Z"/><path fill="#20211c" d="M86 64h8v10H86Z"/><path fill="#f4eecf" d="M72 60h4v4H72Z"/><path fill="#f4eecf" d="M88 60h4v4H88Z"/>
+<path fill="#9ebd68" d="M74 108h12v4H74Z"/>
+<path fill="#eef7c9" d="M100 36h36v10H100Z"/>
+<path fill="#eef7c9" d="M126 26h10v22H126Z"/>
+<path fill="#eef7c9" d="M24 68h36v10H24Z"/>
+<path fill="#eef7c9" d="M18 58h10v22H18Z"/>
+<path fill="#d5e8a0" d="M52 8h56v10H52Z"/>
+<path fill="#d5e8a0" d="M64 0h8v12H64Z"/>
+<path fill="#d5e8a0" d="M80 4h8v10H80Z"/>
+<path fill="#d5e8a0" d="M96 8h8v8H96Z"/></symbol>
+    </defs>
+  </svg>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="Вернуться к уроку"><span class="brand-glyph" lang="zh-CN"><span class="zh-glyph">林</span><span class="zh-glyph-alt" aria-hidden="true">✦</span></span><span>ЛЕСНЫЕ ХРОНИКИ<small>Приключение с иероглифом</small></span></a>
+      <span class="mode-label"><i></i>Пошаговый бой · звук отключается</span>
+    </header>
+    <main>
+      <div class="title-row"><div><p class="eyebrow">БАМБУКОВЫЙ ЛАБИРИНТ</p><h1>Синнабон и бамбуковый лабиринт</h1></div><span class="chapter-badge"><span class="zh-glyph" lang="zh-CN">林</span><span class="zh-glyph-alt" aria-hidden="true">✦</span> <small>lín · лес</small></span></div>
+      <ol class="trail" id="trail" aria-label="Маршрут приключения">
+        <li aria-current="step"><span>01</span><div>Роща стрелков<small>Бамбуковый стрелок</small></div></li>
+        <li><span>02</span><div>Бамбуковая кухня<small>Панда-обжора</small></div></li>
+        <li><span>03</span><div>Шелестящая тропа<small>Шелесток</small></div></li>
+        <li><span>04</span><div>Роща дев<small>Бамбуковая дева</small></div></li>
+        <li><span>05</span><div>Трон бамбука<small>Бамбуковый король</small></div></li>
+      </ol>
+      <div class="game-layout" id="game-area">
+        <section class="battle-field" aria-label="Поле боя">
+          <div class="scene" id="scene" data-land="shooter">
+            <svg class="forest" viewBox="0 0 900 570" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#35502f"/><stop offset="1" stop-color="#7fae6d"/></linearGradient><radialGradient id="glow"><stop stop-color="#d5ecc0" stop-opacity=".5"/><stop offset="1" stop-color="#d5ecc0" stop-opacity="0"/></radialGradient></defs>
+            <path fill="url(#sky)" d="M0 0h900v570H0Z"/><circle fill="url(#glow)" cx="490" cy="150" r="260"/><circle fill="#d5ecc0" opacity=".65" cx="525" cy="105" r="37"/>
+            <g color="#4c7a3a"><use href="#prop" x="20" y="-30" width="170" height="390"/><use href="#prop" x="200" y="-50" width="190" height="430"/><use href="#prop" x="420" y="15" width="140" height="340"/><use href="#prop" x="630" y="-20" width="180" height="410"/><use href="#prop" x="800" y="0" width="170" height="390"/></g>
+            <g color="#33512a"><use href="#prop" x="-70" y="-80" width="260" height="520"/><use href="#prop" x="120" y="-40" width="210" height="460"/><use href="#prop" x="570" y="-80" width="250" height="500"/><use href="#prop" x="760" y="-90" width="240" height="540"/></g>
+            <path fill="#57823f" d="M0 390Q180 320 420 385T900 365v205H0Z"/><path fill="#6f9c50" d="M0 440Q260 365 480 428T900 420v150H0Z"/><path fill="#8fbc72" d="M590 362q-205 57-236 94t42 114h284q-173-94-176-123t86-85Z"/>
+            <path fill="#d5ecc0" opacity=".4" d="M584 371q-138 53-146 83t95 116h70q-142-96-134-117t115-82Z"/>
+            <g fill="#131f12"><path d="M0 0h40v394l22 69-62 40ZM900 0h-46v396l-30 62 76 30Z"/><path d="M0 0h900v27l-130 4-80 25-135-28-156 32-144-20-130 32L0 36Z"/></g>
+            <g color="#33512a"><use href="#prop" x="660" y="300" width="90" height="180"/><use href="#prop" x="120" y="330" width="80" height="160"/></g>
+            <g fill="#d5ecc0" opacity=".7"><path d="m90 442 6-26 6 26 11-14-5 27H78l-6-24Zm680 32 7-30 8 30 11-18-4 30h-40l4-26ZM155 500l8-31 8 31 10-16-3 31h-31l-6-27Z"/></g>
+            </svg>
+            <div class="scene-shade"></div><div class="fireflies" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="location"><span class="location-dot"></span><span id="location">Роща стрелков</span><small id="encounter">Встреча 1 / 5</small></div>
+            <div class="fighter hero" id="hero"><div class="fighter-label">СИННАБОН<span id="hero-hp-text">6 / 6</span></div><div class="hp-track"><div id="hero-hp"></div></div><img src="../../assets/characters/cinnabon.svg" alt="Синнабон — белый кот-путешественник" draggable="false"><span class="shield-aura" id="shield-aura" hidden>ЩИТ</span><span class="ground-shadow"></span></div>
+            <div class="fighter enemy" id="enemy"><div class="fighter-label"><span id="enemy-name">Бамбуковый стрелок</span><span id="enemy-hp-text">17 / 17</span></div><div class="hp-track enemy-track"><div id="enemy-hp"></div></div><svg class="monster" viewBox="0 0 160 160" role="img" aria-label="Противник"><use id="monster-use" href="#shooter"/></svg><span class="ground-shadow"></span></div>
+            <span class="spell" id="spell" lang="zh-CN" aria-hidden="true">林</span><span class="damage-number" id="damage-number" aria-hidden="true"></span>
+            <div class="scene-caption"><span>ЗАКЛИНАНИЕ «ЛЕС»</span><p>Один иероглиф. 8 черт. Целое приключение.</p></div>
+          </div>
+          <div class="encounter-info"><span class="intent-icon" aria-hidden="true">!</span><div><p class="eyebrow">НАМЕРЕНИЕ ПРОТИВНИКА</p><p id="intention">Не контратакует. Ударит только после 3 ошибок.</p></div></div>
+        </section>
+        <aside class="battle-side" aria-label="Написание заклинания">
+          <div class="panel-heading"><span class="eyebrow">ТВОЯ МАГИЯ</span><span class="ink-label"><span class="zh-glyph" lang="zh-CN">林</span><span class="zh-glyph-alt" aria-hidden="true">✦</span> · lín</span></div>
+          <h2>Напиши, чтобы атаковать</h2><p class="panel-intro">Пальцем или мышью. Каждая верная черта бьёт противника.</p>
+          <div class="writer-frame"><div class="writer-grid" id="writer-target" role="application" aria-label="Напишите все черты иероглифа 林" aria-describedby="stroke-guide writer-status"></div><div class="writer-cover" id="writer-cover"><span class="zh-glyph" lang="zh-CN">林</span><span class="zh-glyph-alt" aria-hidden="true">✦</span><small id="cover-label">Магия ждёт начала путешествия</small></div><div class="gate-panel" id="gate-panel" hidden><span class="gate-eyebrow">ВОПРОС ХОЗЯИНА</span><span class="gate-glyph" lang="zh-CN" aria-hidden="true">林</span><p id="gate-text"></p><div class="gate-options" id="gate-options"></div><small>Верный ответ откроет поле написания</small></div><span class="corner top-left"></span><span class="corner bottom-right"></span></div>
+          <div class="stroke-progress" aria-label="Прогресс написания"><span id="stroke-count">0 / 8 черт</span><div id="stroke-dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          <div class="quiz-timer" id="quiz-timer" hidden><span class="timer-label">ВРЕМЯ</span><div class="timer-bar" role="progressbar" aria-label="Оставшееся время написания"><div id="timer-fill"></div></div><span class="timer-text" id="timer-text">32 с</span></div>
+          <p class="writer-status" id="writer-status" role="status" aria-live="polite">Начни путешествие, чтобы открыть поле написания.</p>
+          <div class="writer-controls"><button id="help-button" type="button" disabled>Показать черты</button><button id="outline-button" type="button" aria-pressed="true" disabled>Контур: вкл.</button><button id="sound-button" type="button" aria-pressed="true">Звук: вкл.</button></div>
+          <button class="potion-button" id="potion-button" type="button" disabled><svg viewBox="0 0 24 28" width="24" height="28" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M8 2h8v8l5 5v10H3V15l5-5Z"/><path fill="currentColor" opacity=".55" d="M5 18h14v5H5Z"/><path stroke="currentColor" stroke-width="2" d="M8 6h8"/></svg><span>Бамбуковый сок<small>Восстанавливает 2 здоровья</small></span><b id="potion-count">×2</b></button>
+        </aside>
+        <section class="battle-extras" aria-label="Сведения о бое">
+          <div class="hero-stats"><div><span class="stat-title">Серия без ошибок</span><div class="combo-dots" id="combo-dots"><i></i><i></i><i></i></div><small>Третье чистое написание: двойной удар</small></div><div><span class="stat-title">Бамбуковый щит</span><strong id="shield-text">Не заряжен</strong><small>Чистое написание защищает от 1 урона</small></div><div><span class="stat-title">Шум</span><strong id="danger-text">0 / 3 ошибки</strong><small>Ошибки и промедление будят противника</small></div></div>
+          <details class="extra-block dialogue"><summary>Слова Синнабона</summary><div class="dialogue"><img src="../../assets/characters/cinnabon.svg" alt="" width="44" height="44"><p id="dialogue">«Два дерева — уже лес. Не потеряемся!»</p></div></details>
+          <details class="extra-block" id="stroke-guide" open><summary>Порядок черт</summary><span class="guide-eyebrow">ПОРЯДОК ЧЕРТ</span>
+          <p><b>1</b> Левое 木: горизонталь, вертикаль, две откидные</p>
+          <p><b>2</b> Правое 木 — те же четыре черты</p>
+          <p><b>3</b> Всего восемь черт, ствол за стволом</p>
+          </details>
+          <p class="practice-note">Каждая верная черта — урон. Чистое написание даёт щит. Подсказки не атакуют.</p>
+          <details class="extra-block journal" open><summary>Шелест записок <span id="attack-count">0 заклинаний</span></summary><ol id="journal-list"><li>Синнабон стоит у первых стволов.</li></ol></details>
+        </section>
+      </div>
+      <noscript><p class="noscript">Для игры нужен JavaScript. Включите его в настройках браузера и обновите страницу.</p></noscript>
+    </main>
+    <footer><span>Следуй пути. Пиши внимательно. Береги кота.</span><a href="../part1_glyph.html">Потренировать 林 в уроке</a></footer>
+  </div>
+  <div class="overlay" id="overlay" hidden>
+    <section class="story-card" role="dialog" aria-modal="true" aria-labelledby="story-title" aria-describedby="story-text" tabindex="-1">
+      <div class="story-art" id="story-art"><img src="../../assets/characters/cinnabon.svg" alt="Синнабон" width="110" height="100"><span class="zh-glyph" lang="zh-CN">林</span><span class="zh-glyph-alt" aria-hidden="true">✦</span></div>
+      <p class="eyebrow" id="story-eyebrow">ПРИКЛЮЧЕНИЕ НАЧИНАЕТСЯ</p><h2 id="story-title">Стволы смыкаются</h2><p id="story-text"></p>
+      <div class="story-rules" id="story-rules"><p><b>01</b><span>Пиши все черты — каждая верная черта бьёт противника, чистое написание заряжает щит.</span></p><p><b>02</b><span>С третьей встречи образец скрыт и время ограничено (32 секунд). Три чистых написания подряд — двойной удар.</span></p><p><b>03</b><span>Страж и хозяин рассеивают нечистые заклинания. Настои и привалы помогут восстановиться.</span></p></div>
+      <div class="reward" id="reward" hidden><span>ТВОЙ КОД ПОБЕДЫ</span><strong id="reward-code"></strong><p id="reward-stats"></p></div>
+      <div class="story-actions"><button class="primary-button" id="story-primary" type="button">Отправиться в путь</button><button class="secondary-button" id="story-secondary" type="button" hidden></button><button class="ghost-button" id="story-sound" type="button" aria-pressed="true">Звук: вкл.</button></div>
+      <p class="story-footnote" id="story-footnote">5 встреч · таймер с третьей · звук отключается</p>
+    </section>
+  </div>
+</body>
+</html>

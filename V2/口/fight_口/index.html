@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102b26">
+  <title>fight_口 · Синнабон и шёпот леса</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="game-core.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="pine" viewBox="0 0 140 280"><path fill="currentColor" d="M62 280V215H8l28-48H17l29-47H31l28-48H45L70 0l25 72H81l28 48H94l29 47h-19l28 48H78v65Z"/></symbol>
+      <symbol id="slime" viewBox="0 0 160 160"><path fill="#244d35" d="M20 132v-28h8V80h16V64h24V48h24v16h24v16h16v24h8v28h-12v8H32v-8Z"/><path fill="#87b879" d="M28 124v-20h8V88h16V72h24V56h8v16h24v16h16v16h8v20h-12v8H40v-8Z"/><path fill="#b9d38b" d="M36 104V88h16V80h24v8H56v16Z"/><path fill="#1e3d2d" d="M52 100h12v16H52Zm44 0h12v16H96ZM68 120h24v8H68Z"/><path fill="#f4eecf" d="M52 100h4v4h-4Zm44 0h4v4h-4Z"/><path fill="#628459" d="M48 60V48h12V36h16v12H64v12Zm44-4V40h16v12H96v4Z"/></symbol>
+      <symbol id="mushroom" viewBox="0 0 160 160"><path fill="#4e3440" d="M16 92V68h16V52h16V36h64v16h16v16h16v24h-36v40H96v12H64v-12H52V92Z"/><path fill="#dfa16e" d="M24 84V68h16V52h16V44h48v8h16v16h16v16Z"/><path fill="#ffe0a0" d="M40 64h16v12H40Zm32-16h20v16H72Zm36 20h16v12h-16Z"/><path fill="#f0d2a0" d="M60 92h40v36H88v8H72v-8H60Z"/><path fill="#433e37" d="M64 104h8v12h-8Zm24 0h8v12h-8ZM76 120h8v8h-8Z"/><path fill="#a7bb86" d="m28 100 8-16 8 16Zm88 0 8-16 8 16ZM36 116l8-16 8 16Z"/></symbol>
+      <symbol id="spirit" viewBox="0 0 160 160"><path fill="#628e9b" opacity=".35" d="M20 152v-44h8V64h16V40h20V24h32v16h20v24h16v44h8v44l-32-16-28 16-28-16Z"/><path fill="#a0ddce" d="M32 136v-28h8V64h16V48h16V36h16v12h16v16h16v44h8v28l-24-12-24 12-24-12Z"/><path fill="#d5f3d6" d="M48 96V64h16V56h8v24H60v16Z"/><path fill="#284e5a" d="M56 84h16v20H56Zm32 0h16v20H88ZM72 112h16v12H72Z"/><path fill="#f7e7b2" d="M60 88h4v8h-4Zm32 0h4v8h-4Z"/></symbol>
+      <symbol id="guardian" viewBox="0 0 160 160"><path fill="#392f28" d="M12 144v-20h12V88h16V64h-8V48H16V24h16v16h16V16h16v24h32V16h16v24h16V24h16v24h-16v16h-8v24h16v36h12v20h-36v-16H96v16H64v-16H48v16Z"/><path fill="#827c48" d="M32 136v-12h8V88h8V64h64v24h8v36h8v12h-12v-20H96v20H64v-20H44v20Z"/><path fill="#a29d62" d="M56 64h12v40H56Zm24 4h12v44H80Z"/><path fill="#d8e992" d="M48 80h24v12H48Zm40 0h24v12H88Z"/><path fill="#302f25" d="M56 80h8v12h-8Zm40 0h8v12h-8ZM64 100h32v8H64Z"/><path fill="#729450" d="M40 48V32h24V16h32v16h24v16Zm-16 64V96h16v16Zm96 0V96h16v16Z"/></symbol>
+      <symbol id="boss" viewBox="0 0 160 160"><g fill="#6e5233"><path d="M56 44V24h8v20Z"/><path d="M64 32V12h8v20Z"/><path d="M72 40V20h8v20Z"/><path d="M80 44V24h8v20Z"/><path d="M88 40V20h8v20Z"/><path d="M96 32V12h8v20Z"/><path d="M104 44V24h8v20Z"/></g><path fill="#173626" d="M44 88h72v24h8v36h-16v-20h-8v20H84v-20H76v20H60v-20h-8v20H36v-36h8Z"/><path fill="#245239" d="M36 96h8v24h-8Zm80 0h8v24h-8Z"/><path fill="#1d4230" d="M48 40h64v16h8v20h-8v12H48V76h-8V56h8Z"/><path fill="#4f7d4a" d="M48 88h24v8H48Zm40 0h24v8H88ZM68 100h24v8H68Z"/><path fill="#ffd76a" d="M60 56h12v8H60Zm28 0h12v8H88Z"/><path fill="#3a2c12" d="M66 56h4v8h-4Zm28 0h4v8h-4Z"/><path fill="#0d241a" d="M68 76h24v4H68Z"/></symbol>
+    </defs>
+  </svg>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="Вернуться к уроку"><span class="brand-glyph" lang="zh-CN"><span class="zh-glyph">口</span><span class="zh-glyph-alt" aria-hidden="true">✦</span></span><span>ЛЕСНЫЕ ХРОНИКИ<small>Приключение с иероглифом</small></span></a>
+      <span class="mode-label"><i></i>Пошаговый бой · звук отключается</span>
+    </header>
+    <main>
+      <div class="title-row"><div><p class="eyebrow">ГЛАВА 01 / ЗАЧАРОВАННАЯ ТРОПА</p><h1>Синнабон и шёпот леса</h1></div><span class="chapter-badge"><span class="zh-glyph" lang="zh-CN">口</span><span class="zh-glyph-alt" aria-hidden="true">✦</span> <small>kǒu · рот</small></span></div>
+      <ol class="trail" id="trail" aria-label="Маршрут приключения">
+        <li aria-current="step"><span>01</span><div>Опушка<small>Моховая слизь</small></div></li>
+        <li><span>02</span><div>Грибная чаща<small>Колючий гриб</small></div></li>
+        <li><span>03</span><div>Овраг<small>Туманный дух</small></div></li>
+        <li><span>04</span><div>Древний дуб<small>Корневой страж</small></div></li>
+        <li><span>05</span><div>Сердце леса<small>Древний владыка</small></div></li>
+      </ol>
+      <div class="game-layout" id="game-area">
+        <section class="battle-field" aria-label="Поле боя">
+          <div class="scene" id="scene" data-land="slime">
+            <svg class="forest" viewBox="0 0 900 570" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#385a49"/><stop offset="1" stop-color="#91ab78"/></linearGradient><radialGradient id="glow"><stop stop-color="#f4e3a8" stop-opacity=".5"/><stop offset="1" stop-color="#f4e3a8" stop-opacity="0"/></radialGradient></defs>
+              <path fill="url(#sky)" d="M0 0h900v570H0Z"/><circle fill="url(#glow)" cx="490" cy="150" r="260"/><circle fill="#e4d8a0" opacity=".65" cx="525" cy="105" r="37"/>
+              <g color="#52735a"><use href="#pine" x="20" y="-30" width="170" height="390"/><use href="#pine" x="200" y="-50" width="190" height="430"/><use href="#pine" x="420" y="15" width="140" height="340"/><use href="#pine" x="630" y="-20" width="180" height="410"/><use href="#pine" x="800" y="0" width="170" height="390"/></g>
+              <g color="#315741"><use href="#pine" x="-70" y="-80" width="260" height="520"/><use href="#pine" x="120" y="-40" width="210" height="460"/><use href="#pine" x="570" y="-80" width="250" height="500"/><use href="#pine" x="760" y="-90" width="240" height="540"/></g>
+              <path fill="#2b5039" d="M0 390Q180 320 420 385T900 365v205H0Z"/><path fill="#587448" d="M0 440Q260 365 480 428T900 420v150H0Z"/><path fill="#8a9360" d="M590 362q-205 57-236 94t42 114h284q-173-94-176-123t86-85Z"/><path fill="#b0ad79" opacity=".45" d="M584 371q-138 53-146 83t95 116h70q-142-96-134-117t115-82Z"/>
+              <g fill="#213e30"><path d="M0 0h40v394l22 69-62 40ZM900 0h-46v396l-30 62 76 30Z"/><path d="M0 0h900v27l-130 4-80 25-135-28-156 32-144-20-130 32L0 36Z"/></g>
+              <g fill="#a2b576"><path d="m90 442 6-26 6 26 11-14-5 27H78l-6-24Zm680 32 7-30 8 30 11-18-4 30h-40l4-26ZM155 500l8-31 8 31 10-16-3 31h-31l-6-27Z"/></g>
+              <g fill="#dfa16e"><path d="M66 469v-10h8v-7h20v7h8v10Z"/><path d="M749 428v-8h8v-7h16v7h8v8Z"/></g><g fill="#cfcea0"><path d="M79 469h10v16H79Z"/><path d="M760 428h8v12h-8Z"/></g>
+              <g fill="#253f31"><path d="M13 534q92-30 168 5l-16 31H0ZM681 554q90-45 219-35v51H690Z"/></g>
+            </svg>
+            <div class="scene-shade"></div><div class="fireflies" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="location"><span class="location-dot"></span><span id="location">Солнечная опушка</span><small id="encounter">Встреча 1 / 5</small></div>
+            <div class="fighter hero" id="hero"><div class="fighter-label">СИННАБОН<span id="hero-hp-text">6 / 6</span></div><div class="hp-track"><div id="hero-hp"></div></div><img src="../../assets/characters/cinnabon.svg" alt="Синнабон — белый кот-путешественник" draggable="false"><span class="shield-aura" id="shield-aura" hidden>ЩИТ</span><span class="ground-shadow"></span></div>
+            <div class="fighter enemy" id="enemy"><div class="fighter-label"><span id="enemy-name">Моховая слизь</span><span id="enemy-hp-text">6 / 6</span></div><div class="hp-track enemy-track"><div id="enemy-hp"></div></div><svg class="monster" viewBox="0 0 160 160" role="img" aria-label="Лесной монстр"><use id="monster-use" href="#slime"/></svg><span class="ground-shadow"></span></div>
+            <span class="spell" id="spell" lang="zh-CN" aria-hidden="true">口</span><span class="damage-number" id="damage-number" aria-hidden="true"></span>
+            <div class="scene-caption"><span>ЗАКЛИНАНИЕ РОТА</span><p>Один иероглиф. Три черты. Целое приключение.</p></div>
+          </div>
+          <div class="encounter-info"><span class="intent-icon" aria-hidden="true">!</span><div><p class="eyebrow">НАМЕРЕНИЕ МОНСТРА</p><p id="intention">Не контратакует. Ударит только после 3 ошибок.</p></div></div>
+        </section>
+        <aside class="battle-side" aria-label="Написание заклинания">
+          <div class="panel-heading"><span class="eyebrow">ТВОЯ МАГИЯ</span><span class="ink-label"><span class="zh-glyph" lang="zh-CN">口</span><span class="zh-glyph-alt" aria-hidden="true">✦</span> · kǒu</span></div>
+          <h2>Напиши, чтобы атаковать</h2><p class="panel-intro">Пальцем или мышью. Каждая верная черта бьёт монстра.</p>
+          <div class="writer-frame"><div class="writer-grid" id="writer-target" role="application" aria-label="Напишите три черты заклинания" aria-describedby="stroke-guide writer-status"></div><div class="writer-cover" id="writer-cover"><span class="zh-glyph" lang="zh-CN">口</span><span class="zh-glyph-alt" aria-hidden="true">✦</span><small id="cover-label">Магия ждёт начала путешествия</small></div><div class="gate-panel" id="gate-panel" hidden><span class="gate-eyebrow">ВОПРОС ВЛАДЫКИ</span><span class="gate-glyph" lang="zh-CN" aria-hidden="true">口</span><p id="gate-text"></p><div class="gate-options" id="gate-options"></div><small>Верный ответ откроет поле написания</small></div><span class="corner top-left"></span><span class="corner bottom-right"></span></div>
+          <div class="stroke-progress" aria-label="Прогресс написания"><span id="stroke-count">0 / 3 черты</span><div id="stroke-dots"><i></i><i></i><i></i></div></div>
+          <div class="quiz-timer" id="quiz-timer" hidden><span class="timer-label">ВРЕМЯ</span><div class="timer-bar" role="progressbar" aria-label="Оставшееся время написания"><div id="timer-fill"></div></div><span class="timer-text" id="timer-text">12 с</span></div>
+          <p class="writer-status" id="writer-status" role="status" aria-live="polite">Начни путешествие, чтобы открыть поле написания.</p>
+          <div class="writer-controls"><button id="help-button" type="button" disabled>Показать черты</button><button id="outline-button" type="button" aria-pressed="true" disabled>Контур: вкл.</button><button id="sound-button" type="button" aria-pressed="true">Звук: вкл.</button></div>
+          <button class="potion-button" id="potion-button" type="button" disabled><svg viewBox="0 0 24 28" width="24" height="28" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M8 2h8v8l5 5v10H3V15l5-5Z"/><path fill="currentColor" opacity=".55" d="M5 18h14v5H5Z"/><path stroke="currentColor" stroke-width="2" d="M8 6h8"/></svg><span>Лесной настой<small>Восстанавливает 2 здоровья</small></span><b id="potion-count">×2</b></button>
+        </aside>
+        <section class="battle-extras" aria-label="Сведения о бое">
+          <div class="hero-stats"><div><span class="stat-title">Серия без ошибок</span><div class="combo-dots" id="combo-dots"><i></i><i></i><i></i></div><small>Третье чистое написание: двойной удар</small></div><div><span class="stat-title">Лесной щит</span><strong id="shield-text">Не заряжен</strong><small>Чистое написание защищает от 1 урона</small></div><div><span class="stat-title">Шум в лесу</span><strong id="danger-text">0 / 3 ошибки</strong><small>Ошибки и промедление будят монстра</small></div></div>
+          <details class="extra-block dialogue"><summary>Слова Синнабона</summary><div class="dialogue"><img src="../../assets/characters/cinnabon.svg" alt="" width="44" height="44"><p id="dialogue">«В этом лесу слова — настоящая магия. Поможешь мне написать заклинание?»</p></div></details>
+          <details class="extra-block" id="stroke-guide" open><summary>Порядок черт</summary><span class="guide-eyebrow">ПОРЯДОК ЧЕРТ</span><p><b>1</b> Слева — сверху вниз</p><p><b>2</b> Сверху вправо, затем вниз <em>одной чертой</em></p><p><b>3</b> Снизу — слева направо</p></details>
+          <p class="practice-note">Каждая верная черта — урон. Чистое написание даёт щит. Подсказки не атакуют.</p>
+          <details class="extra-block journal" open><summary>Следы на тропе <span id="attack-count">0 заклинаний</span></summary><ol id="journal-list"><li>Синнабон стоит у входа в зачарованный лес.</li></ol></details>
+        </section>
+      </div>
+      <noscript><p class="noscript">Для игры нужен JavaScript. Включите его в настройках браузера и обновите страницу.</p></noscript>
+    </main>
+    <footer><span>Следуй тропе. Пиши внимательно. Береги кота.</span><a href="../part1_glyph.html">Потренировать иероглиф в уроке</a></footer>
+  </div>
+  <div class="overlay" id="overlay" hidden>
+    <section class="story-card" role="dialog" aria-modal="true" aria-labelledby="story-title" aria-describedby="story-text" tabindex="-1">
+      <div class="story-art" id="story-art"><img src="../../assets/characters/cinnabon.svg" alt="Синнабон" width="110" height="100"><span class="zh-glyph" lang="zh-CN">口</span><span class="zh-glyph-alt" aria-hidden="true">✦</span></div>
+      <p class="eyebrow" id="story-eyebrow">ПРИКЛЮЧЕНИЕ НАЧИНАЕТСЯ</p><h2 id="story-title">Лес знает твоё заклинание</h2><p id="story-text"></p>
+      <div class="story-rules" id="story-rules"><p><b>01</b><span>Пиши три черты — каждая верная черта бьёт монстра, чистое написание заряжает щит.</span></p><p><b>02</b><span>С третьей встречи образец скрыт и время ограничено. Три чистых написания подряд — двойной удар.</span></p><p><b>03</b><span>Страж и владыка рассеивают нечистые заклинания. Настои и привалы помогут восстановиться.</span></p></div>
+      <div class="reward" id="reward" hidden><span>ТВОЙ КОД ПОБЕДЫ</span><strong id="reward-code"></strong><p id="reward-stats"></p></div>
+      <div class="story-actions"><button class="primary-button" id="story-primary" type="button">Отправиться в лес</button><button class="secondary-button" id="story-secondary" type="button" hidden></button><button class="ghost-button" id="story-sound" type="button" aria-pressed="true">Звук: вкл.</button></div>
+      <p class="story-footnote" id="story-footnote">5 встреч · таймер с третьей · играй внимательно</p>
+    </section>
+  </div>
+</body>
+</html>

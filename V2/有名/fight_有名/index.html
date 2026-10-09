@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2e1418">
+  <title>fight_有名 · Синнабон и площадь славы</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="game-core.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body class="w2">
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="prop" viewBox="0 0 140 280"><path fill="currentColor" d="M40 280v-90h60v90ZM28 190h84l-42-40ZM58 150h24v-60H58Z"/></symbol>
+      <symbol id="herald" viewBox="0 0 160 160"><path fill="#7b4c51" d="M44 60h72v76H44Z"/>
+<path fill="#c57982" d="M52 68h56v60H52Z"/>
+<path fill="#20211c" d="M60 80h8v10H60Z"/><path fill="#20211c" d="M86 80h8v10H86Z"/><path fill="#f4eecf" d="M62 76h4v4H62Z"/><path fill="#f4eecf" d="M88 76h4v4H88Z"/>
+<path fill="#7b4c51" d="M68 106h24v4H68Z"/>
+<path fill="#f5d98e" d="M52 44h56v16H52Z"/>
+<path fill="#f5d98e" d="M120 60h10v12H120Z"/>
+<path fill="#f5d98e" d="M126 48h10v36H126Z"/>
+<path fill="#f5d98e" d="M132 44h6v44H132Z"/>
+<path fill="#c57982" d="M28 72h12v52H28Z"/>
+<path fill="#c57982" d="M120 72h12v52H120Z"/></symbol>
+      <symbol id="kite" viewBox="0 0 160 160"><path fill="#642a39" d="M64 16h32v32H64Z"/>
+<path fill="#9f435c" d="M52 44h56v24H52Z"/>
+<path fill="#642a39" d="M64 66h32v28H64Z"/>
+<path fill="#20211c" d="M68 28h8v10H68Z"/><path fill="#20211c" d="M84 28h8v10H84Z"/><path fill="#f4eecf" d="M70 24h4v4H70Z"/><path fill="#f4eecf" d="M86 24h4v4H86Z"/>
+<path fill="#642a39" d="M72 48h12v4H72Z"/>
+<path fill="#f5d98e" d="M76 92h8v14H76Z"/>
+<path fill="#c25450" d="M72 104h12v10H72Z"/>
+<path fill="#f5d98e" d="M76 114h8v14H76Z"/>
+<path fill="#c25450" d="M72 126h12v10H72Z"/>
+<path fill="#f5d98e" d="M76 136h8v12H76Z"/>
+<path fill="#d190a1" d="M60 76h12v10H60Z"/>
+<path fill="#d190a1" d="M88 76h12v10H88Z"/></symbol>
+      <symbol id="drum" viewBox="0 0 160 160"><path fill="#875e64" d="M36 60h88v56H36Z"/>
+<path fill="#d8969f" d="M44 76h72v24H44Z"/>
+<path fill="#f9cad1" d="M36 52h88v12H36Z"/>
+<path fill="#f9cad1" d="M36 112h88v12H36Z"/>
+<path fill="#20211c" d="M56 64h8v10H56Z"/><path fill="#20211c" d="M84 64h8v10H84Z"/><path fill="#f4eecf" d="M58 60h4v4H58Z"/><path fill="#f4eecf" d="M86 60h4v4H86Z"/>
+<path fill="#875e64" d="M66 96h28v4H66Z"/>
+<path fill="#f5d98e" d="M52 76h8v24H52Z"/>
+<path fill="#f5d98e" d="M100 76h8v24H100Z"/>
+<path fill="#f5d98e" d="M24 40h8v40H24Z"/>
+<path fill="#f5d98e" d="M128 40h8v40H128Z"/></symbol>
+      <symbol id="swarm" viewBox="0 0 160 160"><path fill="#6b2e2c" d="M52 60h56v56H52Z"/>
+<path fill="#ab4a46" d="M60 68h40v40H60Z"/>
+<path fill="#20211c" d="M66 80h8v10H66Z"/><path fill="#20211c" d="M90 80h8v10H90Z"/><path fill="#f4eecf" d="M68 76h4v4H68Z"/><path fill="#f4eecf" d="M92 76h4v4H92Z"/>
+<path fill="#6b2e2c" d="M74 100h12v4H74Z"/>
+<path fill="#f5d98e" d="M16 40h14v12H16Z"/>
+<path fill="#f5d98e" d="M40 28h14v12H40Z"/>
+<path fill="#f5d98e" d="M104 36h14v12H104Z"/>
+<path fill="#f5d98e" d="M126 76h14v12H126Z"/>
+<path fill="#f5d98e" d="M12 96h14v12H12Z"/>
+<path fill="#f5d98e" d="M108 116h14v12H108Z"/>
+<path fill="#f5d98e" d="M28 128h14v12H28Z"/>
+<path fill="#20211c" d="M20 50h8v6H20Z"/>
+<path fill="#20211c" d="M46 38h8v6H46Z"/>
+<path fill="#20211c" d="M110 46h8v6H110Z"/>
+<path fill="#20211c" d="M116 82h8v6H116Z"/>
+<path fill="#20211c" d="M16 102h8v6H16Z"/>
+<path fill="#20211c" d="M114 122h8v6H114Z"/>
+<path fill="#20211c" d="M34 132h8v6H34Z"/></symbol>
+      <symbol id="star" viewBox="0 0 160 160"><path fill="#f5d98e" d="M64 12h32v32H64Z"/>
+<path fill="#d8bf7d" d="M52 40h56v24H52Z"/>
+<path fill="#d8bf7d" d="M24 60h40v24H24Z"/>
+<path fill="#d8bf7d" d="M96 60h40v24H96Z"/>
+<path fill="#87774e" d="M40 80h32v28H40Z"/>
+<path fill="#87774e" d="M88 80h32v28H88Z"/>
+<path fill="#d8bf7d" d="M28 104h32v32H28Z"/>
+<path fill="#d8bf7d" d="M100 104h32v32H100Z"/>
+<path fill="#20211c" d="M66 44h8v10H66Z"/><path fill="#20211c" d="M88 44h8v10H88Z"/><path fill="#f4eecf" d="M68 40h4v4H68Z"/><path fill="#f4eecf" d="M90 40h4v4H90Z"/>
+<path fill="#f5d98e" d="M72 62h14v4H72Z"/>
+<path fill="#f9e7b9" d="M72 132h16v12H72Z"/>
+<path fill="#f9e7b9" d="M40 132h12v10H40Z"/>
+<path fill="#f9e7b9" d="M108 132h12v10H108Z"/></symbol>
+    </defs>
+  </svg>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="../index.html" aria-label="Вернуться к уроку"><span class="brand-glyph" lang="zh-CN"><span class="zh-glyph">有名</span><span class="zh-glyph-alt" aria-hidden="true">✦</span></span><span>ЛЕСНЫЕ ХРОНИКИ<small>Приключение со словом</small></span></a>
+      <span class="mode-label"><i></i>Пошаговый бой · звук отключается</span>
+    </header>
+    <main>
+      <div class="title-row"><div><p class="eyebrow">ПЛОЩАДЬ СЛАВЫ</p><h1>Синнабон и площадь славы</h1></div><span class="chapter-badge"><span class="zh-glyph" lang="zh-CN">有名</span><span class="zh-glyph-alt" aria-hidden="true">✦</span> <small>yǒumíng · известный</small></span></div>
+      <ol class="trail" id="trail" aria-label="Маршрут приключения">
+        <li aria-current="step"><span>01</span><div>Помост глашатаев<small>Глашатай слухов</small></div></li>
+        <li><span>02</span><div>Небо афиш<small>Змей-афиша</small></div></li>
+        <li><span>03</span><div>Двор молвы<small>Барабан молвы</small></div></li>
+        <li><span>04</span><div>Ройный переулок<small>Рой сплетников</small></div></li>
+        <li><span>05</span><div>Аллея звёзд<small>Звезда славы</small></div></li>
+      </ol>
+      <div class="game-layout" id="game-area">
+        <section class="battle-field" aria-label="Поле боя">
+          <div class="scene" id="scene" data-land="herald">
+            <svg class="forest" viewBox="0 0 900 570" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#672936"/><stop offset="1" stop-color="#dfaeb9"/></linearGradient><radialGradient id="glow"><stop stop-color="#e6c1ca" stop-opacity=".5"/><stop offset="1" stop-color="#e6c1ca" stop-opacity="0"/></radialGradient></defs>
+            <path fill="url(#sky)" d="M0 0h900v570H0Z"/><circle fill="url(#glow)" cx="490" cy="150" r="260"/><circle fill="#e6c1ca" opacity=".65" cx="525" cy="105" r="37"/>
+            <g color="#54222c"><use href="#prop" x="20" y="-30" width="170" height="390"/><use href="#prop" x="200" y="-50" width="190" height="430"/><use href="#prop" x="420" y="15" width="140" height="340"/><use href="#prop" x="630" y="-20" width="180" height="410"/><use href="#prop" x="800" y="0" width="170" height="390"/></g>
+            <g color="#491e26"><use href="#prop" x="-70" y="-80" width="260" height="520"/><use href="#prop" x="120" y="-40" width="210" height="460"/><use href="#prop" x="570" y="-80" width="250" height="500"/><use href="#prop" x="760" y="-90" width="240" height="540"/></g>
+            <path fill="#5f2632" d="M0 390Q180 320 420 385T900 365v205H0Z"/><path fill="#7a3040" d="M0 440Q260 365 480 428T900 420v150H0Z"/><path fill="#aa6877" d="M590 362q-205 57-236 94t42 114h284q-173-94-176-123t86-85Z"/>
+            <path fill="#e6c1ca" opacity=".4" d="M584 371q-138 53-146 83t95 116h70q-142-96-134-117t115-82Z"/>
+            <g fill="#170a0c"><path d="M0 0h40v394l22 69-62 40ZM900 0h-46v396l-30 62 76 30Z"/><path d="M0 0h900v27l-130 4-80 25-135-28-156 32-144-20-130 32L0 36Z"/></g>
+            <g color="#491e26"><use href="#prop" x="660" y="300" width="90" height="180"/><use href="#prop" x="120" y="330" width="80" height="160"/></g>
+            <g fill="#e6c1ca" opacity=".7"><path d="m90 442 6-26 6 26 11-14-5 27H78l-6-24Zm680 32 7-30 8 30 11-18-4 30h-40l4-26ZM155 500l8-31 8 31 10-16-3 31h-31l-6-27Z"/></g>
+            </svg>
+            <div class="scene-shade"></div><div class="fireflies" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="location"><span class="location-dot"></span><span id="location">Помост глашатаев</span><small id="encounter">Встреча 1 / 5</small></div>
+            <div class="fighter hero" id="hero"><div class="fighter-label">СИННАБОН<span id="hero-hp-text">6 / 6</span></div><div class="hp-track"><div id="hero-hp"></div></div><img src="../../assets/characters/cinnabon.svg" alt="Синнабон — белый кот-путешественник" draggable="false"><span class="shield-aura" id="shield-aura" hidden>ЩИТ</span><span class="ground-shadow"></span></div>
+            <div class="fighter enemy" id="enemy"><div class="fighter-label"><span id="enemy-name">Глашатай слухов</span><span id="enemy-hp-text">26 / 26</span></div><div class="hp-track enemy-track"><div id="enemy-hp"></div></div><svg class="monster" viewBox="0 0 160 160" role="img" aria-label="Противник"><use id="monster-use" href="#herald"/></svg><span class="ground-shadow"></span></div>
+            <span class="spell" id="spell" lang="zh-CN" aria-hidden="true">有名</span><span class="damage-number" id="damage-number" aria-hidden="true"></span>
+            <div class="scene-caption"><span>ЗАКЛИНАНИЕ «ИЗВЕСТНЫЙ»</span><p>Слово из 2 иероглифов. 12 черт. Целое приключение.</p></div>
+          </div>
+          <div class="encounter-info"><span class="intent-icon" aria-hidden="true">!</span><div><p class="eyebrow">НАМЕРЕНИЕ ПРОТИВНИКА</p><p id="intention">Не контратакует. Ударит только после 3 ошибок.</p></div></div>
+        </section>
+        <aside class="battle-side" aria-label="Написание заклинания">
+          <div class="panel-heading"><span class="eyebrow">ТВОЯ МАГИЯ</span><span class="ink-label"><span class="zh-glyph" lang="zh-CN">有名</span><span class="zh-glyph-alt" aria-hidden="true">✦</span> · yǒumíng</span></div>
+          <h2>Напиши, чтобы атаковать</h2><p class="panel-intro">Пальцем или мышью. Каждая верная черта бьёт противника.</p>
+          <div class="writer-frame"><div class="writer-grid" id="writer-target" role="application" aria-label="Напишите все черты слова 有名" aria-describedby="stroke-guide writer-status"></div><div class="writer-cover" id="writer-cover"><span class="zh-glyph" lang="zh-CN">有名</span><span class="zh-glyph-alt" aria-hidden="true">✦</span><small id="cover-label">Магия ждёт начала путешествия</small></div><div class="gate-panel" id="gate-panel" hidden><span class="gate-eyebrow">ВОПРОС ХОЗЯИНА</span><span class="gate-glyph" lang="zh-CN" aria-hidden="true">有名</span><p id="gate-text"></p><div class="gate-options" id="gate-options"></div><small>Верный ответ откроет поле написания</small></div><span class="corner top-left"></span><span class="corner bottom-right"></span></div>
+          <div class="stroke-progress" aria-label="Прогресс написания"><span id="stroke-count">0 / 12 черт</span><div id="stroke-dots" hidden></div></div>
+          <div class="quiz-timer" id="quiz-timer" hidden><span class="timer-label">ВРЕМЯ</span><div class="timer-bar" role="progressbar" aria-label="Оставшееся время написания"><div id="timer-fill"></div></div><span class="timer-text" id="timer-text">48 с</span></div>
+          <p class="writer-status" id="writer-status" role="status" aria-live="polite">Начни путешествие, чтобы открыть поле написания.</p>
+          <div class="writer-controls"><button id="help-button" type="button" disabled>Показать черты</button><button id="outline-button" type="button" aria-pressed="true" disabled>Контур: вкл.</button><button id="sound-button" type="button" aria-pressed="true">Звук: вкл.</button></div>
+          <button class="potion-button" id="potion-button" type="button" disabled><svg viewBox="0 0 24 28" width="24" height="28" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M8 2h8v8l5 5v10H3V15l5-5Z"/><path fill="currentColor" opacity=".55" d="M5 18h14v5H5Z"/><path stroke="currentColor" stroke-width="2" d="M8 6h8"/></svg><span>Лимонад славы<small>Восстанавливает 2 здоровья</small></span><b id="potion-count">×2</b></button>
+        </aside>
+        <section class="battle-extras" aria-label="Сведения о бое">
+          <div class="hero-stats"><div><span class="stat-title">Серия без ошибок</span><div class="combo-dots" id="combo-dots"><i></i><i></i><i></i></div><small>Третье чистое написание: двойной удар</small></div><div><span class="stat-title">Щит репутации</span><strong id="shield-text">Не заряжен</strong><small>Чистое написание защищает от 1 урона</small></div><div><span class="stat-title">Шум</span><strong id="danger-text">0 / 3 ошибки</strong><small>Ошибки и промедление будят противника</small></div></div>
+          <details class="extra-block dialogue"><summary>Слова Синнабона</summary><div class="dialogue"><img src="../../assets/characters/cinnabon.svg" alt="" width="44" height="44"><p id="dialogue">«Известность — дело наживное. Начнём с афиши!»</p></div></details>
+          <details class="extra-block" id="stroke-guide" open><summary>Порядок черт</summary><span class="guide-eyebrow">ПОРЯДОК ЧЕРТ</span>
+          <p><b>1</b> Слева 有: горизонталь, откидная, вертикаль, затем 月</p>
+          <p><b>2</b> Справа 名: 夕 сверху, 口 снизу — 12 черт</p>
+          </details>
+          <p class="practice-note">Каждая верная черта — урон. Чистое написание даёт щит. Подсказки не атакуют.</p>
+          <details class="extra-block journal" open><summary>Дневник знаменитости <span id="attack-count">0 заклинаний</span></summary><ol id="journal-list"><li>Синнабон у первой остановки: Помост глашатаев.</li></ol></details>
+        </section>
+      </div>
+      <noscript><p class="noscript">Для игры нужен JavaScript. Включите его в настройках браузера и обновите страницу.</p></noscript>
+    </main>
+    <footer><span>Следуй пути. Пиши внимательно. Береги кота.</span><a href="../part1_glyph.html">Потренировать 有名 в уроке</a></footer>
+  </div>
+  <div class="overlay" id="overlay" hidden>
+    <section class="story-card" role="dialog" aria-modal="true" aria-labelledby="story-title" aria-describedby="story-text" tabindex="-1">
+      <div class="story-art" id="story-art"><img src="../../assets/characters/cinnabon.svg" alt="Синнабон" width="110" height="100"><span class="zh-glyph" lang="zh-CN">有名</span><span class="zh-glyph-alt" aria-hidden="true">✦</span></div>
+      <p class="eyebrow" id="story-eyebrow">ПРИКЛЮЧЕНИЕ НАЧИНАЕТСЯ</p><h2 id="story-title">Толпа гудит</h2><p id="story-text"></p>
+      <div class="story-rules" id="story-rules"><p><b>01</b><span>Пиши все черты — каждая верная черта бьёт противника, чистое написание заряжает щит.</span></p><p><b>02</b><span>С третьей встречи образец скрыт и время ограничено (48 секунд). Три чистых написания подряд — двойной удар.</span></p><p><b>03</b><span>Страж и хозяин рассеивают нечистые заклинания. Настои и привалы помогут восстановиться.</span></p></div>
+      <div class="reward" id="reward" hidden><span>ТВОЙ КОД ПОБЕДЫ</span><strong id="reward-code"></strong><p id="reward-stats"></p></div>
+      <div class="story-actions"><button class="primary-button" id="story-primary" type="button">Отправиться в путь</button><button class="secondary-button" id="story-secondary" type="button" hidden></button><button class="ghost-button" id="story-sound" type="button" aria-pressed="true">Звук: вкл.</button></div>
+      <p class="story-footnote" id="story-footnote">5 встреч · таймер с третьей · звук отключается</p>
+    </section>
+  </div>
+</body>
+</html>
