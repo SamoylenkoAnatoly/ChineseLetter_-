@@ -73,7 +73,7 @@
   var reward = $("reward");
   var rewardLabel = $("reward-label");
   var rewardCode = $("reward-code");
-  var codesList = $("codes-list");
+  var dragonSeals = $("dragon-seals");
   var storyRank = $("story-rank");
   var rewardStats = $("reward-stats");
   var review = $("review");
@@ -102,14 +102,15 @@
   };
   var TONE_LABELS = { "1": "1 −", "2": "2 ∕", "3": "3 ˇ", "4": "4 \\" };
   var TONE_HINTS = { "1": "высокий", "2": "восходящий", "3": "изгиб", "4": "падающий" };
-  var SPECIAL_SHORT = { armor: "Щитоносец", ram: "Таран", herald: "Глашатай", shaman: "Шаман", elite: "Элита", final: "Владыка · 3 испытания" };
+  var SPECIAL_SHORT = { armor: "Щитоносец", ram: "Таран", herald: "Глашатай", shaman: "Шаман", elite: "Элита", final: "Владыка · 3 испытания", dragon: "Дракон · три печати" };
   var SPECIAL_HINTS = {
     armor: "Щитоносец: первый промах в задании не считается — броня гасит удар.",
     ram: "Таран: монстр признаёт только письмо иероглифа!",
     herald: "Глашатай: монстр слушает только задания на слух!",
     shaman: "Шаман: колдовство вдвое сокращает время на задание!",
     elite: "Элита: два верных ответа подряд — перевод, затем пиньинь того же знака.",
-    final: "Владыка: три испытания подряд, любая ошибка бьёт по стене двойным!"
+    final: "Владыка: три испытания подряд, любая ошибка бьёт по стене двойным!",
+    dragon: "Три печати: тон на слух → письмо по переводу → пиньинь. Ошибка или таймаут срывает цепочку: дыхание −2 стены. Щит блокирует дыхание."
   };
   var EVENT_LABELS = {
     fog: "Туман: контуры письма скрыты!",
@@ -121,7 +122,7 @@
     "Гоблины-разведчики разбежались. Стена выдержала первый натиск, а разведданные пошли на пользу: факелы горят ровнее.",
     "Волчья кавалерия отхлынула от ворот. Всадники уносят луки, а над равниной кружит лишь ворона.",
     "Осадные башни рухнули в ров. Тролли ретируются, бормоча что-то про письмо по памяти.",
-    "Владыка орды повержен! Нечистые письмена не спасли его, и орда снимает осаду."
+    "Владыка орды повержен, но небо закрывают огромные крылья! Впереди пятый этап: один дракон и три печати. Тон на слух → письмо по переводу → пиньинь. Ошибка срывает цепочку и вызывает огненное дыхание; разрушенные печати сохраняются."
   ];
   var DEFENSE_QUOTES = [
     "В этом замке слова — оружие. Отбиваем волну за волной!",
@@ -210,7 +211,9 @@
   }
 
   function playTargetAudio() {
-    if (!currentTask) return;
+    if (!currentTask || state.phase !== "choice" || !model.valid(state, currentToken)) return;
+    var token = currentToken;
+    var currentSession = session;
     if (!audio.enabled) { speakPinyin(); return; }
     var src = currentTask.audio;
     if (!src) return;
@@ -226,7 +229,7 @@
     clip.onerror = done;
     clip.play().catch(function () {
       done();
-      speakPinyin();
+      if (currentSession === session && model.valid(state, token) && state.phase === "choice") speakPinyin();
     });
   }
 
@@ -284,6 +287,7 @@
   }
 
   function stopTicker() {
+    tickerToken += 1;
     if (ticker) { clearInterval(ticker); ticker = null; }
   }
 
@@ -296,9 +300,9 @@
     quizTimer.classList.toggle("low", remaining <= 5.05);
   }
 
-  function armTimer() {
+  function armTimer(resume) {
     stopTicker();
-    remaining = model.taskSeconds(state);
+    if (!resume) remaining = model.taskSeconds(state);
     if (!remaining) { quizTimer.hidden = true; return; }
     quizTimer.hidden = false;
     paintTimer();
@@ -319,6 +323,11 @@
     var result = model.timeoutTask(state);
     if (!result) return;
     stopTicker();
+    if (result.response && result.response.chainReset) {
+      sfx.timeout();
+      handleDragonReset(result.response);
+      return;
+    }
     sfx.timeout();
     log("Время вышло — монстр злее, а стены ближе.");
     if (result.response && result.response.armor) {
@@ -339,21 +348,21 @@
   }
 
   function resetEffects() {
-    scene.classList.remove("casting", "wallhit", "hard", "fizzle", "boss-rage");
+    scene.classList.remove("casting", "wallhit", "hard", "fizzle", "boss-rage", "dragon-breath");
     heroEl.classList.remove("casting", "hit");
-    enemyEl.classList.remove("hit", "defeated", "stroked", "advance");
+    enemyEl.classList.remove("hit", "defeated", "stroked", "advance", "seal-break");
     damageNumber.classList.remove("pop");
   }
 
   function flashStroke(char) {
-    spell.textContent = char;
+    spell.textContent = model.writingHint(state) === "meaning" ? "+" : char;
     scene.classList.add("casting");
     heroEl.classList.add("casting");
     setTimeout(function () {
       scene.classList.remove("casting");
       heroEl.classList.remove("casting");
     }, 900);
-    popDamage("-1");
+    if (state.task.special !== "dragon") popDamage("-1");
     enemyEl.classList.add("stroked");
     setTimeout(function () { enemyEl.classList.remove("stroked"); }, 500);
   }
@@ -395,13 +404,13 @@
   }
 
   function effectiveOutline() {
-    return state.wave.outline && outlineOn;
+    return model.writingHint(state) === "character" && state.wave.outline && outlineOn;
   }
 
   function initializeWriter(currentSession, token, task) {
     var stage = model.currentStage(state);
     loadLibrary(task.char).then(function (data) {
-      if (currentSession !== session || state.phase !== "writing" || !state.task || state.task.char !== task.char) return;
+      if (currentSession !== session || !model.valid(state, token) || state.phase !== "writing" || !state.task || state.task.char !== task.char) return;
       if (writer) { writer.cancelQuiz(); writer.pauseAnimation(); }
       writerTarget.replaceChildren();
       var size = Math.min(340, Math.max(120, writerTarget.clientWidth || 280));
@@ -420,24 +429,24 @@
         strokeAnimationSpeed: 1.2,
         delayBetweenStrokes: 420,
         charDataLoader: function () { return data; },
-        onLoadCharDataError: function () { loadError(currentSession); }
+        onLoadCharDataError: function () { loadError(currentSession, token); }
       });
       startQuiz(currentSession, token, task, stage);
-    }).catch(function () { loadError(currentSession); });
+    }).catch(function () { loadError(currentSession, token); });
   }
 
   function startQuiz(currentSession, token, task, stage) {
-    if (currentSession !== session || state.phase !== "writing" || !state.task || state.task.char !== task.char) return;
+    if (currentSession !== session || !model.valid(state, token) || state.phase !== "writing" || !state.task || state.task.char !== task.char) return;
     writer.cancelQuiz();
     writer.hideCharacter({ duration: 0 });
     writer[effectiveOutline() ? "showOutline" : "hideOutline"]({ duration: 0 });
     coverLabel.textContent = effectiveOutline()
       ? "Контур подсказывает форму — обводи по порядку черт"
-      : "Пиши по памяти! Знак и пиньинь — над свитком";
+      : model.writingHint(state) === "meaning" ? "Пиши по памяти! Перевод — над свитком" : "Пиши по памяти! Знак и пиньинь — над свитком";
     writerFrame.hidden = false;
     writerCover.hidden = true;
     var seconds = model.taskSeconds(state);
-    say(seconds ? "Пиши по памяти: на задание " + seconds + " секунд. Каждая верная черта ранит монстра." : "Пиши спокойно: каждая верная черта ранит монстра.");
+    say(task.special === "dragon" ? "Напиши знак по переводу за " + seconds + " секунд. Печать разрушится только после всей цепочки!" : seconds ? "Пиши по памяти: на задание " + seconds + " секунд." : "Пиши спокойно: каждая верная черта ранит монстра.");
     render();
     armTimer();
     writer.quiz({
@@ -446,7 +455,7 @@
       acceptBackwardsStrokes: false,
       leniency: stage.leniency,
       onCorrectStroke: function (data) {
-        if (currentSession !== session) return;
+        if (currentSession !== session || !model.valid(state, token)) return;
         var result = model.strokeCorrect(state, token, data.strokeNum);
         if (!result) return;
         sfx.stroke(data.strokeNum);
@@ -454,7 +463,7 @@
         render();
       },
       onComplete: function () {
-        if (currentSession !== session) return;
+        if (currentSession !== session || !model.valid(state, token)) return;
         stopTicker();
         var result = model.completeWriting(state, token);
         if (!result) return;
@@ -464,7 +473,9 @@
           say("Заклинание рассеялось! Нечистые черты вернули монстру силы.");
           log("Нечистое письмо: урон ушёл, монстр восстановился.");
           if (result.response) applyWallHit(result.response);
+          var fizzleToken = state.quiz;
           setTimeout(function () {
+            if (currentSession !== session || state.quiz !== fizzleToken) return;
             scene.classList.remove("fizzle");
             if (state.phase === "defeat") { presentPhase("defeat"); return; }
             resolveMonster();
@@ -475,16 +486,10 @@
           writer.showCharacter({ duration: 250 });
           sfx.phase();
           log("Испытание " + state.task.phaseIndex + " пройдено! Дальше — " + TASK_LABELS[state.task.type].toLowerCase() + ".");
+          var nextToken = state.quiz;
           setTimeout(function () {
-            if (currentSession !== session) return;
-            currentTask = state.task;
-            currentToken = state.quiz;
-            writerFrame.hidden = true;
-            strokeProgress.hidden = true;
-            writeTarget.hidden = true;
-            showChoice(currentToken, state.task);
-            armTimer();
-            render();
+            if (currentSession !== session || !model.valid(state, nextToken)) return;
+            showTaskPhase();
           }, 750);
           return;
         }
@@ -492,12 +497,14 @@
         monsterDefeatedFx(result);
       },
       onMistake: function () {
-        if (currentSession !== session) return;
+        if (currentSession !== session || !model.valid(state, token)) return;
         var response = model.strokeMistake(state, token);
         if (!response) return;
         sfx.mistake();
+        if (response.chainReset) { handleDragonReset(response); return; }
         render();
-        if (response.damage) applyWallHit(response);
+        if (state.phase === "defeat") { applyWallHit(response); presentPhase("defeat"); return; }
+        if (response.damage || response.blocked) applyWallHit(response);
         else if (response.armor) applyWallHit(response);
         else say("Мимо! Монстр копит гнев: " + state.danger + " / " + model.currentStage(state).threshold + ".");
       }
@@ -514,7 +521,11 @@
       log("Стойкая оборона: стена +1, +" + model.SCORE.repair + " очков.");
     }
     if (mult > 1) log("Комбо ×" + mult + "! Очки умножаются.");
-    setTimeout(resolveMonster, 1300);
+    var currentSession = session;
+    var token = state.quiz;
+    setTimeout(function () {
+      if (currentSession === session && token === state.quiz && state.phase === "resolving") resolveMonster();
+    }, 1300);
   }
 
   function resolveMonster() {
@@ -552,10 +563,10 @@
     choiceFeedback.className = "choice-feedback";
     if (task.type === "meaning") choiceQuestion.textContent = "Что означает знак " + task.char + "?";
     else if (task.type === "pinyin") choiceQuestion.textContent = "Как читается знак " + task.char + "?";
-    else if (task.type === "tone") choiceQuestion.textContent = "Какой тон у знака " + task.char + "?";
+    else if (task.type === "tone") choiceQuestion.textContent = task.special === "dragon" ? "Прослушай запись и определи тон" : "Какой тон у знака " + task.char + "?";
     else choiceQuestion.textContent = "Прослушай и выбери верный знак";
-    choiceTargetFrame.hidden = task.type === "sound";
-    choiceTarget.textContent = task.char;
+    choiceTargetFrame.hidden = task.type === "sound" || (task.special === "dragon" && task.type === "tone");
+    choiceTarget.textContent = choiceTargetFrame.hidden ? "" : task.char;
     soundReplay.hidden = !(task.type === "sound" || task.type === "tone");
     choiceOptions.innerHTML = "";
     shuffle(task.options).forEach(function (value) {
@@ -579,7 +590,12 @@
       button.addEventListener("click", function () { answerChoiceClick(token, value, button); });
       choiceOptions.appendChild(button);
     });
-    if (!soundReplay.hidden) setTimeout(playTargetAudio, 400);
+    if (!soundReplay.hidden) {
+      var currentSession = session;
+      setTimeout(function () {
+        if (currentSession === session && model.valid(state, token) && state.phase === "choice") playTargetAudio();
+      }, 400);
+    }
   }
 
   function answerChoiceClick(token, value, button) {
@@ -593,11 +609,14 @@
       button.classList.add("correct");
       choiceFeedback.textContent = "Верно! Испытание " + (state.task.phaseIndex + 1) + " из " + state.task.phases.length + ": " + TASK_LABELS[state.task.type].toLowerCase() + ".";
       choiceFeedback.className = "choice-feedback good";
-      currentTask = state.task;
-      currentToken = state.quiz;
-      showChoice(currentToken, state.task);
-      armTimer();
-      render();
+      if (result.sealBroken) {
+        popDamage("Печать разрушена!");
+        log("Разрушена печать " + state.dragonSeals + " / " + model.DRAGON_SEALS + ".");
+        enemyEl.classList.add("seal-break");
+        var currentSession = session;
+        setTimeout(function () { if (currentSession === session) enemyEl.classList.remove("seal-break"); }, 700);
+      }
+      showTaskPhase();
       return;
     }
     if (result.correct) {
@@ -613,6 +632,7 @@
       return;
     }
     sfx.mistake();
+    if (result.response && result.response.chainReset) { handleDragonReset(result.response); return; }
     button.classList.add("wrong");
     button.disabled = true;
     choiceFeedback.textContent = "Мимо! " + state.danger + " / " + stage.threshold + " ошибок до удара по стене.";
@@ -622,9 +642,33 @@
     if (state.phase === "defeat") presentPhase("defeat");
   }
 
+  function handleDragonReset(response) {
+    stopTicker();
+    if (writer) { writer.cancelQuiz(); writer.pauseAnimation(); }
+    scene.classList.add("dragon-breath");
+    var currentSession = session;
+    setTimeout(function () { if (currentSession === session) scene.classList.remove("dragon-breath"); }, 850);
+    applyWallHit(response);
+    log("Огненное дыхание! Цепочка сорвана; разрушенные печати сохранены.");
+    render();
+    if (state.phase === "defeat") { presentPhase("defeat"); return; }
+    showTaskPhase();
+    say(response.blocked ? "Щит погасил дыхание! Начни цепочку с тона на слух." : "Огненное дыхание: −2 стены! Начни цепочку с тона на слух.");
+  }
+
   function startTask() {
-    var task = model.beginTask(state);
-    if (!task) return;
+    if (!model.beginTask(state)) return;
+    showTaskPhase();
+  }
+
+  function showTaskPhase() {
+    stopTicker();
+    pausedRemaining = null;
+    if (writer) { writer.cancelQuiz(); writer.pauseAnimation(); }
+    Object.keys(audioFiles).forEach(function (key) { audioFiles[key].pause(); });
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    soundReplay.classList.remove("speaking");
+    var task = state.task;
     currentTask = task;
     currentToken = state.quiz;
     buttonsLocked = false;
@@ -634,9 +678,15 @@
     paintPhaseDots();
     if (task.type === "write") {
       writeTarget.hidden = false;
-      writeTargetChar.textContent = task.char;
-      writeTargetPy.textContent = task.pinyin;
-      writeTargetPy.className = "write-target-py tone-" + task.tone;
+      var memory = model.writingHint(state) === "meaning";
+      writeTargetChar.hidden = memory;
+      writeTargetChar.textContent = memory ? "" : task.char;
+      writeTargetPy.textContent = memory ? task.meaning : task.pinyin;
+      writeTargetPy.setAttribute("lang", memory ? "ru" : "zh-Latn");
+      writeTargetPy.className = memory ? "write-target-py write-target-meaning" : "write-target-py tone-" + task.tone;
+      choiceTarget.textContent = "";
+      choiceQuestion.textContent = "";
+      spell.textContent = "";
       choicePanel.hidden = true;
       writerFrame.hidden = false;
       strokeProgress.hidden = false;
@@ -693,8 +743,8 @@
     if (phase === "error") { openStory("error"); return; }
   }
 
-  function loadError(currentSession) {
-    if (currentSession !== session) return;
+  function loadError(currentSession, token) {
+    if (currentSession !== session || !model.valid(state, token)) return;
     stopTicker();
     model.failLoad(state);
     if (writer) writer.cancelQuiz();
@@ -721,6 +771,9 @@
     var rage = model.bossPhase(state) === 2;
     var special = stage.specials[state.monsterIndex] || "";
     scene.dataset.wave = stage.kind;
+    var concealedWriting = state.phase === "writing" && model.writingHint(state) === "meaning";
+    document.querySelector(".vocab-block").hidden = concealedWriting;
+    document.querySelector(".ink-label").hidden = concealedWriting;
     if (!state.wave.event) scene.dataset.event = "";
     scene.classList.toggle("boss-rage", rage && state.monsterHp !== null);
     Array.prototype.forEach.call(trail.children, function (li, index) {
@@ -729,7 +782,13 @@
       else li.removeAttribute("aria-current");
     });
     locationText.textContent = stage.place + (state.wave.event ? " · " + ({ fog: "туман", rain: "ливень", desert: "дезертиры", horde: "рать" }[state.wave.event] || "") : "");
-    encounterText.textContent = "Волна " + (state.stage + 1) + " · Монстр " + state.monsterIndex + " / " + model.effectiveMonsters(state);
+    encounterText.textContent = stage.kind === "dragon" ? "Этап 5 · Один дракон · Печати " + state.dragonSeals + " / " + model.DRAGON_SEALS : "Волна " + (state.stage + 1) + " · Монстр " + state.monsterIndex + " / " + model.effectiveMonsters(state);
+    document.querySelector(".monster").setAttribute("viewBox", stage.kind === "dragon" ? "0 0 32 32" : "0 0 16 16");
+    dragonSeals.hidden = stage.kind !== "dragon";
+    Array.prototype.forEach.call(dragonSeals.children, function (seal, index) {
+      seal.classList.toggle("broken", index < state.dragonSeals);
+      seal.textContent = "Печать " + (index + 1) + (index < state.dragonSeals ? " · снята" : " · цела");
+    });
     enemyName.textContent = stage.name + (rage ? " (ярость!)" : "");
     enemyBadge.hidden = !special;
     enemyBadge.textContent = special ? SPECIAL_SHORT[special] : "";
@@ -763,7 +822,7 @@
     var task = state.task;
     if (task) {
       taskHeading.textContent = TASK_LABELS[task.type];
-      taskIntro.textContent = TASK_INTROS[task.type];
+      taskIntro.textContent = task.type === "write" && model.writingHint(state) === "meaning" ? "Напиши знак по русскому переводу над свитком. Образца и контура нет — вспоминай по памяти." : task.special === "dragon" && task.type === "tone" ? "Определи тон только на слух. Запись можно повторять." : TASK_INTROS[task.type];
     } else {
       taskHeading.textContent = "Отбей атаку знанием";
       taskIntro.textContent = "Каждое задание — один монстр. Ошибка — удар по стене замка.";
@@ -771,7 +830,7 @@
     if (state.phase === "intro") writerStatus.textContent = "Нажми «Встать на стену», чтобы начать оборону.";
     else if (state.phase === "ready") writerStatus.textContent = currentTask && currentTask.type === "write" ? "Свиток разматывается... Готовь руку." : "Монстр подступает...";
     else if (state.phase === "writing") writerStatus.textContent = state.dirty ? "Письмо нечистое: щита не будет" + (model.currentStage(state).fizzle && (!state.task || state.task.phases.length === 1) ? ", а у владыки — рассеивание!" : ".") : "Пиши по порядку черт. Ошибки злят монстра.";
-    else if (state.phase === "choice") writerStatus.textContent = task && task.misses ? "Монстр уже ранен твоей памятью. Добивай верным ответом." : "Один верный ответ — и монстр падёт.";
+    else if (state.phase === "choice") writerStatus.textContent = task && task.special === "dragon" ? "Печать " + Math.min(model.DRAGON_SEALS, state.dragonSeals + 1) + ": пройди всю цепочку. Ошибка или таймаут — огненное дыхание." : task && task.misses ? "Монстр уже ранен твоей памятью. Добивай верным ответом." : "Один верный ответ — и монстр падёт.";
     else if (state.phase === "resolving") writerStatus.textContent = "Монстр отброшен от стен!";
     else if (state.phase === "defeat") writerStatus.textContent = "Стена пала...";
     sceneCaption.querySelector("span").textContent = "Волна " + (state.stage + 1) + " · " + stage.name;
@@ -815,7 +874,8 @@
     stopTicker();
     resetEffects();
     reward.hidden = true;
-    codesList.hidden = true;
+    rewardLabel.hidden = false;
+    rewardCode.textContent = "";
     storyRank.hidden = true;
     review.hidden = true;
     rewardCode.hidden = false;
@@ -826,51 +886,39 @@
     if (kind === "intro") {
       storyEyebrow.textContent = "Осадный договор";
       storyTitle.textContent = "Замок под осадой";
-      storyText.textContent = "Орда из четырёх волн встала под стенами замка Синнабона. Каждый монстр — одно задание: письмо, перевод, пиньинь, знак на слух или тон. Элита требует двух ответов подряд, а финал — трёх испытаний. Отбей волну — получи код обороны.";
+      storyText.textContent = "Четыре волны орды и огромный дракон встали под стенами замка. С третьего этапа пиши знаки по переводу без образца. На пятом этапе разрушь три печати: тон на слух → письмо по переводу → пиньинь. Только победа над драконом открывает полный код обороны.";
       storyPrimary.textContent = "Встать на стену";
-      storyFootnote.textContent = "4 волны, 5 типов заданий и 16 цифр кода. Записывай!";
+      storyFootnote.textContent = "5 этапов осады. Код из 16 цифр — только после дракона.";
     } else if (kind === "stageclear") {
       storyEyebrow.textContent = "Волна " + (state.stage + 1) + " отбита!";
       storyTitle.textContent = "Атака отражена!";
       storyText.textContent = STAGE_CLEAR_TEXTS[state.stage];
       reward.hidden = false;
-      rewardLabel.textContent = "Код волны " + (state.stage + 1);
-      rewardCode.textContent = state.lastCode;
+      rewardLabel.hidden = true;
+      rewardCode.hidden = true;
       rewardStats.textContent = "Очки: " + state.score + " · Отбито: " + state.stats.repelled + " · Чистых: " + state.stats.perfect + " · Стена: " + state.wall + " / " + state.maxWall;
       storyPrimary.textContent = "Встретить волну " + (state.stage + 2);
       storySecondary.textContent = "Начать осаду заново";
       storySecondary.hidden = false;
-      storyFootnote.textContent = "Запиши код — он пригодится после игры.";
-      sfx.code();
-      log("Код волны " + (state.stage + 1) + " получен: " + state.lastCode + ".");
+      storyFootnote.textContent = "Полный код откроется только после победы над драконом на пятом этапе.";
+      sfx.phase();
+      log("Волна " + (state.stage + 1) + " отражена.");
     } else if (kind === "victory") {
       storyEyebrow.textContent = "Осада снята";
       storyTitle.textContent = "Орда отступила!";
-      storyText.textContent = "Четыре волны разбились о стены, а владыка пал в трёх испытаниях. Синнабон гасит факелы и чинит ворота, а ты собираешь награду — полный код обороны из 16 цифр.";
+      storyText.textContent = "Все пять этапов пройдены! Владыка пал, три печати разрушены, а огромный дракон отступил. Награда за оборону — полный код из 16 цифр.";
       reward.hidden = false;
       rewardLabel.textContent = "Полный код осады";
-      rewardCode.textContent = model.CODES.join("");
+      rewardCode.textContent = state.lastCode;
       rewardCode.classList.add("full");
-      codesList.innerHTML = "";
-      model.CODES.forEach(function (code, index) {
-        var item = document.createElement("i");
-        var name = document.createElement("b");
-        name.textContent = "Волна " + (index + 1);
-        var value = document.createElement("span");
-        value.textContent = code;
-        item.appendChild(name);
-        item.appendChild(value);
-        codesList.appendChild(item);
-      });
-      codesList.hidden = false;
       storyRank.hidden = false;
       storyRank.textContent = "Звание: " + model.rankFor(state.score);
       rewardStats.textContent = "Очки: " + state.score + " · Отбито: " + state.stats.repelled + " · Чистых: " + state.stats.perfect + " · Ошибок: " + state.stats.mistakes + " · Стена: " + state.wall + " / " + state.maxWall;
       storyPrimary.textContent = "Оборонять снова";
-      storyFootnote.textContent = "Коды осады: " + model.CODES.join(" · ") + " — не потеряй их.";
+      storyFootnote.textContent = "Запиши полный код для задания Stepik.";
       paintReview();
       sfx.victory();
-      log("Осада снята! Все коды собраны.");
+      log("Дракон побеждён! Полный код обороны открыт.");
     } else if (kind === "defeat") {
       storyEyebrow.textContent = "Стена пала";
       storyTitle.textContent = "Ворота пробиты";
@@ -894,6 +942,9 @@
   function closeStory() { overlay.hidden = true; }
 
   function restart() {
+    Object.keys(audioFiles).forEach(function (key) { audioFiles[key].pause(); });
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    pausedRemaining = null;
     session += 1;
     tickerToken += 1;
     stopTicker();
@@ -1009,7 +1060,7 @@
       } else if (pausedRemaining !== null) {
         remaining = pausedRemaining;
         pausedRemaining = null;
-        armTimer();
+        armTimer(true);
       }
     });
     window.addEventListener("resize", function () {

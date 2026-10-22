@@ -25,12 +25,13 @@
       <span class="mode-label"><i></i>Бонус · оборона замка</span>
     </header>
     <main>
-      <div class="title-row"><div><p class="eyebrow">Бонус · четыре волны осады</p><h1>Осада замка Синнабона</h1></div><span class="chapter-badge"><span class="zh-glyph" lang="zh-CN">守</span> <small>обороняй знания!</small></span></div>
+      <div class="title-row"><div><p class="eyebrow">Бонус · пять этапов осады</p><h1>Осада замка Синнабона</h1></div><span class="chapter-badge"><span class="zh-glyph" lang="zh-CN">守</span> <small>обороняй знания!</small></span></div>
       <ol class="trail" id="trail" aria-label="Волны осады">
-        <li aria-current="step"><span>01</span><div>Разведка<small>гоблины у стен</small></div></li>
-        <li><span>02</span><div>Штурм стены<small>волчья кавалерия</small></div></li>
-        <li><span>03</span><div>Осадные башни<small>тролли по памяти</small></div></li>
-        <li><span>04</span><div>Владыка орды<small>ярость и рассеивание</small></div></li>
+        <li data-stage="goblin" aria-current="step"><span>01</span><div>Разведка<small>гоблины у стен</small></div><svg class="trail-emblem" viewBox="0 0 16 16" aria-hidden="true"><use href="#goblin"/></svg></li>
+        <li data-stage="wolf"><span>02</span><div>Штурм стены<small>волчья кавалерия</small></div><svg class="trail-emblem" viewBox="0 0 16 16" aria-hidden="true"><use href="#wolf"/></svg></li>
+        <li data-stage="troll"><span>03</span><div>Осадные башни<small>тролли по памяти</small></div><svg class="trail-emblem" viewBox="0 0 16 16" aria-hidden="true"><use href="#troll"/></svg></li>
+        <li data-stage="warlord"><span>04</span><div>Владыка орды<small>ярость и рассеивание</small></div><svg class="trail-emblem" viewBox="0 0 16 16" aria-hidden="true"><use href="#warlord"/></svg></li>
+        <li data-stage="dragon"><span>05</span><div>Огромный дракон<small>три печати</small></div><svg class="trail-emblem" viewBox="0 0 32 32" aria-hidden="true"><use href="#dragon"/></svg></li>
       </ol>
       <div class="game-layout" id="game-area">
         <section class="battle-field" aria-label="Поле осады">
@@ -169,6 +170,7 @@
             <p class="choice-feedback" id="choice-feedback" role="status"></p>
           </div>
           <div class="stroke-progress" id="stroke-progress" aria-label="Прогресс написания" hidden><span id="stroke-count">0 / 2 черт</span><div id="stroke-dots"></div></div>
+          <div class="dragon-seals" id="dragon-seals" role="status" aria-label="Печати дракона" hidden><span>Печать 1 · цела</span><span>Печать 2 · цела</span><span>Печать 3 · цела</span></div>
           <div class="phase-dots" id="phase-dots" aria-label="Фазы задания" hidden></div>
           <div class="quiz-timer" id="quiz-timer" hidden><span class="timer-label">Время</span><div class="timer-bar" role="progressbar" aria-label="Оставшееся время на ответ"><div id="timer-fill"></div></div><span class="timer-text" id="timer-text">12 с</span></div>
           <p class="writer-status" id="writer-status" role="status" aria-live="polite">Нажми «Встать на стену», чтобы начать оборону.</p>
@@ -193,7 +195,7 @@
             <div><span class="stat-title">Очки обороны</span><strong id="score-value">0</strong><small>Монстр +100 · чисто +50 · без потерь +150</small></div>
           </div>
           <details class="extra-block dialogue" open><summary>Голос Синнабона</summary><div class="dialogue"><img src="../assets/characters/cinnabon.svg" alt="" width="44" height="44"><p id="dialogue">&lt;В этом замке слова — оружие. Отбиваем волну за волной!&gt;</p></div></details>
-          <details class="extra-block" open><summary>Словарь обороны</summary><p class="vocab-note"><b lang="zh-CN">人</b> rén — человек · <b lang="zh-CN">口</b> kǒu — рот · <b lang="zh-CN">日</b> rì — солнце, день</p><p class="vocab-note"><b lang="zh-CN">木</b> mù — дерево · <b lang="zh-CN">目</b> mù — глаз · <b lang="zh-CN">众</b> zhòng — толпа</p><p class="vocab-note"><b lang="zh-CN">林</b> lín — лес · <b lang="zh-CN">品</b> pǐn — предмет · <b lang="zh-CN">相</b> xiāng — взаимно</p></details>
+          <details class="extra-block vocab-block" open><summary>Словарь обороны</summary><p class="vocab-note"><b lang="zh-CN">人</b> rén — человек · <b lang="zh-CN">口</b> kǒu — рот · <b lang="zh-CN">日</b> rì — солнце, день</p><p class="vocab-note"><b lang="zh-CN">木</b> mù — дерево · <b lang="zh-CN">目</b> mù — глаз · <b lang="zh-CN">众</b> zhòng — толпа</p><p class="vocab-note"><b lang="zh-CN">林</b> lín — лес · <b lang="zh-CN">品</b> pǐn — предмет · <b lang="zh-CN">相</b> xiāng — взаимно</p></details>
           <details class="extra-block journal" open><summary>Журнал осады <span id="attack-count">0 отбито</span></summary><ol id="journal-list"><li>Орда собирается у горизонта. Стены проверены, факелы зажжены.</li></ol></details>
         </section>
       </div>
@@ -207,11 +209,11 @@
       <p class="eyebrow" id="story-eyebrow">Осадный договор</p>
       <h2 id="story-title">Замок под осадой</h2>
       <p id="story-text"></p>
-      <div class="story-rules" id="story-rules"><p><b>01</b><span>Каждое задание отбивает одного монстра: письмо, перевод, пиньинь, знак на слух или тон. Элита требует два ответа подряд, финал — три испытания.</span></p><p><b>02</b><span>Ошибки копятся: после порога монстр бьёт по стене. Стена держит 10 ударов. Чистые задания дают щит, ману и комбо-множитель.</span></p><p><b>03</b><span>«Град стрел» гасит два неверных варианта (4 маны), «Залп» добавляет 5 секунд (3 маны). Каждые 3 чистых подряд латают стену.</span></p><p><b>04</b><span>Волны несут события: туман, ливень, дезертиры или рать. После каждой волны — код, в финале — все 16 цифр.</span></p></div>
+      <div class="story-rules" id="story-rules"><p><b>01</b><span>Каждое задание отбивает одного монстра: письмо, перевод, пиньинь, знак на слух или тон. Элита требует два ответа подряд, финал — три испытания.</span></p><p><b>02</b><span>Ошибки копятся: после порога монстр бьёт по стене. Стена держит 10 ударов. Чистые задания дают щит, ману и комбо-множитель.</span></p><p><b>03</b><span>«Град стрел» гасит два неверных варианта (4 маны), «Залп» добавляет 5 секунд (3 маны). Каждые 3 чистых подряд латают стену.</span></p><p><b>04</b><span>С третьего этапа письмо — по переводу, без образца. На пятом этапе дракон: три цепочки «тон на слух → письмо → пиньинь». Ошибка срывает цепочку, дыхание наносит −2 стены; щит его блокирует. Код из 16 цифр — только после дракона.</span></p></div>
       <div class="review" id="review" hidden><span class="review-label">Разбор промахов</span><div class="review-list" id="review-list"></div></div>
-      <div class="reward" id="reward" hidden><span id="reward-label">Код волны</span><strong id="reward-code"></strong><div class="codes-list" id="codes-list" hidden></div><p id="story-rank" class="story-rank" hidden></p><p id="reward-stats"></p></div>
+      <div class="reward" id="reward" hidden><span id="reward-label">Полный код осады</span><strong id="reward-code"></strong><p id="story-rank" class="story-rank" hidden></p><p id="reward-stats"></p></div>
       <div class="story-actions"><button class="primary-button" id="story-primary" type="button">Встать на стену</button><button class="secondary-button" id="story-secondary" type="button" hidden></button><button class="ghost-button" id="story-sound" type="button" aria-pressed="true">Звук: вкл.</button></div>
-      <p class="story-footnote" id="story-footnote">4 волны осады и 4 кода. Записывай — коды пригодятся после игры.</p>
+      <p class="story-footnote" id="story-footnote">5 этапов осады. Полный код — только после победы над драконом.</p>
     </section>
   </div>
 </body>

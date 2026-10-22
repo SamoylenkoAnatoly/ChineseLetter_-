@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#182b25">
+  <title>Ферма Синнабона — девять семян, четыре урожая</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="vendor/hanzi-writer.min.js" defer></script>
+  <script src="char-data.js" defer></script>
+  <script src="game-core.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#farm"><span class="brand-mark" aria-hidden="true">田</span><span>СИННАБОН & СЕМЕНА<small>Китайский растёт здесь</small></span></a>
+      <div class="toolbar">
+        <button id="shop-button" class="quiet" type="button" disabled>Лавка</button>
+        <button id="journal-button" class="quiet" type="button">Журнал</button>
+        <button id="settings-button" class="quiet" type="button" aria-label="Настройки игры">Настройки</button>
+        <button id="pause-button" class="quiet" type="button" disabled>Пауза</button>
+      </div>
+    </header>
+    <section class="heading">
+      <div><p class="eyebrow">МАЛЕНЬКАЯ ФЕРМА · БОЛЬШОЕ ПРИКЛЮЧЕНИЕ</p><h1>Ферма <span>Синнабона</span></h1><p class="subtitle">Девять семян — четыре урожая.</p></div>
+      <div class="harvest-stamp" aria-hidden="true"><span>ВЫРАЩЕНО</span><b>с заботой</b><span>И ИЕРОГЛИФАМИ</span></div>
+    </section>
+    <nav class="seasons" id="seasons" aria-label="Четыре этапа фермы"></nav>
+    <section class="hud" aria-label="Статистика игры">
+      <div><span class="label">Кошелёк</span><b id="coins">4</b><small> монеты</small></div>
+      <div><span class="label">Урожай</span><b id="score">0</b><small> зёрнышек</small></div>
+      <div><span class="label">Чистая серия</span><b id="streak">0</b><small> подряд</small></div>
+      <div class="progress-block"><span class="label" id="progress-label">Первый сезон ждёт</span><div class="progress-track"><i id="progress-fill"></i></div></div>
+    </section>
+    <section class="farm-dashboard" id="farm-dashboard" hidden>
+      <div class="protections" id="protections" aria-label="Защита фермы"></div>
+      <div class="order-strip"><span id="order-status">Свободная работа</span><span id="quality-status">9 золотых грядок</span></div>
+    </section>
+    <div class="game-layout">
+      <section class="farm-panel" id="farm" aria-label="Ферма Синнабона">
+        <div class="scene" id="scene" data-season="0">
+          <div class="sun" aria-hidden="true"></div><div class="cloud cloud-a" aria-hidden="true"></div><div class="cloud cloud-b" aria-hidden="true"></div>
+          <div class="hills" aria-hidden="true"></div>
+          <div class="scene-heading"><span id="season-caption">ВЕСНА · ДЕНЬ 01</span><b id="farm-caption">Первые ростки</b></div>
+          <div class="barn" aria-hidden="true"><div class="barn-roof"></div><div class="barn-window"></div><div class="barn-door"></div></div>
+          <div class="windmill" aria-hidden="true"><div class="mill-tower"></div><div class="mill-blades"></div></div>
+          <div class="fence" aria-hidden="true"></div>
+          <div class="farm-upgrades" aria-hidden="true"><i class="upgrade-scarecrow"></i><i class="upgrade-can"></i><i class="upgrade-greenhouse"></i></div>
+          <div class="garden" id="garden" aria-label="Девять грядок"></div>
+          <div class="hero" id="hero" aria-hidden="true"><div class="hat"></div><img src="assets/cinnabon.svg" alt="" draggable="false"><div class="watering-can"><i></i></div><div class="hero-shadow"></div></div>
+          <div class="farm-sign" aria-hidden="true">СИННАБОН<br><span>фермер с характером</span></div>
+          <div class="harvest-pop" id="harvest-pop" hidden></div>
+        </div>
+        <div class="farmer-note"><span class="note-dot" aria-hidden="true"></span><p id="farmer-line">«Чтобы что-то выросло, нужно немного заботы. И чуть-чуть китайского!»</p></div>
+        <div class="farm-bottom"><span>9 грядок · 4 сезона · твой урожай</span><span id="save-status">Прогресс сохраняется здесь</span></div>
+      </section>
+      <section class="task-panel" id="task-panel" aria-labelledby="task-title">
+        <div class="task-top"><span class="eyebrow" id="task-kind">ТВОЯ ПЕРВАЯ ФЕРМА</span><span class="task-number" id="task-number">01 / 12</span></div>
+        <h2 id="task-title">Земля ждёт семена</h2>
+        <p class="task-description" id="task-description">Посади знания, поливай память и собери четыре секретных кода.</p>
+        <div class="work-board" id="work-board" hidden><div id="event-banner" class="event-banner" role="status"></div><div id="work-choices" class="work-choices"></div><p class="board-tip" id="board-tip">Выбери дело на карточке или нажми подсвеченную грядку.</p></div>
+        <div class="question-display" id="question-display"><span id="question-glyph" lang="zh-CN"></span><span id="question-reading"></span></div>
+        <div class="listen-area" id="listen-area" hidden><button id="listen-button" class="listen-button" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l6 5V4L8 9H4z" fill="currentColor"/><path d="M17 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke="currentColor" fill="none" stroke-width="2"/></svg><span id="listen-label">Послушать</span></button><p id="audio-status">Сначала послушай, затем выбери знак.</p></div>
+        <div class="writer-area" id="writer-area" hidden><div class="writer-paper"><div id="writer-target" role="application" aria-label="Написание иероглифа мышью или пальцем"></div></div><div class="writer-footer"><span id="stroke-status">Черта 0 / 4</span><button id="hint-button" class="text-button" type="button">Показать образец</button></div><p id="writer-status">Пиши черты по порядку.</p></div>
+        <div class="answers" id="answers"></div>
+        <div class="timer" id="timer" hidden><div class="timer-track"><i id="timer-fill"></i></div><span id="timer-text">35 с</span></div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+        <button class="primary continue" id="continue-button" type="button" hidden>Продолжить сейчас</button>
+        <div class="task-idle" id="task-idle"><div class="seed-illustration" aria-hidden="true"><i></i></div><p>Всё начинается с одного ростка.</p><button class="primary" id="start-button" type="button">Открыть ворота фермы <span aria-hidden="true">→</span></button></div>
+        <p class="keyboard-tip" id="keyboard-tip" hidden>Ответы: клавиши 1–6 · Пауза: Esc</p>
+      </section>
+    </div>
+    <section class="action-legend" aria-label="Четыре типа задания"><span><b>01</b> Посади знак<small>напиши по чертам</small></span><span><b>02</b> Полей смысл<small>выбери перевод</small></span><span><b>03</b> Помоги расти<small>найди пиньинь</small></span><span><b>04</b> Собери на слух<small>узнай звучание</small></span></section>
+    <footer class="page-footer"><span>Пусть знания пускают корни.</span><button id="restart-button" class="text-button" type="button">Начать заново</button></footer>
+  </main>
+  <dialog id="story-dialog" class="dialog" aria-labelledby="dialog-title"><div class="dialog-body"><p class="eyebrow" id="dialog-eyebrow"></p><h2 id="dialog-title"></h2><div id="dialog-content"></div><div class="dialog-actions"><button id="dialog-primary" class="primary" type="button">Продолжить</button><button id="dialog-secondary" class="quiet" type="button" hidden>Закрыть</button></div></div></dialog>
+  <noscript><p class="noscript">Для игры включите JavaScript в браузере.</p></noscript>
+</body>
+</html>

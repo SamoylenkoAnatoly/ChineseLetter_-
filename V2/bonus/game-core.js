@@ -18,7 +18,10 @@
 
   var TYPES = ["write", "meaning", "pinyin", "sound", "tone"];
   var TONES = ["1", "2", "3", "4"];
-  var CODES = ["3771", "4567", "6656", "8777"];
+  var FINAL_CODE = "3771456766568777";
+  var DRAGON_SEALS = 3;
+  var DRAGON_DAMAGE = 2;
+  var DRAGON_PHASES = ["tone", "write", "pinyin"];
   var WALL_MAX = 10;
   var STREAK_GOAL = 3;
   var SCAFFOLD_REPAIR = 3;
@@ -77,8 +80,21 @@
       specials: { 2: "shaman", 3: "elite", 5: "armor", 7: "ram", 8: "final" },
       description: "Сам владыка орды встал под стенами. Его ярость растёт с каждым павшим монстром.",
       intention: "Нечистое письмо рассеивается. Ярость с 4-го монстра: 2 секунды на черту. Финал — три испытания подряд, ошибка бьёт по стене двойным. У шамана время вдвое короче."
+    },
+    {
+      name: "Дракон трёх печатей", kind: "dragon", place: "Небо над замком",
+      monsters: 1, threshold: 1, options: 4,
+      outline: false, visualHints: false, leniency: 1,
+      secondsPerStroke: 3, choiceSeconds: 8, fizzle: false, rage: 0,
+      pool: [6, 7, 8], specials: { 1: "dragon" },
+      description: "Над башнями расправляет крылья один огромный дракон. Его защищают три древние печати.",
+      intention: "Три печати: тон на слух → письмо по переводу → пиньинь. Ошибка или таймаут срывает цепочку: дыхание −2 стены. Щит блокирует дыхание."
     }
   ];
+
+  function writingHint(state) {
+    return state.stage >= 2 ? "meaning" : "character";
+  }
 
   function rankFor(score) {
     for (var i = 0; i < RANKS.length; i++) {
@@ -97,6 +113,7 @@
       wall: WALL_MAX, maxWall: WALL_MAX, waveStartWall: WALL_MAX, waveHits: 0,
       shield: 0, streak: 0,
       monsterHp: null, monsterMaxHp: 0,
+      dragonSeals: 0,
       potions: 2,
       mana: 0,
       task: null, strokes: 0, attemptDamage: 0,
@@ -116,7 +133,7 @@
   function rollWave(state) {
     var stage = STAGES[state.stage];
     var wave = { event: "", timerScale: 1, scoreScale: 1, monstersDelta: 0, outline: stage.outline };
-    if (state.stage > 0) {
+    if (state.stage > 0 && stage.kind !== "dragon") {
       var roll = state.rng();
       if (roll < 0.2) {
         wave.event = "fog";
@@ -149,7 +166,7 @@
 
   function effectiveMonsters(state) {
     var stage = STAGES[state.stage];
-    return Math.max(4, stage.monsters + state.wave.monstersDelta);
+    return stage.kind === "dragon" ? 1 : Math.max(4, stage.monsters + state.wave.monstersDelta);
   }
 
   function bossPhase(state) {
@@ -166,9 +183,17 @@
     else if (special === "herald") phases = ["sound"];
     else if (special === "elite") phases = ELITE_PHASES.slice();
     else if (special === "final") phases = FINAL_PHASES.slice();
+    else if (special === "dragon") phases = DRAGON_PHASES.slice();
     else phases = [TYPES[slot]];
-    var vocab = VOCAB[stage.pool[(state.monsterIndex - 1) % stage.pool.length]];
-    var hot = Object.keys(state.mastery);
+    var poolIndex = special === "dragon" ? state.dragonSeals : state.monsterIndex - 1;
+    var vocab = VOCAB[stage.pool[poolIndex % stage.pool.length]];
+    var used = special === "dragon" && state.task ? state.task.sealChars || [] : [];
+    if (used.indexOf(vocab.char) !== -1) {
+      for (var candidate = 0; candidate < stage.pool.length; candidate++) {
+        if (used.indexOf(VOCAB[stage.pool[candidate]].char) === -1) { vocab = VOCAB[stage.pool[candidate]]; break; }
+      }
+    }
+    var hot = Object.keys(state.mastery).filter(function (char) { return used.indexOf(char) === -1; });
     if (hot.length && state.rng() < 0.5) {
       var pick = hot[Math.floor(state.rng() * hot.length) % hot.length];
       if (pick !== state.lastChar) {
@@ -250,6 +275,10 @@
 
   function beginTask(state) {
     if (state.phase !== "ready") return null;
+    if (currentStage(state).kind === "dragon" && state.task && state.task.special === "dragon") {
+      resetDragonPhase(state);
+      return state.task;
+    }
     var spec = taskSpec(state);
     var task = {
       phases: spec.phases,
@@ -257,14 +286,15 @@
       special: spec.special,
       covers: spec.phases.slice(),
       misses: 0,
+      sealChars: spec.special === "dragon" ? [spec.vocab.char] : [],
       volley: false
     };
     buildPhase(task, spec.vocab, spec.phases[0], STAGES[state.stage].options);
     if (state.monsterHp === null) {
       var hp = 0;
       for (var i = 0; i < spec.phases.length; i++) hp += spec.phases[i] === "write" ? spec.vocab.strokes : 1;
-      state.monsterHp = hp;
-      state.monsterMaxHp = hp;
+      state.monsterHp = spec.special === "dragon" ? DRAGON_SEALS : hp;
+      state.monsterMaxHp = state.monsterHp;
     }
     state.task = task;
     state.lastChar = task.char;
@@ -287,12 +317,43 @@
     state.phase = task.type === "write" ? "writing" : "choice";
   }
 
+  function resetDragonPhase(state) {
+    state.task.phaseIndex = -1;
+    advancePhase(state);
+    state.danger = 0;
+  }
+
+  function dragonBreath(state) {
+    noteMiss(state);
+    var response = hurt(state);
+    response.breath = true;
+    response.chainReset = true;
+    if (state.phase !== "defeat") resetDragonPhase(state);
+    return response;
+  }
+
+  function breakDragonSeal(state) {
+    state.dragonSeals += 1;
+    state.monsterHp = DRAGON_SEALS - state.dragonSeals;
+    if (state.monsterHp === 0) {
+      state.phase = "resolving";
+      state.quiz += 1;
+      return finishClean(state);
+    }
+    var spec = taskSpec(state);
+    state.task.vocab = spec.vocab;
+    state.task.sealChars.push(spec.vocab.char);
+    resetDragonPhase(state);
+    state.lastChar = state.task.char;
+    return { correct: true, advanced: true, sealBroken: true, killed: false, response: null };
+  }
+
   function valid(state, token) {
     return token === state.quiz && (state.phase === "writing" || state.phase === "choice");
   }
 
   function hurt(state) {
-    var damage = state.task && state.task.special === "final" ? 2 : 1;
+    var damage = state.task && state.task.special === "dragon" ? DRAGON_DAMAGE : state.task && state.task.special === "final" ? 2 : 1;
     state.stats.wallHits += 1;
     state.waveHits += 1;
     if (state.shield) {
@@ -337,6 +398,7 @@
     if (state.phase !== "writing" || !valid(state, token)) return null;
     if (stroke !== state.strokes || stroke > state.task.strokeTotal - 1) return false;
     state.strokes += 1;
+    if (state.task.special === "dragon") return { damage: 0 };
     state.attemptDamage += 1;
     state.monsterHp = Math.max(0, state.monsterHp - 1);
     return { damage: 1 };
@@ -344,14 +406,14 @@
 
   function strokeMistake(state, token) {
     if (state.phase !== "writing" || !valid(state, token)) return null;
-    return registerMistake(state);
+    return state.task.special === "dragon" ? dragonBreath(state) : registerMistake(state);
   }
 
   function finishClean(state) {
     var result = { correct: true, fizzle: false, killed: true, advanced: false, repair: 0, response: null, gained: 0 };
     state.stats.repelled += 1;
     var task = state.task;
-    var base = task.special === "final" ? SCORE.finalMonster : SCORE.monster;
+    var base = task.special === "final" || task.special === "dragon" ? SCORE.finalMonster : SCORE.monster;
     var scale = state.wave.scoreScale;
     if (!state.dirty) {
       state.stats.perfect += 1;
@@ -362,7 +424,8 @@
       result.gained = points;
       state.mana = Math.min(MANA_MAX, state.mana + MANA_GAIN);
       state.shield = 1;
-      delete state.mastery[task.char];
+      if (task.special === "dragon") task.sealChars.forEach(function (char) { delete state.mastery[char]; });
+      else delete state.mastery[task.char];
       if (state.streak % STREAK_GOAL === 0 && state.wall < state.maxWall) {
         state.wall = Math.min(state.maxWall, state.wall + 1);
         state.stats.repairs += 1;
@@ -388,7 +451,7 @@
       var regained = Math.min(state.monsterMaxHp - state.monsterHp, state.attemptDamage);
       state.monsterHp += regained;
       var response = hurt(state);
-      state.phase = "resolving";
+      if (state.phase !== "defeat") state.phase = "resolving";
       state.quiz += 1;
       return { correct: false, fizzle: true, killed: false, advanced: false, regained: regained, repair: 0, response: response };
     }
@@ -404,10 +467,12 @@
   function answerChoice(state, token, value) {
     if (state.phase !== "choice" || !valid(state, token)) return null;
     if (value !== state.task.correct) {
-      return { correct: false, fizzle: false, killed: false, advanced: false, repair: 0, response: registerMistake(state) };
+      var response = state.task.special === "dragon" ? dragonBreath(state) : registerMistake(state);
+      return { correct: false, fizzle: false, killed: false, advanced: false, repair: 0, response: response };
     }
+    if (state.task.special === "dragon" && state.task.phaseIndex === state.task.phases.length - 1) return breakDragonSeal(state);
     if (state.task.phaseIndex < state.task.phases.length - 1) {
-      state.monsterHp = Math.max(0, state.monsterHp - 1);
+      if (state.task.special !== "dragon") state.monsterHp = Math.max(0, state.monsterHp - 1);
       advancePhase(state);
       return { correct: true, fizzle: false, killed: false, advanced: true, repair: 0, response: null };
     }
@@ -418,6 +483,10 @@
   }
 
   function timeoutTask(state) {
+    if (state.task && state.task.special === "dragon" && valid(state, state.quiz)) {
+      state.stats.timeouts += 1;
+      return { restarted: true, response: dragonBreath(state) };
+    }
     if (state.phase === "writing") {
       state.quiz += 1;
       state.stats.timeouts += 1;
@@ -453,11 +522,11 @@
       if (state.stage === STAGES.length - 1) {
         state.phase = "victory";
         result.next = "victory";
+        state.lastCode = FINAL_CODE;
+        result.code = FINAL_CODE;
       } else {
         state.phase = "stageclear";
-        state.lastCode = CODES[state.stage];
         result.next = "stageclear";
-        result.code = state.lastCode;
       }
       if (state.waveHits === 0) {
         state.score += SCORE.waveBonus;
@@ -525,7 +594,8 @@
   }
 
   return {
-    VOCAB: VOCAB, TYPES: TYPES, TONES: TONES, CODES: CODES, WALL_MAX: WALL_MAX, STREAK_GOAL: STREAK_GOAL,
+    VOCAB: VOCAB, TYPES: TYPES, TONES: TONES, FINAL_CODE: FINAL_CODE, WALL_MAX: WALL_MAX, STREAK_GOAL: STREAK_GOAL,
+    DRAGON_SEALS: DRAGON_SEALS, DRAGON_DAMAGE: DRAGON_DAMAGE, writingHint: writingHint,
     STAGES: STAGES, SCORE: SCORE, RANKS: RANKS, rankFor: rankFor, multiplierFor: multiplierFor,
     MANA_MAX: MANA_MAX, MANA_GAIN: MANA_GAIN, VOLLEY_COST: VOLLEY_COST, SALVO_COST: SALVO_COST, SALVO_SECONDS: SALVO_SECONDS,
     create: create, start: start, currentStage: currentStage, effectiveMonsters: effectiveMonsters,

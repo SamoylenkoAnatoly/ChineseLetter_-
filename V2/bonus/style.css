@@ -56,14 +56,21 @@ h1 { font-family: var(--font-body); font-weight: 800; font-size: clamp(20px, 3vw
 .chapter-badge { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 10px; background: var(--panel); border: 3px solid var(--shadow); box-shadow: inset 0 0 0 2px var(--line), 4px 4px 0 var(--shadow); color: var(--gold); font-size: 20px; font-family: "Noto Sans SC", sans-serif; }
 .chapter-badge small { font-family: var(--font-body); font-size: 10px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: .06em; }
 
-.trail { list-style: none; margin: 0 0 8px; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-.trail li { display: flex; font-weight: 800; align-items: center; gap: 7px; padding: 5px 8px; background: var(--panel-deep); border: 3px solid var(--shadow); box-shadow: inset 0 0 0 2px #262e57; font-family: var(--font-body); font-size: 11px; color: var(--ink-dim); }
-.trail li span { display: grid; place-items: center; width: 22px; height: 22px; background: #0d1229; border: 2px solid var(--line); color: var(--ink-dim); flex: none; }
-.trail li small { display: block; font-family: var(--font-body); font-size: 10px; font-weight: 400; }
-.trail li.visited { color: var(--ink); box-shadow: inset 0 0 0 2px #3f4a85; }
-.trail li.visited span { background: #23305e; color: var(--gold); }
-.trail li[aria-current="step"] { color: var(--ink); box-shadow: inset 0 0 0 2px var(--gold); }
-.trail li[aria-current="step"] span { background: var(--gold); color: #20180a; border-color: var(--gold); }
+.trail { list-style: none; margin: 0 0 8px; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.trail li { --stage-color: #8fce79; --stage-bg: #14291e; --stage-pattern: none; position: relative; display: flex; font-weight: 800; align-items: center; gap: 6px; min-width: 0; min-height: 56px; padding: 7px 8px; background-color: var(--stage-bg); background-image: var(--stage-pattern); border: 3px solid var(--shadow); box-shadow: inset 0 0 0 2px var(--stage-color); font-family: var(--font-body); font-size: 11px; color: var(--ink); }
+.trail li[data-stage="goblin"] { --stage-pattern: repeating-linear-gradient(90deg, transparent 0 17px, #8fce7910 17px 20px); }
+.trail li[data-stage="wolf"] { --stage-color: #80c8ed; --stage-bg: #15273e; --stage-pattern: repeating-linear-gradient(135deg, transparent 0 15px, #80c8ed14 15px 18px); }
+.trail li[data-stage="troll"] { --stage-color: #c9ae7d; --stage-bg: #2a261e; --stage-pattern: repeating-linear-gradient(0deg, transparent 0 12px, #c9ae7d18 12px 15px); }
+.trail li[data-stage="warlord"] { --stage-color: #ed837d; --stage-bg: #351b29; --stage-pattern: repeating-linear-gradient(45deg, transparent 0 14px, #ed837d18 14px 18px); }
+.trail li[data-stage="dragon"] { --stage-color: #cf9bfa; --stage-bg: #2a1b40; --stage-pattern: repeating-linear-gradient(90deg, transparent 0 13px, #cf9bfa16 13px 15px), repeating-linear-gradient(0deg, transparent 0 13px, #cf9bfa16 13px 15px); }
+.trail li > span { display: grid; place-items: center; width: 22px; height: 22px; background: var(--shadow); border: 2px solid var(--stage-color); color: var(--stage-color); flex: none; }
+.trail li > div { flex: 1; min-width: 0; }
+.trail li small { display: block; font-family: var(--font-body); font-size: 10px; font-weight: 400; color: #c3cce0; line-height: 1.25; margin-top: 2px; }
+.trail-emblem { width: 30px; height: 30px; flex: none; image-rendering: pixelated; filter: drop-shadow(2px 2px var(--shadow)); }
+.trail li.visited > span { background: var(--stage-color); color: var(--shadow); }
+.trail li.visited::after { content: ""; position: absolute; right: 5px; bottom: 4px; width: 7px; height: 7px; background: var(--stage-color); border: 1px solid var(--shadow); }
+.trail li[aria-current="step"] { border-color: var(--gold); box-shadow: inset 0 0 0 2px var(--shadow), 0 3px 0 var(--shadow); }
+.trail li[aria-current="step"] > span { background: var(--gold); color: #20180a; border-color: var(--gold); }
 
 .game-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; grid-template-areas: "field side" "extras side"; gap: 10px; align-items: start; padding-bottom: 12px; }
 .battle-field { grid-area: field; min-width: 0; }
@@ -73,6 +80,17 @@ h1 { font-family: var(--font-body); font-weight: 800; font-size: clamp(20px, 3vw
 .castle-view { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
 .scene::after { content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none; background: repeating-linear-gradient(rgba(4, 7, 15, .14) 0 2px, transparent 2px 4px); }
 .scene-shade { position: absolute; inset: 0; background: linear-gradient(#0c0f2238, transparent 40%, #0c0f22cc); z-index: 1; pointer-events: none; transition: background .3s steps(3); }
+.scene[data-wave="dragon"] .scene-shade { background: #49172866; }
+.scene[data-wave="dragon"] { height: 400px; }
+.scene[data-wave="dragon"] .fighter.enemy { width: clamp(140px, 30%, 200px); right: 5%; bottom: 80px; }
+.scene[data-wave="dragon"] .fighter.hero { bottom: 48%; }
+.scene.dragon-breath::before { content: ""; position: absolute; z-index: 4; left: 18%; right: 25%; top: 44%; height: 26px; background: #ffd76a; border: 7px solid #ff9c4a; box-shadow: 0 8px #8f2942, 0 -8px #8f2942; pointer-events: none; animation: breath .85s steps(4); }
+@keyframes breath { 0% { transform: scaleX(.1); transform-origin: right; opacity: .3; } 40% { transform: scaleX(1); opacity: 1; } 100% { opacity: 0; } }
+.enemy.seal-break .monster { animation: monsterHit .7s steps(5); }
+.dragon-seals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+.dragon-seals span { padding: 6px 4px; text-align: center; font-size: 10px; font-weight: 800; border: 2px solid var(--ember); background: #381b2a; color: var(--gold); }
+.dragon-seals span.broken { border-color: #7dc95e; color: #9ed97f; background: #16301c; }
+.write-target-meaning { color: var(--gold); font-weight: 800; text-align: center; }
 .scene[data-wave="warlord"] .scene-shade { background: linear-gradient(#3a0f1838, transparent 38%, #42101cce); }
 .scene.boss-rage .scene-shade { background: linear-gradient(#5a141438, transparent 30%, #5a1414d8); }
 
@@ -157,7 +175,7 @@ h1 { font-family: var(--font-body); font-weight: 800; font-size: clamp(20px, 3vw
 .writer-target { width: 100%; }
 .writer-target canvas { max-width: 100%; }
 .writer-grid { width: 100%; aspect-ratio: 1; background: linear-gradient(90deg, transparent calc(50% - .5px), var(--paper-line) 50%, transparent calc(50% + .5px)), linear-gradient(transparent calc(50% - .5px), var(--paper-line) 50%, transparent calc(50% + .5px)), var(--paper); touch-action: none; user-select: none; position: relative; }
-.writer-grid svg { image-rendering: auto; }
+.writer-grid svg { display: block; width: 100%; height: 100%; image-rendering: auto; }
 .writer-cover { position: absolute; inset: 7px; display: grid; place-content: center; justify-items: center; gap: 10px; background: #121836f2; color: var(--gold); text-align: center; padding: 20px; }
 .writer-cover .zh-glyph { font-size: 58px; line-height: 1; filter: drop-shadow(3px 3px 0 #04070f); }
 .writer-cover small { max-width: 220px; font-size: 12.5px; line-height: 1.5; color: var(--ink); }
@@ -300,10 +318,7 @@ footer a { color: var(--gold); }
 .reward { display: grid; justify-items: center; gap: 7px; padding: 10px; background: #0d1229; border: 3px dashed var(--gold); }
 .reward > span { font-family: var(--font-body); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-dim); }
 #reward-code { font-family: var(--font-body); font-weight: 800; font-size: 32px; letter-spacing: .18em; padding-left: .18em; color: var(--gold); text-shadow: 3px 3px 0 var(--shadow), 0 0 18px #ffd76a55; font-variant-numeric: tabular-nums; }
-#reward-code.full { font-size: 22px; letter-spacing: .08em; padding-left: .08em; }
-.codes-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; width: 100%; }
-.codes-list i { display: flex; font-weight: 800; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 9px; background: var(--panel-deep); border: 2px solid var(--shadow); box-shadow: inset 0 0 0 2px var(--line); font-style: normal; font-family: var(--font-body); font-size: 10.5px; color: var(--ink-dim); }
-.codes-list i span { font-size: 16px; letter-spacing: .14em; color: var(--gold); }
+#reward-code.full { font-size: clamp(12px, 4vw, 22px); letter-spacing: .04em; padding-left: .04em; white-space: nowrap; overflow-wrap: normal; }
 .story-rank { font-family: var(--font-body); font-weight: 800; font-size: 15px; color: var(--gold); text-shadow: 2px 2px 0 var(--shadow); }
 #reward-stats { font-size: 12px; color: var(--ink-dim); }
 
@@ -340,7 +355,6 @@ footer a { color: var(--gold); }
   .trail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .battle-extras .hero-stats { grid-template-columns: minmax(0, 1fr); }
   .choice-options { grid-template-columns: minmax(0, 1fr); }
-  .codes-list { grid-template-columns: minmax(0, 1fr); }
   .review-list { grid-template-columns: minmax(0, 1fr); }
   .ability-buttons { grid-template-columns: minmax(0, 1fr); }
 }
@@ -369,7 +383,10 @@ footer a { color: var(--gold); }
   .write-target-glyph { font-size: 26px; }
   .option-char { font-size: 26px; }
   #reward-code { font-size: 26px; }
-  #reward-code.full { font-size: 18px; }
+  #reward-code.full { font-size: clamp(12px, 4vw, 18px); }
+  .scene[data-wave="dragon"] { height: 390px; }
+  .scene[data-wave="dragon"] .fighter.enemy { width: 140px; bottom: 90px; }
+  .scene[data-wave="dragon"] .location { flex-wrap: wrap; max-width: calc(100% - 24px); font-size: 9px; }
   .story-card { padding: 12px 12px; }
   .scene-caption p { font-size: 10.5px; }
 }

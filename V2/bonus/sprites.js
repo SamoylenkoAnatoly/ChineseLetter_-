@@ -2,6 +2,43 @@
   "use strict";
 
   var SPRITES = {
+    dragon: {
+      palette: { k: "#190f24", r: "#8f2942", R: "#d34a45", d: "#531c39", w: "#ffe3ae", y: "#ffd76a", o: "#ff9c4a" },
+      rows: [
+        "................................",
+        "......................kk........",
+        ".........kk..........krk........",
+        "........krk.........krrk........",
+        ".......krdk........krrdk........",
+        "......krrdk.......krrrdk........",
+        ".....krrrdk......krrrrdk........",
+        "....krrrrdk.....krrrrrdk........",
+        "...krrrrrdk....krrrrrrdk........",
+        "..krrrrrrdk...krrrrrrrdk........",
+        ".krrrrrrrdk..krrrrrrrrdk........",
+        "krrrrrrrrdk.krrrrrrrrrdk........",
+        "kkkkkkrrrdkkrrrrrrrkkkkk........",
+        ".....krrrdkrrrkkkkk.............",
+        "......krrdrrrkk................",
+        "...ww..krrrRRRkk...............",
+        "..krkwkrrRRRRRRrk..............",
+        ".krrrkrRRRRRRRRrrk.............",
+        "kryrrrRRRRRRRRRrrrk............",
+        "krrrrRRRRRRRRRRRrrrk...........",
+        "krrrwwkRRRRRRRRRRrrrk..........",
+        ".kkwwkkRRRooRRRRRrrrrk.........",
+        "..kkkkRRRooooRRRRrrrrrk........",
+        ".....kRRRooooRRRRrrrrrrk.......",
+        ".....krRRooooRRrrrkkrrrrk......",
+        "......krroooorrrrk..krrrrk.....",
+        "......krrroorrrrk....krrrrk....",
+        ".....krrkrrrrkrrk.....krrrrk...",
+        "....krrkkrrrrkkrrk.....krrrk...",
+        "...kwwwk.krk..kwwwk.....krrk...",
+        ".........kk.............kkkkkk.",
+        "..............................."
+      ].map(function (row) { return (row + "................................").slice(0, 32); })
+    },
     goblin: {
       palette: { k: "#12240f", g: "#4a7c3a", G: "#7db463", d: "#2f5426", y: "#ffd76a", o: "#ff9c4a", w: "#8a5a34", b: "#5d3a1f", t: "#e8e4d8" },
       rows: [
