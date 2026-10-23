@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#241b20">
+  <title>Наливай и плач — карточная таверна китайских иероглифов</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к игре</a>
+  <div id="app">
+    <header class="tavern-header">
+      <span class="route-label">Путь иероглифа <span class="route-divider">/</span> Таверна</span>
+      <div class="header-controls">
+        <button type="button" id="soundToggle" class="btn btn-ghost" aria-pressed="true">Звук: вкл</button>
+        <button type="button" class="btn btn-ghost" id="rulesLink" aria-haspopup="dialog">Правила</button>
+      </div>
+    </header>
+
+    <div class="tavern-room">
+      <div class="roof-beam" aria-hidden="true"></div>
+      <div class="room-masthead">
+        <div class="window-corner decor" aria-hidden="true">
+          <div class="night-window"><span class="moon"></span><span class="stars"></span><span class="night-hills"></span></div>
+          <div class="window-sill"></div><span class="window-plant"></span>
+        </div>
+        <div class="tavern-sign">
+          <p class="sign-label">Огонь в камине · карты на столе</p>
+          <h1>Наливай и плач</h1>
+          <p class="sign-subtitle">Тёплое место для новых слов</p>
+          <span class="sign-mug decor" aria-hidden="true"></span>
+        </div>
+        <div class="hearth-corner decor" aria-hidden="true">
+          <div class="bottle-shelf"><span class="bottle green"></span><span class="cup"></span><span class="bottle plum"></span><span class="cup small"></span></div>
+          <div class="fireplace"><div class="firebox"><span class="logs"></span><span class="flame flame-back"></span><span class="flame flame-front"></span><span class="embers"></span></div><div class="mantel"></div></div>
+        </div>
+        <span class="room-lantern left decor" aria-hidden="true"></span>
+        <span class="room-lantern right decor" aria-hidden="true"></span>
+      </div>
+
+      <main id="main">
+        <section id="screen-select" class="screen" aria-label="Выбор героя">
+          <div class="welcome-counter">
+            <div class="host"><img src="../assets/characters/cinnabon.svg" alt="Синнабон, хозяин таверны" width="128" height="128"><span class="host-name">Синнабон</span></div>
+            <div class="host-dialogue">
+              <p class="dialogue-label">Хозяин таверны <span>Столик свободен</span></p>
+              <h2>Заходи, у огня место найдётся.</h2>
+              <p>Карты на стол — и учим китайский! Здесь каждый знак — маленькое приключение. Выбери героя, а я подолью чаю.</p>
+            </div>
+            <div class="counter-barrel decor" aria-hidden="true"><span></span></div>
+            <div class="counter-top decor" aria-hidden="true"></div>
+          </div>
+          <div class="guest-panel">
+            <div class="panel-heading"><span class="section-badge">01 · Заходи</span><h2>Кто сегодня играет?</h2></div>
+            <p class="panel-lead">Пять гостей, пять особых умений. Китайские слова — общие для всех.</p>
+            <div class="hero-grid" id="heroGrid"></div>
+            <div class="select-actions">
+              <button type="button" id="startMatch" class="btn btn-primary" disabled>Сесть за стол</button>
+              <p>30 HP · 10 минут · без регистрации</p>
+            </div>
+          </div>
+          <div class="welcome-notes"><span><b>Бойцы</b> остаются на столе</span><span><b>Заклинания</b> действуют сразу</span><span><b>Знание</b> открывает карту</span></div>
+        </section>
+
+        <section id="screen-game" class="screen" aria-label="Игровой стол" hidden>
+          <div class="match-bar">
+            <span id="turnLabel" class="turn-label" aria-live="polite">Ваш ход</span>
+            <span id="timer" class="timer" aria-live="off">10:00</span>
+            <button type="button" id="endTurnBtn" class="btn btn-primary">Завершить ход</button>
+          </div>
+          <div class="battlefield">
+            <div class="table-corners decor" aria-hidden="true"></div>
+            <div class="hero-row hero-row--enemy" data-hero="ai" data-drop="enemy-hero">
+              <img class="portrait portrait--enemy" id="enemyPortrait" alt="">
+              <div class="hero-info"><span class="seat-label">Гость напротив</span><span class="hero-name" id="enemyName"></span><span class="hero-power-name" id="enemyPowerName"></span></div>
+              <div class="hero-vitals"><span class="hp-badge" id="enemyHp">30 HP</span><span class="shield-badge" id="enemyShield" hidden>щит 0</span></div>
+              <div class="hero-meta"><span class="meta-item" id="enemyMana">мана 0/0</span><span class="meta-item" id="enemyDeck">колода 0</span><span class="meta-item" id="enemyHand">рука 0</span></div>
+            </div>
+            <p class="board-label">Сторона противника</p>
+            <div class="board board--enemy" id="enemyBoard" aria-label="Половина противника"></div>
+            <div class="table-seam" aria-hidden="true"><span>Наливай и плач</span></div>
+            <div class="board board--player" id="playerBoard" aria-label="Ваша половина"></div>
+            <p class="board-label board-label--own">Ваша сторона · перетащите бойца в свободное место</p>
+            <div class="hero-row hero-row--player" data-hero="player" data-drop="own-hero">
+              <img class="portrait portrait--player" id="playerPortrait" alt="">
+              <div class="hero-info"><span class="seat-label">Ваш герой</span><span class="hero-name" id="playerName"></span></div>
+              <div class="hero-vitals"><span class="hp-badge" id="playerHp">30 HP</span><span class="shield-badge" id="playerShield" hidden>щит 0</span></div>
+              <button type="button" id="powerBtn" class="power-btn" title="Сила героя"><span class="power-cost" id="powerCost">2</span><span class="power-name" id="powerName"></span></button>
+              <div class="hero-meta"><span class="meta-item" id="playerMana">мана 0/0</span><span class="meta-item" id="playerDeck">колода 0</span></div>
+            </div>
+          </div>
+          <div class="hand-wrap"><p class="hand-label">Карты в руке <span>Стоимость — синяя метка</span></p><div class="hand" id="hand" aria-label="Ваша рука"></div></div>
+          <div class="card-legend" aria-label="Виды карт"><span>Щит с мечом · боец</span><span>Огонь · урон</span><span>Флакон · лечение</span><span>Руна · усиление</span><span>Книга · добор</span></div>
+          <p class="hand-hint">Перетащите карту на стол или выберите её нажатием, затем укажите место.</p>
+        </section>
+      </main>
+      <div class="room-floor decor" aria-hidden="true"></div>
+    </div>
+    <footer class="tavern-footer"><span>Наливай и плач · открыто до последней карты</span><span>Китайский, по одной карте за раз</span></footer>
+
+    <div id="dropZoneNone" class="drop-zone-none" data-drop="none-zone" hidden>Бросить заклинание здесь</div>
+
+    <div id="questionModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="questionTitle">
+      <div class="modal-card">
+        <span class="paper-caption">Записка трактирщика</span>
+        <p class="question-kind" id="questionKind"></p>
+        <p class="question-hanzi" id="questionHanzi" lang="zh"></p>
+        <h2 id="questionTitle" class="question-title"></h2>
+        <div class="question-options" id="questionOptions"></div>
+        <div class="question-feedback" id="questionFeedback" hidden>
+          <p class="feedback-line" id="feedbackLine"></p>
+          <p class="word-details"><span class="word-hanzi" id="wordHanzi" lang="zh"></span><span class="word-pinyin" id="wordPinyin"></span><span class="word-ru" id="wordRu"></span></p>
+          <p class="word-note" id="wordNote"></p>
+          <div class="feedback-actions"><button type="button" id="pronounceBtn" class="btn btn-ghost">Произнести</button><button type="button" id="feedbackClose" class="btn btn-primary">Дальше</button></div>
+        </div>
+        <div class="modal-actions" id="questionActions"><button type="button" id="questionCancel" class="btn btn-ghost">Отмена</button></div>
+      </div>
+    </div>
+
+    <div id="endModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="endTitle">
+      <div class="modal-card modal-card--end">
+        <span class="paper-caption">Трактирный счёт · итоги вечера</span>
+        <h2 id="endTitle"></h2><p id="endReason"></p>
+        <div class="end-stats" id="endStats"></div><div class="end-words" id="endWords"></div>
+        <div class="end-actions"><button type="button" id="rematchBtn" class="btn btn-primary">Ещё матч</button><button type="button" id="changeHeroBtn" class="btn btn-ghost">Сменить героя</button></div>
+      </div>
+    </div>
+
+    <dialog id="rules" class="rules-dialog" aria-labelledby="rulesTitle">
+      <div class="rules-content">
+        <span class="paper-caption">Памятка гостю</span><h2 id="rulesTitle">Как играть за нашим столом</h2>
+        <ol class="rules-list">
+          <li><b>Цель — снять 30 HP противника.</b> Через 10 минут побеждает герой с большим HP, при равенстве — ничья.</li>
+          <li><b>Бойцы и заклинания.</b> Бойцы занимают выбранную свободную ячейку на вашей половине. Заклинания перетаскиваются на цель; общий эффект — в выделенную зону.</li>
+          <li><b>Сначала — слово.</b> Чтобы разыграть карту, ответьте на вопрос о переводе или пиньине. Ошибка возвращает карту в руку до следующего хода, не тратя ману.</li>
+          <li><b>Мана растёт с 1 до 10.</b> В начале своего хода она восстанавливается, и вы берёте карту.</li>
+          <li><b>Атакуйте бойца или героя.</b> Обычные бойцы атакуют начиная со следующего хода, один раз за ход. Тяните своего бойца к цели; два бойца наносят урон друг другу одновременно.</li>
+          <li><b>Щит.</b> Поглощает весь урон первого попадания по бойцу и исчезает. Не обновляется каждый ход. Это не числовой щит героя Робота.</li>
+          <li><b>Натиск.</b> В ход появления боец может сразу ударить только бойца противника. Со следующего своего хода — любую вражескую цель. Всё ещё один удар за ход.</li>
+          <li><b>Лекарь.</b> При успешном появлении восстанавливает вашему герою 2 HP, не выше 30. Ошибка или отмена вопроса не лечит.</li>
+          <li><b>Сила героя.</b> Стоит 2 маны и доступна раз за ход без вопроса.</li>
+        </ol>
+        <p class="rules-note">Можно выбрать карту и цель нажатиями. Escape отменяет выбор. Таймер матча не останавливается на вопросах и в этой памятке.</p>
+        <button type="button" id="rulesClose" class="btn btn-primary">Понятно, к столу</button>
+      </div>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <div id="dragLayer" class="drag-layer" aria-hidden="true"></div>
+    <svg id="arrowLayer" class="arrow-layer" aria-hidden="true"></svg>
+  </div>
+  <script src="data.js" defer></script>
+  <script src="engine.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
