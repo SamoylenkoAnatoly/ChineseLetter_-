@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05131f">
+  <title>Глубина Синнабона — рыбалка с иероглифами</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Noto+Sans+SC:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="vendor/hanzi-writer.min.js" defer></script>
+  <script src="char-data.js" defer></script>
+  <script src="engine.js" defer></script>
+  <script src="game-core.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="depth-ruler" aria-label="Глубиномер">
+      <div class="ruler-scale">
+        <div class="ruler-seg" data-zone="0">
+          <div class="ruler-fill" id="ruler-fill-0"></div>
+          <span class="ruler-name">Отмели</span>
+          <span class="ruler-depth">0–4 м</span>
+          <span class="ruler-bottle" id="ruler-code-0">···</span>
+        </div>
+        <div class="ruler-seg" data-zone="1">
+          <div class="ruler-fill" id="ruler-fill-1"></div>
+          <span class="ruler-name">Течение</span>
+          <span class="ruler-depth">4–9 м</span>
+          <span class="ruler-bottle" id="ruler-code-1">···</span>
+        </div>
+        <div class="ruler-seg" data-zone="2">
+          <div class="ruler-fill" id="ruler-fill-2"></div>
+          <span class="ruler-name">Бездна</span>
+          <span class="ruler-depth">9–16 м</span>
+          <span class="ruler-bottle" id="ruler-code-2">···</span>
+        </div>
+        <div class="ruler-seg" data-zone="3">
+          <div class="ruler-fill" id="ruler-fill-3"></div>
+          <span class="ruler-name">Река</span>
+          <span class="ruler-depth">16–25 м</span>
+          <span class="ruler-bottle" id="ruler-code-3">···</span>
+        </div>
+        <div class="ruler-seg" data-zone="4">
+          <div class="ruler-fill" id="ruler-fill-4"></div>
+          <span class="ruler-name">Улов</span>
+          <span class="ruler-depth">25–40 м</span>
+          <span class="ruler-bottle" id="ruler-code-4">Трофей</span>
+        </div>
+        <div class="ruler-marker" id="ruler-marker" aria-hidden="true">◆</div>
+      </div>
+    </aside>
+    <div class="viewport">
+      <header class="hud">
+        <div class="hud-block worms">
+          <span class="hud-label">Черви</span>
+          <span class="worm-icons" id="worm-icons" aria-hidden="true"></span>
+          <b id="worm-count">6</b>
+        </div>
+        <div class="hud-block oxygen" id="oxygen-block" hidden>
+          <span class="hud-label">Кислород</span>
+          <span class="bubble"><i id="oxygen-fill"></i><b id="oxygen-text">0</b></span>
+        </div>
+        <div class="hud-block score">
+          <span class="hud-label">Жемчуг</span>
+          <b id="score-value">0</b>
+          <small id="rank-text">Юнга на плоту</small>
+        </div>
+        <div class="hud-block creel">
+          <span class="hud-label">Садок</span>
+          <b id="creel-value">0</b><small id="fish-progress">рыба 1 / 5</small>
+        </div>
+        <div class="hud-block zone">
+          <b id="zone-name">Солнечные отмели</b>
+          <small id="zone-task"></small>
+        </div>
+        <button class="hud-sound" id="sound-button" type="button" aria-pressed="true">Звук: вкл.</button>
+      </header>
+      <div class="stage" id="stage">
+        <canvas id="sea" width="960" height="640"></canvas>
+        <img class="cat" id="cat" src="../assets/characters/cinnabon.svg" alt="Синнабон на плоту" draggable="false">
+        <div class="bottle" id="bottle" hidden>
+          <p class="bottle-eyebrow" id="bottle-eyebrow">ЗАПИСКА В БУТЫЛКЕ</p>
+          <p class="bottle-text" id="bottle-text"></p>
+          <button class="bottle-audio" id="bottle-audio" type="button" hidden><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l6 5V4L8 9H4z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16.5 8.5a5 5 0 0 1 0 7 M19 6a8.5 8.5 0 0 1 0 12"/></svg><span>Слушать</span></button>
+          <p class="bottle-sub" id="bottle-sub"></p>
+        </div>
+        <div class="grotto" id="grotto" hidden>
+          <p class="grotto-eyebrow">ГРОТ ПАМЯТИ</p>
+          <div class="grotto-head">
+            <span class="grotto-char" id="grotto-char" lang="zh-CN">术</span>
+            <span class="grotto-py" id="grotto-py">shù</span>
+          </div>
+          <div class="writer-holder" id="writer-holder"><div id="writer-target" role="application" aria-label="Поле написания иероглифа"></div></div>
+          <p class="grotto-status" id="grotto-status" role="status" aria-live="polite">Обводи черты по порядку.</p>
+          <p class="grotto-note" id="grotto-note"></p>
+        </div>
+        <section class="boss-panel" id="boss-panel" aria-label="Вываживание большой рыбы" hidden>
+          <div class="boss-caption"><b>БОЛЬШОЙ УЛОВ</b><span id="boss-distance">До лодки: 100 м</span></div>
+          <div class="tension-label"><span>Натяжение лески</span><b id="tension-value">20%</b></div>
+          <div class="tension-meter" id="tension-meter" role="progressbar" aria-label="Натяжение лески" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20"><i id="tension-fill"></i></div>
+          <p id="boss-instruction" role="status" aria-live="polite">Тяни, но следи за леской</p>
+          <button id="reel-button" type="button">Удерживай — тянуть</button>
+          <small>Отпускай при рывке · Пробел или касание · 20–30 секунд + задания</small>
+        </section>
+        <section class="boss-quiz" id="boss-quiz" aria-label="Испытание большой рыбы" hidden>
+          <p class="grotto-eyebrow">РЫБА ЗАМЕРЛА · ВРЕМЯ НА ПОДУМАТЬ</p>
+          <div id="boss-options" class="boss-options"></div>
+          <p id="boss-quiz-status" role="status" aria-live="polite">Выбери ответ. Леска и время на паузе.</p>
+        </section>
+        <div class="score-pop" id="score-pop" hidden></div>
+        <div class="card intro-card" id="intro" hidden>
+          <p class="card-eyebrow">БОЛЬШОЕ ПОГРУЖЕНИЕ</p>
+          <h1>Глубина Синнабона</h1>
+          <p class="card-text">Плот Синнабона плывёт над четырьмя зонами глубины, а в воде снуют рыбы с ответами. Задание приплывает в бутылке — кликни по рыбе с верным ответом, и крючок сделает своё дело. Девять знаков: <b lang="zh-CN">术 中 右 心 必 想 白 勺 的</b>.</p>
+          <div class="card-rules">
+            <p><b>01</b><span>Четыре типа заданий в каждой зоне: ввод иероглифа в гроте, перевод, пиньинь и знак на слух.</span></p>
+            <p><b>02</b><span>Чистый улов растит серию и возвращает червяка. Кислород на исходе — рыба уходит.</span></p>
+            <p><b>03</b><span>Четыре зоны дают четыре кода. На пятом этапе вываживай гиганта: тяни катушку, отпускай при рывках и проходи задания.</span></p>
+          </div>
+          <button class="card-button" id="intro-button" type="button">Ныряем</button>
+          <p class="card-foot">5 этапов · 4 кода · большой улов на дне</p>
+        </div>
+        <div class="card zone-card" id="zone-card" hidden>
+          <p class="card-eyebrow" id="zone-card-eyebrow">ЗОНА ВЫЛОВЛЕНА</p>
+          <h2 id="zone-card-title">Бутылка с кодом</h2>
+          <p class="card-text" id="zone-card-text"></p>
+          <div class="code-bottle" id="zone-code">3456</div>
+          <p class="card-stats" id="zone-card-stats"></p>
+          <button class="card-button" id="zone-button" type="button">Ныряем глубже</button>
+        </div>
+        <div class="card defeat-card" id="defeat-card" hidden>
+          <p class="card-eyebrow">ЧЕРВИ КОНЧИЛИСЬ</p>
+          <h2>Рыба смеётся в глубине</h2>
+          <p class="card-text" id="defeat-card-text"></p>
+          <button class="card-button" id="defeat-button" type="button">Снова в зону</button>
+          <p class="card-foot">Коды и пройденные зоны сохранены</p>
+        </div>
+        <div class="card victory-card" id="victory" hidden>
+          <p class="card-eyebrow">ЖЕЛАНИЕ ИСПОЛНЕНО</p>
+          <h2>Большой улов Синнабона!</h2>
+          <p class="card-text">Гигант у лодки! Ты справился с рывками и четырьмя испытаниями. Трофей «Хранитель глубины» и +1000 жемчуга — твои. Все четыре кода сохранены.</p>
+          <div class="trophy-badge">ХРАНИТЕЛЬ ГЛУБИНЫ</div>
+          <div class="code-bottle full" id="victory-code">3456444454549999</div>
+          <div class="codes-row" id="codes-row"></div>
+          <p class="card-stats" id="victory-stats"></p>
+          <div class="review" id="review" hidden><p>Знаки, что срывались с крючка:</p><ul id="review-list"></ul></div>
+          <button class="card-button" id="victory-button" type="button">Новое погружение</button>
+        </div>
+      </div>
+      <footer class="legend" id="legend">Клик по рыбе — заброс крючка. Промах по воде не страшен.</footer>
+    </div>
+  </div>
+  <noscript><p class="noscript">Для игры нужен JavaScript. Включите его в браузере и обновите страницу.</p></noscript>
+</body>
+</html>
