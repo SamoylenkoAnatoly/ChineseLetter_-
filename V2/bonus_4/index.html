@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1230">
+  <title>Алхимия Жаберта — бонус про иероглифы</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Noto+Sans+SC:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="game-core.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="flask" viewBox="0 0 60 84">
+        <clipPath id="flask-clip"><path d="M25 6h10v15l17 37c3 6-1 12-8 12H16c-7 0-11-6-8-12l17-37Z"/></clipPath>
+        <rect x="-2" y="49" width="64" height="38" fill="var(--liquid,#9fe870)" clip-path="url(#flask-clip)"/>
+        <ellipse cx="30" cy="49" rx="15.5" ry="3.4" fill="var(--liquid,#9fe870)" opacity=".75"/>
+        <path d="M25 6h10v15l17 37c3 6-1 12-8 12H16c-7 0-11-6-8-12l17-37Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+        <rect x="21" y="2" width="18" height="7" rx="2.5" fill="currentColor"/>
+        <circle cx="40" cy="34" r="2.2" fill="var(--liquid,#9fe870)"/>
+        <circle cx="33" cy="42" r="1.7" fill="var(--liquid,#9fe870)" opacity=".7"/>
+      </symbol>
+    </defs>
+  </svg>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="../口/index.html" aria-label="Китайский курс с Синнабоном"><span class="brand-glyph" lang="zh-CN">月</span><span>Китайский курс<small>иероглифы с Синнабоном</small></span></a>
+      <span class="mode-label"><i></i>Бонус · болотная алхимия</span>
+    </header>
+    <main>
+      <div class="title-row"><div><p class="eyebrow">Бонус · три зелья · 27 знаков</p><h1>Синнабон и алхимия Жаберта</h1></div><span class="chapter-badge"><svg viewBox="0 0 160 160" width="52" height="52" aria-hidden="true"><use href="#flask" style="--liquid:#9fe870"/></svg> <small>月 明 有 朋 用 夕 名 自 息 术 中 右 心 必 想 白 勺 的 口 品 日 目 人 众 木 林 相</small></span></div>
+      <ol class="trail" id="trail" aria-label="Путь алхимика">
+        <li aria-current="step"><span>01</span><div>Первая ступка<small>светлые настойки</small></div></li>
+        <li><span>02</span><div>Тигль-двойка<small>настойки поглубже</small></div></li>
+        <li><span>03</span><div>Великий эликсир<small>цепь мастера</small></div></li>
+      </ol>
+      <div class="game-layout" id="game-area">
+        <section class="lab-field" aria-label="Лаборатория Жаберта">
+          <div class="scene" id="scene" data-heat="high">
+            <svg class="lab-view" viewBox="0 0 900 570" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs>
+                <linearGradient id="lab-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#332660"/><stop offset="1" stop-color="#1b1333"/></linearGradient>
+                <linearGradient id="lab-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1e4d"/><stop offset="1" stop-color="#140e28"/></linearGradient>
+                <linearGradient id="lab-copper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0814e"/><stop offset=".55" stop-color="#a05a30"/><stop offset="1" stop-color="#6f3c1f"/></linearGradient>
+                <radialGradient id="lab-moon"><stop offset="0" stop-color="#f2e6ae" stop-opacity=".8"/><stop offset="1" stop-color="#f2e6ae" stop-opacity="0"/></radialGradient>
+                <radialGradient id="lab-glow"><stop offset="0" stop-color="#9fe870" stop-opacity=".38"/><stop offset="1" stop-color="#9fe870" stop-opacity="0"/></radialGradient>
+                <radialGradient id="lab-fire"><stop offset="0" stop-color="#ff9a4a" stop-opacity=".55"/><stop offset="1" stop-color="#ff9a4a" stop-opacity="0"/></radialGradient>
+              </defs>
+              <rect width="900" height="428" fill="url(#lab-wall)"/>
+              <g class="window">
+                <path d="M636 262V138q0-84 86-84t86 84v124Z" fill="#0c0920"/>
+                <circle cx="766" cy="130" r="70" fill="url(#lab-moon)"/>
+                <circle cx="766" cy="130" r="30" fill="#efe6b2"/>
+                <circle cx="702" cy="176" r="3" fill="#efe6b2" class="star star-a"/>
+                <circle cx="728" cy="98" r="2" fill="#efe6b2" class="star star-b"/>
+                <circle cx="812" cy="184" r="2" fill="#efe6b2" class="star star-c"/>
+                <path d="M636 262V138q0-84 86-84t86 84v124" fill="none" stroke="#4d3a75" stroke-width="10"/>
+                <path d="M636 198h172M722 56v206" stroke="#4d3a75" stroke-width="8"/>
+              </g>
+              <g class="wall-shelf">
+                <path d="M62 130h312M62 218h312" stroke="#3f2f6e" stroke-width="7"/>
+                <rect x="84" y="96" width="18" height="32" rx="4" fill="#9fe870" opacity=".85"/><rect x="88" y="86" width="10" height="12" fill="#6fd0f0"/>
+                <rect x="126" y="90" width="22" height="38" rx="5" fill="#ffd76a" opacity=".85"/><rect x="132" y="80" width="10" height="12" fill="#c9a0ff"/>
+                <circle cx="184" cy="114" r="14" fill="#ff9de2" opacity=".8"/><rect x="180" y="94" width="8" height="12" fill="#7fd8ff"/>
+                <rect x="222" y="98" width="16" height="30" rx="4" fill="#7fd8ff" opacity=".85"/><rect x="226" y="88" width="8" height="12" fill="#9fe870"/>
+                <circle cx="272" cy="112" r="12" fill="#c9a0ff" opacity=".8"/><rect x="268" y="94" width="8" height="10" fill="#ffd76a"/>
+                <rect x="304" y="100" width="14" height="28" rx="4" fill="#7fbf6a" opacity=".85"/><rect x="308" y="90" width="7" height="11" fill="#ff9de2"/>
+                <rect x="86" y="184" width="20" height="32" rx="4" fill="#ffb37a" opacity=".85"/><rect x="91" y="174" width="10" height="11" fill="#9fe870"/>
+                <circle cx="140" cy="202" r="13" fill="#7fd8ff" opacity=".8"/><rect x="136" y="184" width="8" height="11" fill="#ffd76a"/>
+                <rect x="178" y="188" width="16" height="28" rx="4" fill="#ff9de2" opacity=".85"/><rect x="182" y="178" width="8" height="11" fill="#7fbf6a"/>
+                <rect x="216" y="182" width="22" height="34" rx="5" fill="#9fe870" opacity=".85"/><rect x="222" y="172" width="10" height="11" fill="#ffb37a"/>
+                <circle cx="268" cy="204" r="12" fill="#ffd76a" opacity=".8"/><rect x="264" y="186" width="8" height="11" fill="#c9a0ff"/>
+                <rect x="300" y="190" width="14" height="26" rx="4" fill="#c9a0ff" opacity=".85"/><rect x="304" y="180" width="7" height="11" fill="#7fd8ff"/>
+                <path d="M352 40v26M368 34v32M384 40v26" stroke="#4d3a75" stroke-width="3"/>
+                <g fill="#7fbf6a" opacity=".8"><circle cx="352" cy="76" r="6"/><circle cx="368" cy="78" r="7"/><circle cx="384" cy="76" r="6"/><circle cx="360" cy="88" r="5"/><circle cx="376" cy="88" r="5"/></g>
+              </g>
+              <rect y="428" width="900" height="142" fill="url(#lab-floor)"/>
+              <g stroke="#120c24" stroke-width="3" opacity=".45" fill="none"><path d="M0 468h900M0 512h900M150 428v40M420 428v40M680 428v40M300 468v44M560 468v44M770 468v44"/></g>
+              <ellipse cx="470" cy="404" rx="240" ry="150" fill="url(#lab-glow)"/>
+              <g class="work-table">
+                <rect x="636" y="416" width="210" height="12" fill="#3a2b63"/>
+                <rect x="648" y="428" width="10" height="54" fill="#312455"/><rect x="824" y="428" width="10" height="54" fill="#312455"/>
+                <rect x="660" y="392" width="58" height="24" rx="3" fill="#5b478f"/><path d="M660 399h58" stroke="#2b2050" stroke-width="4"/>
+                <rect x="738" y="378" width="16" height="38" rx="4" fill="#9fe870" opacity=".8"/><rect x="742" y="368" width="8" height="12" fill="#6fd0f0"/>
+                <rect x="770" y="386" width="22" height="30" rx="6" fill="#ffd76a" opacity=".8"/>
+              </g>
+              <g class="hearth">
+                <path d="M312 570v-50q0-24 32-24h252q32 0 32 24v50Z" fill="#33265a"/>
+                <g fill="#281c4a"><circle cx="354" cy="540" r="14"/><circle cx="470" cy="552" r="16"/><circle cx="590" cy="540" r="14"/></g>
+              </g>
+              <ellipse cx="470" cy="502" rx="150" ry="46" fill="url(#lab-fire)"/>
+              <g class="fire">
+                <path class="flame flame-a" d="M470 514c-28-8-32-36-15-50-2 17 8 23 15 23s14-8 10-27c19 12 21 46-10 54Z" fill="#ff9a4a"/>
+                <path class="flame flame-b" d="M428 517c-14-6-16-23-6-33-2 10 4 14 8 14s8-4 6-16c10 8 10 29-8 35Z" fill="#ffb37a"/>
+                <path class="flame flame-c" d="M518 515c-12-5-14-20-5-28-2 9 3 12 7 12s7-3 5-14c9 7 9 25-7 30Z" fill="#ffb37a"/>
+              </g>
+              <g class="cauldron">
+                <path d="M356 356c0 96 46 132 114 132s114-36 114-132Z" fill="url(#lab-copper)"/>
+                <path d="M382 382c4 52 26 78 58 86-40-4-62-30-58-86Z" fill="#e09a63" opacity=".32"/>
+                <ellipse cx="470" cy="356" rx="118" ry="22" fill="#8a4a2a"/>
+                <ellipse cx="470" cy="356" rx="102" ry="15" fill="#1d3a2b"/>
+                <ellipse class="brew-surface" cx="450" cy="353" rx="34" ry="7" fill="#9fe870" opacity=".5"/>
+                <path d="M344 352q-18 4-14 18t20 8" fill="none" stroke="#8a4a2a" stroke-width="10" stroke-linecap="round"/>
+                <path d="M596 352q18 4 14 18t-20 8" fill="none" stroke="#8a4a2a" stroke-width="10" stroke-linecap="round"/>
+                <path d="M404 474l-16 34M536 474l16 34" stroke="#6f3c1f" stroke-width="12" stroke-linecap="round"/>
+              </g>
+            </svg>
+            <div class="scene-shade"></div>
+            <div class="fireflies" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="location"><span class="location-dot"></span><span id="location">Учебный угол лаборатории</span><small id="encounter">Варка 1 / 3</small></div>
+            <div class="fighter hero" id="hero"><div class="fighter-label">СИННАБОН · ЖАР КОТЛА <span id="hero-heat-text">6 / 6</span></div><div class="hp-track heat-track"><div id="hero-heat"></div></div><img src="../assets/characters/cinnabon.svg" alt="Синнабон — белый кот в фартуке алхимика" draggable="false"><span class="ground-shadow"></span></div>
+            <div class="fighter alchemist" id="alchemist"><div class="fighter-label">ЖАБЕРТ · АЛХИМИК</div><img src="../assets/characters/zhabert.svg" alt="Лягушка Жаберт — алхимик в очках" draggable="false"><span class="ground-shadow"></span></div>
+            <div class="cauldron-hot" id="cauldron-hot" aria-hidden="true"></div>
+            <div class="bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <span class="brew-glyph" id="brew-glyph" lang="zh-CN" aria-hidden="true"></span>
+            <div class="smoke" id="smoke" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="scene-caption"><span id="scene-caption-title">Этап 1 · Первая ступка</span><p id="scene-caption-text">Первые настойки для разогрева лап.</p></div>
+          </div>
+          <div class="encounter-info"><span class="intent-icon" aria-hidden="true">!</span><div><p class="eyebrow">НРАВ ЭТАПА</p><p id="intention">Рецепт виден целиком, но на полке уже прячутся лишние колбы — собирай только то, что нужно.</p></div></div>
+        </section>
+        <aside class="lab-side" aria-label="Заказ Жаберта">
+          <div class="panel-heading"><span class="eyebrow">ЗАКАЗ ЖАБЕРТА</span><span class="ink-label" lang="zh-CN">月 + 日 → 明</span></div>
+          <h2>Собери знак в котле</h2>
+          <p class="panel-intro">Перетащи колбу в котёл или просто нажми на неё. Потом жми «Варить!».</p>
+          <div class="order-frame">
+            <div class="order-card" id="order-card">
+              <div class="order-glyph-wrap"><span class="order-glyph" id="order-glyph" lang="zh-CN">明</span><div class="order-side"><b class="order-py" id="order-py">míng</b><small class="order-meta" id="order-meta">Варка 1 из 3</small></div></div>
+              <p class="order-hint" id="order-hint">Реагенты: 日 + 月</p>
+            </div>
+            <div class="quiz-panel" id="quiz-panel" hidden>
+              <span class="quiz-eyebrow">ВОПРОС ЖАБЕРТА</span>
+              <div class="quiz-row"><span class="quiz-target" id="quiz-target" lang="zh-CN">明</span><p class="quiz-question" id="quiz-question">Как читается знак 明?</p></div>
+              <div class="quiz-options" id="quiz-options"></div>
+              <small>Верный ответ открывает котёл, неверный гасит жар.</small>
+            </div>
+            <div class="order-cover" id="order-cover"><span class="zh-big" lang="zh-CN">月</span><small id="cover-label">Фартук ждёт героя</small></div>
+            <span class="corner top-left"></span><span class="corner bottom-right"></span>
+          </div>
+          <div class="heat-panel"><span class="heat-label">ЖАР КОТЛА</span><div class="heat-dots" id="heat-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><strong id="heat-text">6 / 6</strong></div>
+          <div class="cauldron-slots" id="cauldron-slots" aria-label="Содержимое котла">
+            <button class="slot" type="button" data-index="0" aria-label="Пустой слот котла"></button>
+            <button class="slot" type="button" data-index="1" aria-label="Пустой слот котла"></button>
+            <button class="slot" type="button" data-index="2" aria-label="Пустой слот котла"></button>
+            <button class="slot" type="button" data-index="3" aria-label="Пустой слот котла"></button>
+          </div>
+          <div class="quiz-timer" id="quiz-timer" hidden><span class="timer-label">ВРЕМЯ ВАРКИ</span><div class="timer-bar" role="progressbar" aria-label="Оставшееся время варки"><div id="timer-fill"></div></div><span class="timer-text" id="timer-text">35 с</span></div>
+          <p class="brew-status" id="brew-status" role="status" aria-live="polite">Начни варку, чтобы открыть котёл.</p>
+          <div class="brew-controls"><button class="primary-button" id="brew-button" type="button" disabled>Варить!</button><button class="secondary-button" id="clear-button" type="button" disabled>Вылить</button></div>
+          <div class="writer-controls"><button id="hint-button" type="button" hidden>Подсказка · −1 жар</button><button class="chip-button" id="chip-button" type="button" disabled><svg viewBox="0 0 24 28" width="22" height="26" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M6 2h12v9l4 5v10H2V16l4-5Z"/><path fill="currentColor" opacity=".55" d="M4 18h16v6H4Z"/></svg><span>Сосновая щепка<small>Вернёт 2 деления жара</small></span><b id="chip-count">×2</b></button><button id="sound-button" type="button" aria-pressed="true">Звук: вкл.</button></div>
+        </aside>
+        <section class="lab-shelf" aria-label="Полка реагентов">
+          <div class="shelf-heading"><p class="eyebrow">ПОЛКА РЕАГЕНТОВ</p><small>Перетащи колбу в котёл или нажми на неё. Нажатие по слоту возвращает реагент.</small></div>
+          <div class="shelf-rack" id="shelf"></div>
+        </section>
+        <section class="lab-extras" aria-label="Сведения о варке">
+          <div class="hero-stats"><div><span class="stat-title">Чистые варки</span><strong id="stat-clean">0 / 17</strong><small>Варка без ошибок, таймера и подсказок</small></div><div><span class="stat-title">Сорванные варки</span><strong id="stat-fail">0</strong><small>Неверные реагенты и просроченное время</small></div><div><span class="stat-title">Экзамен Жаберта</span><strong id="stat-quiz">0 / 0</strong><small>Верных и неверных ответов на вопросы</small></div></div>
+          <details class="extra-block dialogue" open><summary>Слова Жаберта</summary><div class="dialogue"><img src="../assets/characters/zhabert.svg" alt="" width="44" height="44"><p id="dialogue">«Ква! Начнём с простых настоек: солнце, луна и деревья. Только не тащи в котёл всё подряд — я подсыпал лишних колб.»</p></div></details>
+          <details class="extra-block" open><summary>Гримуар <span id="grimoire-count">0 / 16 знаков</span></summary><div class="grimoire" id="grimoire"></div></details>
+          <details class="extra-block journal" open><summary>Записи в тетради <span id="journal-count">0 записей</span></summary><ol id="journal-list"><li>Синнабон стоит у порога лаборатории Жаберта.</li></ol></details>
+        </section>
+      </div>
+      <noscript><p class="noscript">Для игры нужен JavaScript. Включите его в настройках браузера и обновите страницу.</p></noscript>
+    </main>
+    <footer><span>Мешай котёл. Верить реагентам. Кивать Жаберту.</span><a href="../口/index.html">Вернуться к урокам курса</a></footer>
+  </div>
+  <div class="overlay" id="overlay">
+    <section class="story-card" role="dialog" aria-modal="true" aria-labelledby="story-title" aria-describedby="story-text" tabindex="-1">
+      <div class="story-art" id="story-art"><img src="../assets/characters/cinnabon.svg" alt="Синнабон" width="96" height="88"><img src="../assets/characters/zhabert.svg" alt="Жаберт" width="96" height="88"></div>
+      <p class="eyebrow" id="story-eyebrow">БОЛОТНАЯ АЛХИМИЯ</p><h2 id="story-title">Котёл ждёт помощника</h2><p id="story-text"></p>
+      <div class="story-rules" id="story-rules"><p><b>01</b><span>Тапни по колбе или перетащи её в котёл. Собери ровно те реагенты, из которых сложен знак, и нажми «Варить!». Лишние колбы — ловушка уже с первого этапа.</span></p><p><b>02</b><span>Со второго этапа Жаберт называет только перевод знака («толпа», «имя»…) — сам знак спрятан и не встречается на полке. Ошибка, таймер или подсказка гасят жар, щепка вернёт два деления.</span></p><p><b>03</b><span>На третьем этапе Жаберт экзаменует, а финальный заказ диктует по слуху — только чтение. Вари цепочки: сваренный промежуточный знак сам станет реагентом на полке.</span></p></div>
+      <div class="reward" id="reward" hidden><span id="reward-label">ТВОЙ КОД ЭТАПА</span><strong id="reward-code">1111</strong><p id="reward-stats"></p></div>
+      <div class="codes-list" id="codes-list" hidden><span class="codes-title">КОДЫ ЭТАПОВ</span><div class="codes-items" id="codes-items"></div></div>
+      <div class="story-actions"><button class="primary-button" id="story-primary" type="button">Надеть фартук</button><button class="ghost-button" id="story-sound" type="button" aria-pressed="true">Звук: вкл.</button></div>
+      <p class="story-footnote" id="story-footnote">3 этапа · 17 знаков · код после каждого этапа</p>
+    </section>
+  </div>
+</body>
+</html>
