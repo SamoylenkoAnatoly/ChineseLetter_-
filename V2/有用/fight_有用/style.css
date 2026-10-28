@@ -10,8 +10,11 @@ html{scrollbar-gutter:stable}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.scene.casting .spell{opacity:1;left:47%;top:39%}.scene.casting .damage-number,.scene.stroked .damage-number{opacity:1}.scene.fizzle .spell{opacity:0}}
 
 .writer-grid{aspect-ratio:auto;display:flex;gap:8px;justify-content:center;align-items:center;background:none}
-.writer-box{flex:1 1 0;min-width:0;max-width:150px;aspect-ratio:1;position:relative;touch-action:none;user-select:none;background:linear-gradient(90deg,transparent calc(50% - .5px),#95886755 50%,transparent calc(50% + .5px)),linear-gradient(transparent calc(50% - .5px),#95886755 50%,transparent calc(50% + .5px)),#f1e9ce}
+.writer-box{flex:1 1 0;min-width:0;max-width:240px;aspect-ratio:1;position:relative;touch-action:none;user-select:none;background:linear-gradient(90deg,transparent calc(50% - .5px),#95886755 50%,transparent calc(50% + .5px)),linear-gradient(transparent calc(50% - .5px),#95886755 50%,transparent calc(50% + .5px)),#f1e9ce}
 .writer-box svg{display:block}
+@media(min-width:801px){body.w2 .game-layout{grid-template-columns:minmax(0,1fr) 460px}}
+@media(max-width:800px){body.w2 .writer-frame{max-width:420px}body.w2 .stroke-progress,body.w2 .writer-status,body.w2 .writer-controls,body.w2 .quiz-timer{max-width:420px;margin-left:auto;margin-right:auto}body.w2.battle-active .writer-frame{max-width:min(420px,64vh);max-width:min(420px,64dvh)}}
+@media(orientation:landscape) and (max-height:520px){body.w2 .writer-frame{max-width:min(420px,calc(100vh - 120px));max-width:min(420px,calc(100dvh - 120px))}}
 body.w2 .writer-cover>span{font-size:64px}
 body.w2 .writer-cover .zh-glyph-alt{font-size:46px}
 body.w2 .gate-glyph{font-size:40px}
